@@ -1,0 +1,175 @@
+﻿@model Yunity.Models.CsAppointmentRecord
+
+@{
+    ViewData["Title"] = "Detail";
+    Layout = "~/Views/Shared/_LayoutVendorSide.cshtml";
+}
+
+<main>
+    <div class="">
+        <div class="detail-container">
+            <div class="detail-info">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td class="label">產品項目</td>
+                            <td class="value">@ViewBag.CategoryName</td>
+                        </tr>
+                        <tr>
+                            <td class="label">用戶姓名</td>
+                            <td class="value">@Model.CustomerName</td>
+                        </tr>
+                        <tr>
+                            <td class="label">聯絡電話</td>
+                            <td class="value">@Model.Phone</td>
+                        </tr>
+                        <tr>
+                            <td class="label">服務地址</td>
+                            <td class="value">@Model.ServiceLocation</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Email</td>
+                            <td class="value">@Model.Email</td>
+                        </tr>
+                        <tr>
+                            <td class="label">用戶備註</td>
+                            <td class="value">@Model.ArNotes</td>
+                        </tr>
+                        <tr>
+                            <td class="label">送單時間</td>
+                            <td class="value">@Model.CreatedDate</td>
+                        </tr>
+                        <tr>
+                            <td class="label">結單時間</td>
+                            <td class="value">
+                                @if (Model.Status == "進行中" || Model.Status == "已送單")
+                                {
+                                    @:
+                                }
+                                else if (Model.Status == "已完成" || Model.Status == "已取消")
+                                {
+                                    @Model.FinishDate
+                                }
+                                </td>
+                        </tr>
+                        <tr>
+                            <td class="label">服務狀態</td>
+                            <td class="status-value">
+                                @if (Model.Status == "進行中")
+                                {
+                                    <span class="badge rounded-pill text-bg-primary">進行中</span>
+                                }
+                                else if (Model.Status == "已送單")
+                                {
+                                    <span class="badge rounded-pill text-bg-danger">已送單</span>
+                                }
+                                else if (Model.Status == "已完成")
+                                {
+                                    <span class="badge rounded-pill text-bg-success">已完成</span>
+                                }
+                                else if (Model.Status == "已取消")
+                                {
+                                    <span class="badge rounded-pill text-bg-secondary">已取消</span>
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="status-buttons">
+                    @if (Model.Status == "已送單")
+                    {
+                        <button id="btnInProgress" type="button" class="btn btn-outline-primary" onclick="confirmStatusChange('進行中')">進行中</button>
+                        <button id="btnComplete" type="button" class="btn btn-outline-success" onclick="confirmStatusChange('已完成')">完成訂單</button>
+                        <button id="btnCancel" type="button" class="btn btn-outline-secondary" onclick="confirmStatusChange('已取消')">取消預約</button>
+                    }
+                    else if (Model.Status == "進行中")
+                    {
+                        <button id="btnInProgress" type="button" class="btn btn-outline-primary" disabled>進行中</button>
+                        <button id="btnComplete" type="button" class="btn btn-outline-success" onclick="confirmStatusChange('已完成')">完成訂單</button>
+                        <button id="btnCancel" type="button" class="btn btn-outline-secondary" onclick="confirmStatusChange('已取消')">取消預約</button>
+                    }
+                    else if (Model.Status == "已完成" || Model.Status == "已取消")
+                    {
+                        <button id="btnInProgress" type="button" class="btn btn-outline-primary" disabled>進行中</button>
+                        <button id="btnComplete" type="button" class="btn btn-outline-success" disabled>完成訂單</button>
+                        <button id="btnCancel" type="button" class="btn outline-secondary" disabled>取消預約</button>
+                    }
+                    <a asp-action="List" class="btn btn-outline-dark">返回列表</a>
+
+                </div>
+            </div>
+            <div class="detail-imgs">
+                @foreach (var url in ViewBag.PhotoUrls)
+                {
+                    <img src="@url" alt="Photo" />
+                }
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            const orderId = @Model.Id;  // 使用訂單 ID
+
+            // Confirm status change ---------------------------------
+            window.confirmStatusChange = function(newStatus) {
+                if (confirm("是否確認更改狀態 【" + newStatus + "】?")) {
+                    const url = '@Url.Action("UpdateStatus", "VendorSide")';
+                    console.log("Generated URL: " + url);
+
+                    // Send Ajax request to update status
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: { id: orderId, status: newStatus },
+                        success: function(response) {
+                            alert("狀態更改完成!");
+                            location.reload();
+                        },
+                        error: function() {
+                            alert("狀態更改失敗!請重試!");
+                        }
+                    });
+                }
+            }
+        });
+
+        // Show full image on click -----------------------------------
+        document.querySelectorAll('.detail-imgs img').forEach(img => {
+            img.addEventListener('click', function () {
+                const fullImage = document.createElement('img');
+                fullImage.src = this.src;
+                fullImage.style.maxWidth = '90%';
+                fullImage.style.maxHeight = '90%';
+                fullImage.style.position = 'fixed';
+                fullImage.style.top = '50%';
+                fullImage.style.left = '50%';
+                fullImage.style.transform = 'translate(-50%, -50%)';
+                fullImage.style.zIndex = '1000';
+                fullImage.style.cursor = 'zoom-out';
+
+                // Create the overlay background
+                const overlay = document.createElement('div');
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                overlay.style.zIndex = '999';
+
+                // Remove overlay and full image on click
+                overlay.addEventListener('click', function () {
+                    this.remove();
+                    fullImage.remove();
+                });
+
+                document.body.appendChild(overlay);
+                document.body.appendChild(fullImage);
+            });
+        });
+    </script>
+}
+

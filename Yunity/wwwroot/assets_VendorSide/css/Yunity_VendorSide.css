@@ -1,0 +1,576 @@
+﻿/*--------------------------------------------------------------
+# Body
+--------------------------------------------------------------*/
+
+body,
+html {
+   font-family: 'Noto Sans TC', sans-serif;
+   font-weight: 200;
+   margin: 0;
+   padding: 0;
+   min-height: 100%;
+   display: flex;
+   flex-direction: column;
+   height: 100%;
+   margin: 0;
+}
+
+body {
+   display: flex;
+   flex-direction: column;
+}
+
+.main-content {
+   padding-bottom: 80px;
+   min-height: 100%;
+   flex: 1;
+}
+
+/*--------------------------------------------------------------
+# Menu
+--------------------------------------------------------------*/
+.menu-logo {
+   height: 35px;
+   margin-left: 20px;
+}
+
+.menu-var {
+   position: fixed;
+   z-index: 9998;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   margin: 0px 0px 20px 0px;
+   border-radius: 0px 0px 50px 50px;
+   padding: 15px;
+   width: 100%;
+   background-color: #ffffff;
+   box-shadow: 0 4px 30px rgb(221, 221, 221);
+}
+
+.menu-group {
+   display: flex;
+   padding: 0 20px;
+}
+
+.menu-item {
+   background-color: white;
+   border-radius: 20px;
+   padding: 10px 20px;
+   margin-right: 10px;
+   font-size: 18px;
+   color: #686868;
+   cursor: pointer;
+   transition: all 0.2s ease;
+   border: none;
+   text-decoration: none;
+   font-style: normal;
+   display: flex;
+   align-items: center;
+   width: 105px;
+   height: 35px;
+   font-family: 'Noto Sans TC', sans-serif;
+   font-weight: 500;
+}
+    .menu-item span.partial-center {
+        display: inline-flex; /* 使用 inline-flex 可以更貼合文本佈局 */
+        align-items: center; /* 垂直置中 */
+        justify-content: center; /* 水平置中 */
+        height: 100%; /* 確保 span 填滿父元素 */
+        width: 100%;
+        
+    }
+
+
+.menu-item:hover,
+.menu-item:checked,
+.menu-item.visited {
+    background-color: #e4e4e4;
+    color: #333;
+    text-decoration: none;
+}
+
+.menu-item span {
+   color: inherit;
+   margin-right: 5px;
+}
+
+@media (max-width: 600px) {
+   .menu-item {
+      font-size: 0;
+      height: 45px;
+      width: 45px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
+
+   .menu-item span {
+      font-size: 25px;
+      margin: 0;
+   }
+
+   .logo {
+      height: 30px;
+   }
+
+}
+
+/*--------------------------------------------------------------
+# Footer
+--------------------------------------------------------------*/
+footer {
+    position: relative;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 -4px 30px rgb(221, 221, 221);
+    padding: 20px;
+    text-align: center;
+    border-radius: 50px 50px 0px 0px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 200;
+    font-size: 15px;
+    z-index: 0;
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-img {
+   height: 30px;
+   width: auto;
+   object-fit: contain;
+   margin: 0 20px;
+}
+
+.footer-p {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   margin: 0;
+   color: #5271ff;
+   width: 33%;
+}
+
+.footer-p span {
+   font-size: 1.5em;
+   margin-right: 2px;
+}
+
+.footer-p.left {
+   justify-content: flex-start;
+}
+
+.footer-p.right {
+   justify-content: flex-end;
+}
+
+@media (max-width: 600px) {
+   .footer-p span {
+      display: none;
+   }
+
+   .footer-p {
+      font-size: 11px;
+   }
+}
+
+/*--------------------------------------------------------------
+# Scroll Top Button
+--------------------------------------------------------------*/
+.scroll-top {
+   position: fixed;
+   visibility: hidden;
+   opacity: 0;
+   right: 15px;
+   bottom: -15px;
+   z-index: 99999;
+   background-color: #5271ff;
+   width: 44px;
+   height: 44px;
+   border-radius: 50px;
+   transition: all 0.4s;
+   text-decoration: none;
+}
+
+.scroll-top span {
+   font-size: 24px;
+   color: #ffffff;
+   line-height: 0;
+}
+
+.scroll-top:hover {
+   background-color: #9eafff;
+   color: #5271ff;
+   text-decoration: none;
+}
+
+.scroll-top.active {
+   visibility: visible;
+   opacity: 1;
+   bottom: 15px;
+}
+
+/*--------------------------------------------------------------
+# Login
+--------------------------------------------------------------*/
+.login-form {
+   width: 100%;
+   max-width: 400px;
+   margin: 100px auto;
+   background-color: #fff;
+   display: block;
+   padding: 1rem;
+   max-width: 350px;
+   border-radius: 30px;
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+   font-family: 'Noto Sans TC', sans-serif;
+}
+
+.login-input-container {
+   position: relative;
+}
+
+.login-input-container input {
+   outline: none;
+   border: 1px solid #e5e7eb;
+   margin: 8px 0;
+   background-color: #fff;
+   padding: 1rem;
+   padding-right: 3rem;
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   width: 320px;
+   border-radius: 30px;
+   box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.login-input-container span {
+   display: grid;
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   right: 0;
+   padding-right: 1rem;
+   place-content: center;
+   color: gray;
+   font-size: 20px;
+}
+
+.login-input-container span svg {
+   color: gray;
+   width: 1rem;
+   height: 1rem;
+}
+
+.login-submit {
+   display: block;
+   padding-top: 0.75rem;
+   padding-bottom: 0.75rem;
+   padding-left: 1.25rem;
+   padding-right: 1.25rem;
+   background-color: #5271ff;
+   color: #ffffff;
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   font-weight: 500;
+   width: 100%;
+   border-radius: 30px;
+   text-transform: uppercase;
+   outline: none;
+   border: none;
+   margin-top: 10px;
+   margin-bottom: 10px;
+}
+
+.login-submit:hover {
+   background-color: #4a53fa;
+}
+
+.login-submit:focus {
+   outline: none;
+   border: none;
+}
+
+.login-some-link {
+   color: gray;
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   text-align: center;
+   display: flex;
+   justify-content: space-around;
+}
+
+.login-some-link a {
+   text-decoration: none;
+}
+
+.login-some-link a:hover {
+   text-decoration: none;
+}
+
+.login-logo {
+   height: 30px;
+   margin: 10px;
+   display: block;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+.login-input-container span:hover {
+   cursor: pointer;
+}
+/*--------------------------------------------------------------
+# Hr
+--------------------------------------------------------------*/
+/* hr {
+   border: 0 !important;
+   border-top: 1px solid #000 !important;
+   margin: 20px 0 !important;
+} */
+
+/*--------------------------------------------------------------
+# List
+--------------------------------------------------------------*/
+/* Table */
+.table100 {
+    background-color: #fff;
+    padding-top:40px
+}
+
+
+table {
+   width: 100%;
+   table-layout: fixed;
+}
+
+.column1 {
+   width: 20%;
+}
+
+.column2 {
+   width: 10%;
+}
+
+.column3 {
+   width: 20%;
+}
+
+.column4 {
+   width: 20%;
+}
+
+.column5 {
+   width: 20%;
+}
+
+.column6 {
+   width: 10%;
+}
+
+.table100-body span {
+   font-weight: 100;
+}
+
+/* header */
+.table100 {
+   position: relative;
+}
+
+.table100-head {
+   width: 100%;
+   top: 0;
+   left: 0;
+   padding-top: 20px;
+   background-color: #fff;
+}
+
+.table100-body {
+    margin-bottom: 80px;
+    width: 100%;
+}
+
+.table100-head th,
+.table100-body td {
+   padding: 10px;
+   text-align: left;
+}
+
+.table100-head th {
+   background-color: #f0f0f0;
+}
+
+.table100-body td {
+   background-color: #fafafa;
+}
+
+.table100 tr:hover td {
+   background-color: #ebebeb;
+   cursor: pointer;
+}
+
+.table100 th {
+   font-size: 14px;
+   color: #555555;
+   line-height: 1.4;
+   text-transform: uppercase;
+   background-color: transparent;
+}
+
+.table100 td {
+   font-size: 15px;
+   color: #808080;
+   line-height: 1.4;
+   background-color: #f7f7f7;
+}
+
+.table100 .table100-body tr {
+   overflow: hidden;
+   border-bottom: 10px solid #fff;
+   border-radius: 10px;
+}
+
+.table100 .table100-body table {
+   border-collapse: separate;
+   border-spacing: 0 10px;
+}
+
+.table100 .table100-body td {
+   border: solid 1px transparent;
+   border-style: solid none;
+   padding: 10px;
+}
+
+.table100 .table100-body td:first-child {
+   border-left-style: solid;
+   border-top-left-radius: 10px;
+   border-bottom-left-radius: 10px;
+}
+
+.table100 .table100-body td:last-child {
+   border-right-style: solid;
+   border-bottom-right-radius: 10px;
+   border-top-right-radius: 10px;
+}
+
+.table100 tr:hover td {
+   background-color: #ebebeb;
+   cursor: pointer;
+   color: #333;
+}
+
+.table100 .table100-head th {
+   font-weight: 200;
+}
+
+/* search-container */
+.search-container {
+margin-bottom:5px;
+display:flex;
+justify-content:end;
+}
+
+.search-container input {
+   outline: none;
+   border: 1px solid #e5e7eb;
+   background-color: #fff;
+   padding: 1rem;
+   padding-right: 3rem;
+   margin-left:10px;
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   width: 200px;
+   height: 30px;
+   border-radius: 30px;
+   box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.search-container button {
+   position:absolute;
+   padding-top:5px;
+   right: 10px;
+   color: gray;
+   background-color: transparent;
+   font-size: 20px;
+   border: none;
+}
+
+.search-container span:hover {
+   color: #333;
+}
+
+.search-container select {
+   outline: none;
+   border: 1px solid #e5e7eb;
+   font-size: 0.875rem;
+   line-height: 1.25rem;
+   padding-left: 0.8rem;
+   width: 120px;
+   height: 34px;
+   border-radius: 30px;
+   box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+   background-color: #fff;
+   color: gray;
+   transition: all 1s ease;
+}
+
+/*--------------------------------------------------------------
+# Detail
+--------------------------------------------------------------*/
+main {
+   z-index: 2;
+   height: 100%;
+   margin: 100px 0px 20px 0px;
+}
+
+.detail-container {
+   display: flex;
+   margin-top: 30px;
+}
+
+.badge {
+   font-weight: 100;
+}
+
+.detail-info {
+   width: 600px;
+}
+
+.label {
+   width: 100px;
+}
+
+.detail-imgs {
+   margin-left: 30px;
+}
+
+.detail-imgs img {
+   width: 180px;
+   height: 370px;
+   margin: 5px;
+   border-radius: 10px;
+   object-fit: cover;
+   cursor: pointer;
+}
+
+.status-buttons {
+   display: flex;
+   gap: 10px;
+   margin-top: 10px;
+}
+
+.btn {
+   border-radius: 20px;
+}
+
+/*Product*/
+#productModal {
+    z-index: 9999;
+}
+.modal-dialog {
+    top: 100px;
+}

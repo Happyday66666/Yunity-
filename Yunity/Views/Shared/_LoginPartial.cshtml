@@ -1,0 +1,73 @@
+﻿@{
+    Layout = null;  // 不要這樣禁用 Layout
+
+}
+
+@using Microsoft.AspNetCore.Identity
+@using Yunity.Areas.Identity.Data
+@using Microsoft.EntityFrameworkCore;
+@inject SignInManager<YunityUser> SignInManager
+@inject UserManager<YunityUser> UserManager
+@inject BuildingDataContext _buildingDataContext
+
+<ul class="navbar-nav">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        var user = await UserManager.GetUserAsync(User);  // 獲取已登錄的用戶資料
+
+        // 查詢 TManagerInfo
+        var managerInfo = await _buildingDataContext.TManagerInfos
+        .FirstOrDefaultAsync(m => m.FAspUserId == user.Id);
+
+        // 查詢 TUserInfo
+        var userInfo = await _buildingDataContext.TusersInfos
+        .FirstOrDefaultAsync(u => u.FAspUserId == user.Id);
+
+        // 查詢 CompanyAccount
+        var companyAccount = await _buildingDataContext.CompanyAccounts
+        .FirstOrDefaultAsync(c => c.FAspUserId == user.Id);
+
+        // 提取 Fname 來顯示
+        var userFname = managerInfo?.FName ?? userInfo?.FName ?? "Guest";  // 如果都為 null，顯示 Guest
+
+        <li class="nav-item">
+            @if (managerInfo != null)
+            {
+                <a class="nav-link nav_style" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage"><i class="bi bi-person-fill"></i> @managerInfo.FName</a>
+
+            }
+            @if (userInfo != null)
+            {
+                <a class="nav-link text-dark form-inline circle-wrapper" asp-area="Identity" asp-page="/Account/Manage/Index"><i class="bi bi-person-fill" id="Logouticon"></i></a>
+
+            }
+            @if (companyAccount != null)
+            {
+                <a class="nav-link text-dark " asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">您好， @companyAccount.ComName!</a>
+
+            }
+
+        </li>
+        <!-- 顯示更多資料 -->
+
+        <li class="nav-item">
+            <form class="form-inline circle-wrapper" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "HomePage", new { area = "" })">
+                <button type="submit" class="nav-link btn btn-link text-dark">
+                    <i class="bi bi-box-arrow-right" id="Logouticon"></i>
+                </button>
+            </form>
+        </li>
+
+
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">註冊</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">登入</a>
+        </li>
+    }
+</ul>
+

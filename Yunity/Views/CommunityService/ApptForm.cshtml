@@ -1,0 +1,257 @@
+﻿@model Yunity.Models.CSListWrap
+
+@{
+    Layout = "_LayoutUser";
+	ViewData["Title"] = "預約表單";
+}
+<style>
+    /* 按鈕容器樣式 */
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    /* 按鈕樣式 */
+    .action-btn {
+        font-size: 1.2rem;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: background-color 0.3s;
+    }
+
+    /* 返回按鈕 */
+    .back-btn {
+        background-color: #7cdee0;
+        color: #000;
+    }
+
+        .back-btn:hover {
+            background-color: #49cdd1;
+        }
+
+    /* 取消訂單按鈕 */
+    .cancel-btn {
+        background-color: #ef744a;
+        color: white;
+    }
+
+        .cancel-btn:hover {
+            background-color: #c5401f;
+        }
+
+    /* 編輯訂單按鈕 */
+    .edit-btn {
+        background-color: #abd8f1;
+        color: #000;
+    }
+
+        .edit-btn:hover {
+            background-color: #7abaf9;
+        }
+
+    /* 儲存按鈕樣式 */
+    .save-btn {
+        background-color: #a7cd6d; /* 綠色 */
+        color: #000;
+        font-size: 1.2rem;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+
+        .save-btn:hover {
+            background-color: #83af40; /* 滑鼠懸停變色 */
+        }
+    /* 按鈕群組樣式 */
+    .action-btn-group {
+        display: flex;
+        gap: 10px;
+    }
+</style>
+
+<div class="container mt-3 mb-3">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index","UHome")">首頁</a>
+                </li>
+                <li class="breadcrumb-item" aria-current="page"><a href="@Url.Action("CS_Index","CommunityService")">社區服務</a></li>
+                <li class="breadcrumb-item active" aria-current="page">預約表單</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="container-fluid">
+        <h2>預約表單</h2>
+        <div class="card">            
+            <div class="card-body">
+                <div class="row">                    
+                    <div class="col-md-4">
+                        <div class="card" style="border: none;">
+                            <img src="~/image_CS/CS_Attr_01.png" class="card-img-top" alt="圖片說明">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <form asp-action="ApptForm" method="post" enctype="multipart/form-data">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    @*
+                                    <div class="mb-3 row">
+                                        <label asp-for="ComName" class="col-sm-2 col-form-label"></label>
+                                        <div class="col-sm-10">
+                                            <input asp-for="ComName" class="form-control" placeholder="輸入廠商名稱" />
+                                            <span asp-validation-for="ComName" class="text-danger"></span>
+                                        </div>
+                                    </div>*@
+
+                                    <div class="mb-3 row">
+                                        <label asp-for="CustomerName" class="col-sm-2 col-form-label"></label>
+                                        <div class="col-sm-10">
+                                            <input asp-for="CustomerName" class="form-control" placeholder="ex:張小美" required />
+                                            <span asp-validation-for="CustomerName" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label asp-for="Phone" class="col-sm-2 col-form-label"></label>
+                                        <div class="col-sm-10">
+                                            <input asp-for="Phone" class="form-control" placeholder="ex:0988123123" required />
+                                            <span asp-validation-for="Phone" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label asp-for="ServiceLocation" class="col-sm-2 col-form-label"></label>
+                                        <div class="col-sm-10">
+                                            <input asp-for="ServiceLocation" class="form-control" placeholder="ex:高雄市前金區小美路5號5樓" required />
+                                            <span asp-validation-for="ServiceLocation" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label asp-for="Email" class="col-sm-2 col-form-label"></label>
+                                        <div class="col-sm-10">
+                                            <input asp-for="Email" class="form-control" placeholder="ex:abc@gmail.com" required />
+                                            <span asp-validation-for="Email" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label asp-for="ArNotes" class="col-sm-2 col-form-label"></label>
+                                        <div class="col-sm-10">
+                                            <textarea asp-for="ArNotes" class="form-control" rows="3" placeholder="ex:冷氣不冷了，型號:ABC-123"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 row">
+                                        <label class="col-sm-2 col-form-label">提供照片給廠商</label>
+                                        <div class="col-sm-10">
+                                            <!-- 上傳照片的 input -->
+                                            <div id="preview1" class="mt-2"></div>
+                                            <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" />
+                                            <div id="preview2" class="mt-2"></div>
+                                            <input type="file" class="form-control mt-2" id="photo2" name="photo2" />
+                                            <div id="preview3" class="mt-2"></div>
+                                            <input type="file" class="form-control mt-2" id="photo3" name="photo3" />
+                                        </div>
+                                    </div>
+                                    @*按扭區域 START*@
+                                    <div class="">            
+                                        <div class="action-btn-group d-flex justify-content-end">
+                                            <button type="reset" class="action-btn cancel-btn" onclick="window.location.href='@Url.Action("CS_Index", "CommunityService")'">
+                                                <span class="material-symbols-outlined">close</span>
+                                                <span>取消</span>
+                                            </button>
+                                            <button type="submit" class="action-btn save-btn">
+                                                <span class="material-symbols-outlined">check</span>
+                                                <span>送出預約</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    @*按扭區 END*@
+                                    <input type="hidden" name="ProductId" value="@ViewBag.ProductId" />
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- Main END -->
+
+@section Scripts
+{
+    @* 載入 jQuery、jQuery Validation 和 Unobtrusive Validation  *@
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+
+        // 預覽圖片的 JavaScript 函數
+        function previewImage(inputElement, previewId) {
+            var file = inputElement.files[0];  // 取得選中的檔案
+
+            // 驗證檔案格式
+            if (file) {
+                var validTypes = ['image/png', 'image/jpeg', 'image/jpg','image/gif'];
+                var fileType = file.type;
+
+                if (!validTypes.includes(fileType)) {
+                    alert('請選擇有效的圖片檔案（PNG、JPEG、JPG、GIF）。');
+                    inputElement.value = ''; // 清空選擇的文件
+                    return; // 停止執行預覽
+                }
+
+                var reader = new FileReader();
+
+                // 讀取檔案並顯示在指定的預覽區域
+                reader.onload = function(e) {
+                    var previewContainer = document.getElementById(previewId);
+                    previewContainer.innerHTML = ''; // 清空之前的預覽（如果有的話）
+
+                    // 創建一個 img 元素來顯示圖片
+                    var img = document.createElement('img');
+                    img.src = e.target.result;  // 設定圖片來源
+                    img.classList.add('img-fluid');  // 加入 Bootstrap 樣式使圖片自適應容器
+                    img.style.maxWidth = '400px';  // 設定圖片的最大寬度
+                    previewContainer.appendChild(img);  // 加入預覽容器中
+                };
+
+                // 開始讀取檔案
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 使用 addEventListener 綁定事件
+        document.getElementById("photo1").addEventListener("change", function() {
+            previewImage(this, "preview1");
+        });
+
+        document.getElementById("photo2").addEventListener("change", function() {
+            previewImage(this, "preview2");
+        });
+
+        document.getElementById("photo3").addEventListener("change", function() {
+            previewImage(this, "preview3");
+        });
+    </script>
+}

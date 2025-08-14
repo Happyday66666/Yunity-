@@ -1,0 +1,324 @@
+﻿@model Yunity.ViewModels.UserAreaReserveViewModel
+
+@{
+    ViewData["Title"] = "新增公設預約";
+    Layout = "_LayoutUser";
+    var areaName = ViewBag.AreaName ?? "未知公設";
+    var deductPoints = Model.DeductPoints;
+    var maxAmount = Model.Amount;
+}
+<style>
+    /* 保持原有色系，不變動背景與文字顏色 */
+    .container {
+        max-width: 800px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        padding: 1.5rem;
+    }
+
+        .card-header h3 {
+            margin: 0;
+            color: #ffffff;
+        }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .form-control, .form-select {
+        /* 保持原有背景顏色與文字顏色 */
+    }
+
+    .btn-primary {
+        /* 保持原有顏色 */
+    }
+
+    /* 調整各區塊間距 */
+    .card-footer {
+        margin-top: 1rem;
+    }
+
+    /* 讓表單標籤字體不變，但調整間距 */
+    .card-body label {
+        margin-bottom: 0.5rem;
+    }
+</style>
+
+
+<div class="container my-5">
+    <a id="top"></a>
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="mb-3">新增公設預約</h1>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3><strong>@areaName</strong></h3>
+                </div>
+                <div class="card-body bg-white">
+                    <form id="reservationForm" asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="AreaId" />
+                        <input type="hidden" asp-for="Amount" />
+                        <input type="hidden" asp-for="ReserveTime" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+                        <input type="hidden" asp-for="StartTime" id="combinedStartTime" />
+                        <input type="hidden" asp-for="EndTime" id="combinedEndTime" />
+
+                        <!-- ✅ 預約日期 -->
+                        <div class="form-group mb-3">
+                            <label for="selectDate" class="form-label">預約日期</label>
+                            <input asp-for="ReservationDate" type="date" id="selectDate" class="form-control" required
+                                   min="@DateTime.Now.ToString("yyyy-MM-dd")" value="@Model.ReservationDate" />
+                        </div>
+
+                        <!-- ✅ 預約時段 -->
+                        <div class="form-group mb-3">
+                            <label for="timeSlotSelect" class="form-label">預約時段</label>
+                            <select asp-for="ReservationTimeSlot" id="timeSlotSelect" class="form-select" required>
+                                <option value="" disabled selected>請選擇時段</option>
+                            </select>
+                        </div>
+
+                        <!-- ✅ 預約人數 -->
+                        <div class="form-group mb-3">
+                            <label for="reservedPeopleSelect" class="form-label">預約人數</label>
+                            <select asp-for="ReservedPeople" id="reservedPeopleSelect" class="form-select" required>
+                                <option value="0" disabled selected>請選擇人數</option>
+                            </select>
+                        </div>
+
+                        <!-- ✅ 每人扣點數 -->
+                        <div class="form-group mb-3">
+                            <label class="form-label">每人扣點數</label>
+                            <input type="number" class="form-control" value="@deductPoints" readonly id="deductPoints" />
+                        </div>
+
+                        <!-- ✅ 點數計算 -->
+                        <div class="form-group mb-3 text-center">
+                            <!-- ✅ 加入標題 -->
+                            <label class="form-label fw-bold">目前點數 - 使用點數 = 預估剩餘點數</label>
+
+                            <div class="d-flex justify-content-center align-items-center gap-3">
+                                <h3 id="currentPoints" class="text-primary-emphasis">@Model.UserPoints</h3><span class="fs-4 fw-bold">點</span>
+                                <span class="fs-4 text-dark fw-bold mx-2">-</span>
+                                <h3 id="deductedPoints" class="text-primary fw-bold">0</h3><span class="fs-4 fw-bold">點</span>
+                                <span class="fs-4 text-dark fw-bold mx-2">=</span>
+                                <h3 id="remainingPointsDisplay" class="text-success fw-bold">0</h3><span class="fs-4 fw-bold">點</span>
+                            </div>
+
+                            <!-- ❌ 點數不足時顯示警告 -->
+                            <span id="pointsWarning" class="text-danger fw-bold" style="display:none;">❌ 點數不足，請減少預約人數！</span>
+                        </div>
+
+
+
+                        <div class="d-grid mb-3">
+                            <button id="btnReserve" type="submit" class="btn btn-primary" disabled>提交預約</button>
+                        </div>
+                    </form>
+
+                    <hr />
+
+                    <div class="mt-3 text-center">
+                        <a asp-action="Index" class="btn btn-secondary">返回列表</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            const deductUnit = parseInt($("#deductPoints").val(), 10);
+            const userPoints = @Model.UserPoints;
+            const maxAmount = @Model.Amount;
+
+            $("#selectDate").on("change", function () {
+                const selectedDate = $(this).val();
+                const areaId = "@Model.AreaId";
+                fetchAvailableTimeSlots(selectedDate, areaId);
+            });
+
+            $("#timeSlotSelect").on("change", function () {
+                const selectedTime = $(this).val();
+                if (selectedTime) {
+                    const parts = selectedTime.split('~');
+                    if (parts.length === 2) {
+                        $("#combinedStartTime").val(`${$("#selectDate").val()}T${parts[0]}:00`);
+                        $("#combinedEndTime").val(`${$("#selectDate").val()}T${parts[1]}:00`);
+                    }
+                }
+                updateReservedPeopleOptions();
+                enableSubmit();
+            });
+
+            function fetchAvailableTimeSlots(selectedDate, areaId) {
+                $.ajax({
+                    url: '/UserAreaReserves/GetTimeSlots',
+                    type: 'GET',
+                    dataType: 'json',
+                    data: { date: selectedDate, areaId: areaId },
+                    success: function (data) {
+                        populateTimeSlots(data);
+                    },
+                    error: function () {
+                        alert("獲取時段資料失敗，請稍後再試。");
+                    }
+                });
+            }
+
+                    function populateTimeSlots(data) {
+            const $timeSlotSelect = $("#timeSlotSelect");
+            $timeSlotSelect.empty().append("<option value='' disabled selected>請選擇時段</option>");
+            let hasAvailableSlot = false; // ✅ 確保至少有一個可選時段
+
+            if (data && data.length > 0) {
+                const todayStr = new Date().toISOString().split('T')[0];
+                let nowMinutes = 0;
+
+                if ($("#selectDate").val() === todayStr) {
+                    const now = new Date();
+                    nowMinutes = now.getHours() * 60 + now.getMinutes();
+                }
+
+                $.each(data, function (index, slot) {
+                    const timePeriod = slot.timePeriod;
+                    const parts = timePeriod.split('~');
+                    let disableOption = false;
+
+                    if ($("#selectDate").val() === todayStr) {
+                        const [hour, minute] = parts[0].split(':').map(Number);
+                        const slotStartMinutes = hour * 60 + minute;
+                        if (slotStartMinutes < nowMinutes) {
+                            disableOption = true;
+                        }
+                    }
+
+                    if (!disableOption) {
+                        hasAvailableSlot = true;
+                    }
+
+                    const option = $("<option>")
+                        .val(timePeriod)
+                        .text(`${timePeriod} (剩餘${slot.remainingCapacity}人)`)
+                        .prop("disabled", disableOption);
+                    $timeSlotSelect.append(option);
+                });
+
+                // ✅ 如果沒有可用時段，顯示提示
+                if (!hasAvailableSlot) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: '沒有可用時段',
+                        text: '請選擇其他日期！',
+                        confirmButtonText: '確定'
+                    });
+                    $timeSlotSelect.empty().append("<option value='' disabled selected>無可預約時段</option>");
+                }
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '無時段可預約',
+                    text: '請選擇其他日期！',
+                    confirmButtonText: '確定'
+                });
+                $timeSlotSelect.empty().append("<option value='' disabled selected>無可預約時段</option>");
+            }
+
+            enableSubmit();
+        }
+
+
+
+
+
+
+            function updateReservedPeopleOptions() {
+                const selectedOptionText = $("#timeSlotSelect option:selected").text();
+                const regex = /\(剩餘(\d+)人\)/;
+                const match = regex.exec(selectedOptionText);
+                const remainingCapacity = match ? parseInt(match[1], 10) : 0;
+
+                const $reservedPeopleSelect = $("#reservedPeopleSelect");
+                $reservedPeopleSelect.empty().append("<option value='' disabled selected>請選擇人數</option>");
+
+                for (let i = 1; i <= Math.min(remainingCapacity, maxAmount); i++) {
+                    $reservedPeopleSelect.append($("<option>").val(i).text(i));
+                }
+            }
+
+         
+
+                      $("#reservedPeopleSelect").on("change", function () {
+            const people = parseInt($(this).val(), 10) || 0;
+            const totalDeduct = people * deductUnit;
+            const remainingPoints = userPoints - totalDeduct;
+
+            // ✅ 更新畫面上的 "使用點數"
+            $("#deductedPoints").text(totalDeduct);
+
+            // ✅ 更新畫面上的 "剩餘點數"
+            $("#remainingPointsDisplay").text(remainingPoints);
+
+            if (remainingPoints < 0) {
+                $("#remainingPointsDisplay").removeClass("text-success").addClass("text-danger"); // 變紅色
+                $("#pointsWarning").show(); // 顯示警告訊息
+            } else {
+                $("#remainingPointsDisplay").removeClass("text-danger").addClass("text-success"); // 變回綠色
+                $("#pointsWarning").hide(); // 隱藏警告訊息
+            }
+
+            enableSubmit(); // 檢查按鈕是否可點擊
+        });
+
+
+                function enableSubmit() {
+            const isPointsValid = parseInt($("#remainingPointsDisplay").text(), 10) >= 0;
+            if ($("#selectDate").val() && $("#timeSlotSelect").val() && $("#reservedPeopleSelect").val() && isPointsValid) {
+                $("#btnReserve").prop("disabled", false);
+            } else {
+                $("#btnReserve").prop("disabled", true);
+            }
+        }
+
+            // 當表單提交時，觸發 SweetAlert 成功通知
+            $("#reservationForm").on("submit", function (event) {
+                event.preventDefault(); // 防止表單預設提交
+         const Toast = Swal.mixin({
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 1000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+          }
+        });Toast.fire({
+            icon: 'success',
+            title: '您的預約已成功提交'
+        }).then(() => {
+            // 實際提交表單
+            this.submit();
+        });
+            });
+
+
+
+            enableSubmit();
+        });
+    </script>
+}

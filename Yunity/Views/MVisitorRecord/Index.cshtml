@@ -1,0 +1,228 @@
+﻿@{
+    Layout = "_LayoutManager";
+    ViewData["Title"] = "訪客列表";
+}
+
+@section Styles {
+    <style>
+        #CreateButton {
+            position: fixed;
+            bottom: 75px;
+            right: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        #CreateButton:hover {
+            transform: scale(1.1);
+        }
+
+        td {
+            vertical-align: middle;
+            height: 60px;
+        }
+
+        .btnS {
+            border-radius: 50%;
+        }
+
+        .form-control {
+            font-size: 1.1rem;
+            background: rgb(255 255 255);
+            color: #3a525e;
+        }
+    </style>
+}
+
+<div class="container my-3">
+    <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Concierge")" style="color:#9BA8Ab;">首頁</a></li>
+            <li class="breadcrumb-item " aria-current="page" style="color:#31515e">訪客列表</li>
+        </ol>
+    </nav>
+
+
+    <h3 class="text-center m-4">訪客列表</h3>
+
+    <div class="container my-4" style="width:80%;">
+        <form id="searchForm" method="post" onsubmit="fetchVisitorList()" class="d-flex justify-content-end align-items-center gap-3">
+            <input type="text" id="keywordtxt" name="keyword" placeholder="搜尋訪客" class="form-control" style="width: 30%;" />
+            <button type="submit" class="btn btn-primary-Manager btnS"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+
+    <div class="d-flex justify-content-center mx-auto mb-3" style="width:85%">
+        <table class="table table-hover align-middle table-container" id="boardTable">
+            <thead style="vertical-align: middle">
+                <tr style="border-bottom:solid black 2px; height:70px;font-size:19px;" class="tr-bg-color">
+                    <th class="text-center">序號</th>
+                    <th>門牌號</th>
+                    <th>訪客姓名</th>
+                    <th>原因</th>
+                    <th class="text-center">拜訪時間</th>
+                </tr>
+            </thead>
+            <tbody id="VisitorList">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+    <form asp-action="Create" method="post" id="CreateForm">
+        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="CreateModal" tabindex="-1" aria-labelledby="pickupModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">新增訪客資訊</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="DoorNum" class="form-label">拜訪門戶號</label>
+                            <input type="text" id="DoorNum" name="DoorNum" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="VisitorName" class="form-label">訪客姓名</label>
+                            <input type="text" id="VisitorName" name="VisitorName" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="VisitReason" class="form-label">拜訪原因</label>
+                            <input type="text" id="VisitReason" name="VisitReason" class="form-control" required />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="submit" class="btn btn-success">確定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+<a data-bs-toggle="modal" data-bs-target="#CreateModal" id="CreateButton">
+    <i class="bi bi-plus-circle-fill btn-create"></i>
+</a>
+
+@section Scripts {
+    <!--  jQuery 與 SweetAlert2 掛載 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            fetch("/MVisitorRecord/GetVisitorList")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    let VisitorList = document.getElementById("VisitorList");
+                    VisitorList.innerHTML = "";
+
+                    if (data.length === 0) {
+                        VisitorList.innerHTML = `<tr><td colspan="8" class="text-center">沒有訪客記錄</td></tr>`;
+                        return;
+                    }
+
+                    data.forEach((Visitor, index) => {
+                        let row = `<tr style="cursor: pointer;">
+                                        <td class="text-center">${index + 1}</td>
+                                        <td>${Visitor.doorNo || '未提供'}</td>
+                                        <td>${Visitor.visitorName || '未知'}</td>
+                                        <td>${Visitor.visitReason || '未提供'}</td>
+                                                <td class="text-center">${new Date(Visitor.visitTime).toLocaleString()}</td>
+                                    </tr>
+                                   `;
+                        VisitorList.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    VisitorList.innerHTML = `<tr><td colspan="8" class="text-center text-danger">無法載入數據，請稍後再試</td></tr>`;
+                });
+        });
+
+        function fetchVisitorList() {
+            event.preventDefault();
+
+            const form = document.getElementById('searchForm');
+            const formData = new FormData(form);
+
+            fetch('/MVisitorRecord/SearchVisitor', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('伺服器回應錯誤');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let VisitorList = document.getElementById("VisitorList");
+                    VisitorList.innerHTML = "";
+
+                    if (data.length === 0) {
+                        VisitorList.innerHTML = `<tr><td colspan="5" class="text-center">沒有訪客記錄</td></tr>`;
+                        return;
+                    }
+
+                    data.forEach((Visitor, index) => {
+                        let row = `<tr style="cursor: pointer;">
+                                        <td class="text-center">${index + 1}</td>
+                                        <td>${Visitor.doorNo || '未提供'}</td>
+                                        <td>${Visitor.visitorName || '未知'}</td>
+                                        <td>${Visitor.visitReason || '未提供'}</td>
+                                        <td class="text-center">${new Date(Visitor.visitTime).toLocaleString()}</td>
+                                    </tr>
+                                   `;
+                        VisitorList.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    VisitorList.innerHTML = `<tr><td colspan="5" class="text-center text-danger">無法載入數據，請稍後再試</td></tr>`;
+                });
+        }
+
+        $(document).ready(function () {
+            $("#CreateForm").submit(function () {
+                event.preventDefault(); 
+
+                var form = $(this);
+                $.ajax({
+                    type: "POST",
+                    url: form.attr("action"),
+                    data: form.serialize(),
+                    dataType: "json", 
+                    success: function (response) {
+                        if (!response.success) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "錯誤",
+                                text: response.message
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "success",
+                                title: "成功",
+                                text: response.message
+                            }).then(function () {
+                                location.reload(); 
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "發生錯誤",
+                            text: "伺服器錯誤：" + error
+                        });
+                    }
+                });
+            });
+        });
+
+
+    </script>
+}

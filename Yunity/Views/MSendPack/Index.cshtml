@@ -1,0 +1,646 @@
+﻿@{
+    Layout = "_LayoutManager";
+    ViewData["Title"] = "寄送包裹";
+}
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Message"]
+    </div>
+}
+
+<div class="container mt-5">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Concierge")">首頁</a></li>
+            <li class="breadcrumb-item active" aria-current="page">寄送包裹清單</li>
+        </ol>
+    </nav>
+     @* <h3 class="text-center mb-4">寄送包裹清單</h3> *@
+</div>
+<div class="container mb-4" style="text-align: center;">
+    <img src="~/images/backgrounds/寄送包裹清單1.png" style="max-width: 100%;" />
+</div>
+<div class="d-flex justify-content-end container mb-5">
+    <input type="text" class="Search_text w-25" style="border-radius: 50px 0 0 50px;" id="keyword" placeholder="請輸入關鍵字" />
+    <div>
+        <span class="material-symbols-outlined Search_div" style="border-radius: 0 50px 50px 0; font-size:2rem; color: #A9A9A9" id="search-icon">
+            search
+        </span>
+    </div>
+</div>
+<div class="d-flex justify-content-center mx-auto container">
+    <table class="table align-middle table-container">
+        <thead style="vertical-align: middle">
+            <tr style="border-bottom:solid black 2px; height:70px" class="tr-bg-color">
+                <th style="padding-left:30px">序號</th>
+                <th>寄件住戶</th>
+                <th>包裹類別</th>
+                <th>物流公司</th>
+                <th>狀態</th>
+                <th>寄送時間</th>
+                <th colspan="3"></th>
+            </tr>
+        </thead>
+		<tbody id="SendPackList">
+        </tbody>
+    </table>
+</div>
+<a class="CreateButton" data-bs-toggle="modal" data-bs-target="#exampleModal" onclick="createbtn()">
+    <i class="bi bi-plus-circle-fill btn-create"></i>
+</a>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:800px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-4 ps-1" id="exampleModalLabel"><i class="bi bi-box-seam-fill" onclick="enter_val()"></i>  新增寄件包裹</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Create" method="post" enctype="multipart/form-data" id="sendPack">
+                <div class="modal-body" >
+                        <table class="table align-middle table-borderless">
+                            <tr style="height:70px">
+                                <td>
+                                    <label class="fs-5">寄件住戶條碼</label>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" id="fAspUserId" name="fAspUserId" />
+                                </td>
+                                <td>
+                                    <button type="button" class="btn mt-1" id="myBtn">
+                                        <span class="material-symbols-outlined">
+                                            photo_camera
+                                        </span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr style="height:70px">
+                                <td>
+                                    <label class="fs-5">包裹類別</label>
+                                </td>
+                                <td>
+                                    <div class="input-group" style="width:150px">
+                                    <select id="Type" name="Type" class="form-select">
+                                            <option value="1">信件</option>
+                                            <option value="2">掛號</option>
+                                            <option value="3">一般包裹</option>
+                                            <option value="4">冷藏包裹</option>
+                                            <option value="5">冷凍包裹</option>
+                                        </select>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr style="height:70px">
+                                <td>
+                                    <label class="fs-5">收件人</label>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" style="width:200px" id="GetUser" name="GetUser" />
+                                </td>
+                            </tr>
+                            <tr style="height:70px">
+                                <td>
+                                    <label class="fs-5">電話</label>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" style="width:250px" id="GetTel" name="GetTel" />
+                                </td>
+                            </tr>
+                            <tr style="height:70px">
+                                <td>
+                                    <label class="fs-5">地址</label>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" id="SendAddr" name="SendAddr" />
+                                </td>
+                            </tr>
+                            <tr style="height:70px">
+                                <td>
+                                    <label class="fs-5">物流公司</label>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control" style="width:200px" id="Logistic" name="Logistic" />
+                                </td>
+                            </tr>
+                            <tr style="height:70px">
+                                <td class="text-center" colspan="3">
+                                    <img id="creat_image" src="/images/noPic.jpeg" alt="Image Preview" class="img-fluid mb-3" style="max-height:330px" />
+                                    <input type="file" name="ImageFile" id="creat_file" onchange="previewCreateImage(event)" class="form-control w-75 m-auto" accept="image/*" />
+                                </td>
+                            </tr>
+                        </table>
+                </div>
+                <div class="modal-footer mb-5" style="display:block">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="float: left">取消</button>
+                    <button type="button" class="btn btn-primary" style="float: right" onclick="Create_pack()" data-bs-dismiss="modal">確定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="myModal" class="camramodal">
+    <div class="camramodal-content">
+        <div class="modal-header mb-3">
+            <h1 class="modal-title fs-4" id="exampleModalLabel">掃描住戶QR Code</h1>
+            <span class="close fs-1 ms-auto">&times;</span>
+        </div>
+        <div class="row" style="border-top: 1px solid #dee2e6">
+            <div class="col-md-12 mb-3">
+                <div class="pt-5 pb-4 ps-2">
+                    <select id="cameraSelect" class="form-control mb-2" onchange="cameraChange()" style="display:none"></select>
+                    <video autoplay class="w-100"></video>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            UpdateTable(-1);
+        });
+
+        var key_val = document.getElementById('keyword').value;
+        var keyword_json = JSON.stringify({ keyword: key_val });
+        document.getElementById("keyword").addEventListener("input", function (event) {
+            keyword_json = JSON.stringify({ keyword: event.target.value });
+            UpdateTable(-1);
+        });
+
+        function UpdateTable(rowId) {
+            fetch("/MSendPack/SendPack_List", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: keyword_json
+            })
+            .then(response => response.json())
+            .then(data => {
+                let SendPackList = document.getElementById("SendPackList");
+                SendPackList.innerHTML = "";
+                console.log(data)
+
+                if (data.length === 0) {
+                    SendPackList.innerHTML = `<tr><td colspan="8" class="text-center">沒有包裹記錄</td></tr>`;
+                    return;
+                }
+                data.forEach((packs, index) => {
+                    let Listrow = `
+                    <form asp-action="Edit-${packs.id}" method="post" enctype="multipart/form-data">
+                        <tr id="row-${packs.id}" style="height:70px" class="table-hover-tr">
+                            <td onclick="toggleRow(${packs.id})" style="padding-left:40px">${index + 1}</td>
+                            <td onclick="toggleRow(${packs.id})">${packs.fName}</td>
+                            <td onclick="toggleRow(${packs.id})">${PackType(packs.type)}</td>
+                            <td onclick="toggleRow(${packs.id})">${packs.logistic}</td>
+                            <td onclick="toggleRow(${packs.id})">${PackState(packs.state)}</td>
+                            <td onclick="toggleRow(${packs.id})">${packs.pickTime ? new Date(packs.pickTime).toLocaleString().replace(/\//g, '-') : '-'}</td>
+                            <td onclick="toggleRow(${packs.id})" id="show_detail${packs.id}" style="cursor:pointer">
+                                <span class="material-symbols-outlined">menu</span>
+                            </td>
+                            <td onclick="toggleRow(${packs.id})" id="row_edit${packs.id}" >
+                                
+                            </td>
+                            <td onclick="row_delete(${packs.id})" id="row_delete${packs.id}" style="cursor:pointer">
+                                <span class="material-symbols-outlined">delete</span>
+                            </td>
+                        </tr>
+                        <tr id="edit_row-${packs.id}" style="display:none; height:70px">
+                            <td>${index + 1}</td>
+                            <td><input type="text" value="${packs.fName}" class="form-control" id="fName-${packs.id}" style disabled /></td>
+                            <td>
+                                <div class="input-group">
+                                    <select id="type-${packs.id}" name="sort_Order" class="form-select">
+                                        <option value="1" ${packs.type == 1 ? 'selected' : ''}>信件</option>
+                                        <option value="2" ${packs.type == 2 ? 'selected' : ''}>掛號</option>
+                                        <option value="3" ${packs.type == 3 ? 'selected' : ''}>一般包裹</option>
+                                        <option value="4" ${packs.type == 4 ? 'selected' : ''}>冷藏包裹</option>
+                                        <option value="5" ${packs.type == 5 ? 'selected' : ''}>冷凍包裹</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td><input type="text" value="${packs.logistic}" class="form-control" id="logistic-${packs.id}" /></td>
+                            <td>
+                                <div class="input-group">
+                                    <select id="state-${packs.id}" name="sort_Order" class="form-select">
+                                        <option value="1" ${packs.state == 1 ? 'selected' : ''}>待處理</option>
+                                        <option value="2" ${packs.state == 2 ? 'selected' : ''}>已寄送</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td><input type="datetime-local" value="${packs.pickTime != null ? packs.pickTime : ''}" class="form-control" id="pickTime-${packs.id}" /></td>
+                            <td id="row_edit_save${packs.id}" style="cursor:pointer" >
+                                <span class="material-symbols-outlined">save</span>
+                            </td>
+                            <td onclick="rowdetail_close(${packs.id})" id="row_detail_close${packs.id}" style="cursor:pointer">
+                                <span class="material-symbols-outlined">close</span>
+                            </td>
+                            <td onclick="row_delete(${packs.id})" id="row_delete${packs.id}" style="cursor:pointer">
+                                <span class="material-symbols-outlined">delete</span>
+                            </td>
+                        </tr>
+                    `;
+
+                    SendPackList.innerHTML += Listrow;
+
+                    let imageSrc = packs.packPhoto ? '/SendPackPicture/' + packs.packPhoto : '/images/noPic.jpeg';
+
+                    let Detailrow = `
+                        <tr id="row_detail-${packs.id}" style="display:none">
+                            <td colspan="4" class="p-5" >
+                                <div class="ps-5 pe-5 table-container">
+                                <table class="table align-middle" >
+                                    <tr style="height:50px">
+                                        <th colspan="2" class="text-center">包裹詳細資訊</th>
+                                    </tr>
+                                    <tr style="height:50px" ">
+                                        <th>收件人</th>
+                                        <td>${packs.getUser}</td>
+                                    </tr>
+                                    <tr style="height:50px">
+                                        <th>電話</th>
+                                        <td>${packs.getTel}</td>
+                                    </tr>
+                                    <tr style="height:50px">
+                                        <th>地址</th>
+                                        <td>${packs.sendAddr}</td>
+                                    </tr>
+                                    <tr style="height:50px">
+                                        <th>物流司機</th>
+                                        <td>${packs.pickUser}</td>
+                                    </tr>
+                                    <tr style="height:50px">
+                                        <th>包裹登入人</th>
+                                        <td>${packs.managerFName}</td>
+                                    </tr>
+                                    <tr style="height:50px">
+                                        <th>登入時間</th>
+                                        <td>${new Date(packs.pickLogisticTime).toLocaleString().replace(/\//g, '-')}</td>
+                                    </tr>
+                                </table>
+                                </div>
+                            </td>
+                            <td colspan="5" class="text-center pe-5">
+                                <img id="imagePreview-${packs.id}" src="${imageSrc}" alt="Image Preview" class="img-fluid table-container" style="max-height:400px; max-width:500px" />
+                            </td>
+                        </tr>
+                        <tr id="edit_detail-${packs.id}" style="display:none">
+                            <td colspan="4" class="p-5">
+                                <table class="table table-borderless">
+                                    <tr>
+                                        <th colspan="2" class="text-center">包裹詳細資訊</th>
+                                    </tr>
+                                    <tr>
+                                        <th>收件人</th>
+                                        <td><input type="text" value="${packs.getUser}" class="form-control" id="getUser-${packs.id}" />
+                                    </tr>
+                                    <tr>
+                                        <th>電話</th>
+                                        <td><input type="text" value="${packs.getTel}" class="form-control" id="getTel-${packs.id}" />
+                                    </tr>
+                                    <tr>
+                                        <th>地址</th>
+                                        <td><input type="text" value="${packs.sendAddr}" class="form-control" id="sendAddr-${packs.id}" />
+                                    </tr>
+                                    <tr>
+                                        <th>物流司機</th>
+                                        <td><input type="text" value="${packs.pickUser}" class="form-control" id="pickUser-${packs.id}" />
+                                    </tr>
+                                </table>
+                            </td>
+                            <td colspan="5" class="text-center">
+                                <img id="image-${packs.id}" src="${imageSrc}" alt="Image Preview" class="img-fluid mb-3" style="max-height:330px" />
+                                <input type="file" id="file-${packs.id}" onchange="previewImage(event, ${packs.id})" class="form-control w-75 m-auto" accept="image/*" />
+                            </td>
+                        </tr>
+                        </form>`;
+
+                    SendPackList.innerHTML += Detailrow;
+                });
+                if (rowId != -1)
+                {
+                    toggleRow(rowId);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                SendPackList.innerHTML = `<tr><td colspan="8" class="text-center text-danger">無法載入數據，請稍後再試</td></tr>`;
+            });
+        }
+
+        function toggleRow(rowId) {
+
+            var row_detail = document.getElementById('row_detail-' + rowId);
+            var row_edit = document.getElementById('row_edit' + rowId);
+            var show_detail = document.getElementById('show_detail' + rowId);
+            var row = document.getElementById('row-' + rowId);
+            var tds = row.getElementsByTagName('td');
+            var isRowDetailVisible = window.getComputedStyle(row_detail).display !== "none";
+
+            document.querySelectorAll('[id^="row_detail-"]').forEach(function(row_detail_item) {
+                if (row_detail_item !== row_detail) {
+                    row_detail_item.style.display = "none";
+                }
+            });
+
+            document.querySelectorAll('tr[id^="row-"]').forEach(function(row_item) {
+                if (row_item !== row) {
+                    Array.from(row_item.getElementsByTagName('td')).forEach(function(td) {
+                        td.style.backgroundColor = '';
+                    });
+                }
+            });
+
+            if (!isRowDetailVisible) {
+                row_detail.style.display = "table-row";
+                row_edit.innerHTML = '<span class="material-symbols-outlined">edit</span>';
+                row_edit.style.cursor = 'pointer';
+                row_edit.setAttribute('onclick', "edit_click(" + rowId + ")");
+                show_detail.innerHTML = "";
+
+                for (var i = 0; i < tds.length; i++) {
+                    tds[i].style.backgroundColor = '#F0F0F0'; 
+                }
+
+            } else {
+                row_detail.style.display = "none";
+                row_edit.innerHTML = "";
+                row_edit.setAttribute('onclick', "toggleRow(" + rowId + ")");
+                show_detail.innerHTML = '<span class="material-symbols-outlined">menu</span>';
+
+                for (var i = 0; i < tds.length; i++) {
+                    tds[i].style.backgroundColor = '';
+                }
+            }
+        }
+
+        function edit_click(rowId) {
+            var row_detail = document.getElementById('row_detail-' + rowId);
+            var edit_detail = document.getElementById('edit_detail-' + rowId);
+            var row = document.getElementById('row-' + rowId);
+            var edit_row = document.getElementById('edit_row-' + rowId );
+            if (edit_detail.style.display === "none" || edit_detail.style.display === "") {
+                row.style.display = "none";  
+                row_detail.style.display = "none";
+                edit_row.style.display = "table-row";
+                edit_detail.style.display = "table-row"; 
+            }
+
+            var saveBtn = document.getElementById('row_edit_save' + rowId);
+            saveBtn.onclick = function() {
+                var form = new FormData();
+                form.append("Id", rowId);
+                form.append("GetUser", document.getElementById('getUser-' + rowId).value);
+                form.append("Type", document.getElementById('type-' + rowId).value);
+                form.append("GetTel", document.getElementById('getTel-' + rowId).value);
+                form.append("SendAddr", document.getElementById('sendAddr-' + rowId).value);
+                form.append("Logistic", document.getElementById('logistic-' + rowId).value);
+                form.append("PickUser", document.getElementById('pickUser-' + rowId).value);
+                form.append("PickTime", document.getElementById('pickTime-' + rowId).value);
+                form.append("ImageFile", document.getElementById('file-' + rowId).files[0]);
+                form.append("State", document.getElementById('state-' + rowId).value);
+                console.log(document.getElementById('pickUser-' + rowId).value);
+                fetch('/MSendPack/Edit', {
+                    method: 'POST',
+                    body: form 
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: "包裹資訊更新成功！!",
+                            icon: "success",
+                            draggable: true
+                        });
+                        UpdateTable(rowId);
+                    } else {
+                        Swal.fire({
+                          icon: "error",
+                          title: "包裹資訊更新失敗",
+                          text: "請再試一次!"
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('錯誤:', error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "更新失敗",
+                        text: "請稍後再試!"
+                    });
+                });
+            };
+        }
+
+        function createbtn() {
+            document.getElementById('sendPack').reset();
+            $("#creat_image").attr("src", "@Url.Content("/images/noPic.jpeg")");
+        }
+
+        function Create_pack() {
+            var form = new FormData();
+                form.append("fAspUserId", document.getElementById('fAspUserId').value);
+                form.append("Type", document.getElementById('Type').value);
+                form.append("GetUser", document.getElementById('GetUser').value);
+                form.append("GetTel", document.getElementById('GetTel').value);
+                form.append("SendAddr", document.getElementById('SendAddr').value);
+                form.append("Logistic", document.getElementById('Logistic').value);
+                form.append("ImageFile", document.getElementById('creat_file').files[0]);
+                fetch('/MSendPack/Create', {
+                    method: 'POST',
+                    body: form 
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: "成功新增包裹！!",
+                            icon: "success",
+                            draggable: true
+                        });
+                        UpdateTable(-1);
+                        document.getElementById('sendPack').reset();
+                        $("#creat_image").attr("src", "@Url.Content("/images/noPic.jpeg")");
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "新增失敗",
+                            text: "請再試一次!"
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('錯誤:', error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "新增失敗",
+                        text: "請稍後再試!"
+                    });
+                });
+        }
+
+        function row_delete(rowId){
+            var ret = confirm("確定要刪除嗎?");
+            var data = JSON.stringify({ Id: rowId });
+
+            if (ret == true){
+                fetch('/MSendPack/Delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: data
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: "包裹資訊已刪除！!",
+                            icon: "success",
+                            draggable: true
+                        });
+                        UpdateTable(-1);
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                                title: "刪除失敗",
+                            text: "請再試一次!"
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('錯誤:', error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "刪除失敗",
+                        text: "請稍後再試!"
+                    });
+                });
+            }
+        }
+
+        function rowdetail_close(rowId) {
+            var row_detail = document.getElementById('row_detail-' + rowId);
+            var edit_detail = document.getElementById('edit_detail-' + rowId);
+            var row = document.getElementById('row-' + rowId);
+            var edit_row = document.getElementById('edit_row-' + rowId );
+            if (row_detail.style.display === "none" || row_detail.style.display === "") {
+                row.style.display = "table-row"
+                row_detail.style.display = "table-row";
+                edit_row.style.display = "none";
+                edit_detail.style.display = "none"
+            }
+        }
+
+        function previewImage(event, rowId) {
+            var file = event.target.files[0];
+            if (file) {
+                if (!file.type.startsWith("image/")) {
+                    Swal.fire({
+                        title: "請上傳寄送包裹的圖片！!",
+                        icon: "warning",
+                        draggable: true
+                    });
+                    return;
+                }
+
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var imagePreview = document.getElementById('image-' + rowId);
+                    if (imagePreview) {
+                        imagePreview.src = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function previewCreateImage(event) {
+            var file = event.target.files[0];
+            if (file) {
+                if (!file.type.startsWith("image/")) {
+                    Swal.fire({
+                        title: "請上傳寄送包裹的圖片！!",
+                        icon: "warning",
+                        draggable: true
+                    });
+                    return;
+                }
+
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var imagePreview = document.getElementById('creat_image');
+                    if (imagePreview) {
+                        imagePreview.src = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+
+
+        function PackType(type) {
+            const types = { 1: "信件", 2: "掛號", 3: "一般包裹", 4: "冷藏包裹", 5: "冷凍包裹"};
+            return types[type] || "其他包裹";
+        }
+
+        function PackState(state) {
+            const States = { 0: "待處理", 1: "已寄送"};
+            return States[state];
+        }
+
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("myBtn");
+        var span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        let cameraList;
+        const cameraSelect = document.querySelector("#cameraSelect");
+        const myVideo = document.querySelector("video");
+        const fAspUserId = document.querySelector("#fAspUserId");
+        let scanner = new Instascan.Scanner({ video: myVideo, mirror: false });
+        scanner.addListener('scan', function (content) {
+            console.log(content);
+            modal.style.display = "none";
+            fAspUserId.value = content;
+        });
+        navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+            myVideo.srcObject = stream;
+
+            const camera = new Instascan.Camera();
+            camera.stream = stream;
+            scanner.start(camera);
+
+        }).catch(function (e) {
+            console.error(e);
+        });
+        function cameraChange() {
+            const selectedCamera = parseInt(cameraSelect.value);
+            scanner.stop();
+            scanner.start(cameraList[selectedCamera]);
+        }
+        function enter_val() {
+            document.getElementById('GetUser').value = "陳宥霖";
+            document.getElementById('GetTel').value = "0989977433";
+            document.getElementById('SendAddr').value = "高雄市前鎮區中山二路123號";
+            document.getElementById('Type').value = "3";
+            document.getElementById('Logistic').value = "大毅物流";
+        }
+    </script>
+}

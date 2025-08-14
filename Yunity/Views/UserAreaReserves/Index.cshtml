@@ -1,0 +1,160 @@
+﻿@model Yunity.Models.UserAreaReserveWrap
+
+@{
+    ViewData["Title"] = "公設預約紀錄";
+    Layout = "_LayoutUser"; // 使用 _LayoutUser 版面
+}
+
+<style>
+    /* 置中分頁標籤容器，移除容器邊框 */
+    .nav-tabs {
+        justify-content: center;
+        border: none;
+    }
+        /* 調整 tab 按鈕字體大小與內邊距，不顯示預設邊框 */
+        .nav-tabs .nav-link {
+            font-size: 1.5rem;
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        /* 包裹文字的 span，利用相對定位創建底部下劃線效果 */
+        .nav-tabs .tab-text {
+            display: inline-block;
+            position: relative;
+        }
+
+            .nav-tabs .tab-text::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                bottom: -5px;
+                width: 0;
+                height: 2px;
+                background-color: #007bff;
+                transition: width 0.3s ease;
+            }
+
+        .nav-tabs .nav-link:hover .tab-text::after,
+        .nav-tabs .nav-link.active .tab-text::after {
+            width: 100%;
+        }
+    /* Table header styling for active 分頁 */
+    #activeContent table thead th {
+        background-color: #006d7b;
+        color: #fff;
+    }
+    /* Table header styling for 歷史紀錄 分頁 */
+    #historyContent table thead th {
+        background-color: #0c9197;
+        color: #fff;
+    }
+</style>
+
+<!-- 頁首定位 -->
+<a id="top"></a>
+
+<div class="container my-5">
+    <!-- 頁面標題置中 -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <h1 class="mb-4">公設預約紀錄</h1>
+            <h3>您的點數: @Model.UserPoints 點</h3>
+            <p>
+                <a asp-controller="PublicAreaReserves" asp-action="Index" class="btn btn-info rounded-circle" title="返回公設列表"
+                   style="position: fixed; right: 20px; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; z-index: 1050;">
+                    <i class="material-symbols-outlined">location_away</i>
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <!-- 分頁標籤 -->
+    <ul class="nav nav-tabs" id="reservationTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <!-- 設定 data-tab 屬性，用於判斷要載入哪個 Partial View -->
+            <button class="nav-link active" id="active-tab" data-tab="active" type="button" role="tab" aria-controls="active" aria-selected="true">
+                <span class="tab-text"><i class="bi bi-calendar-check"></i> 預約紀錄</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="history-tab" data-tab="history" type="button" role="tab" aria-controls="history" aria-selected="false">
+                <span class="tab-text"><i class="bi bi-clock-history"></i> 歷史紀錄</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="reservationTabContent">
+        <!-- 預約紀錄分頁 -->
+        <div class="tab-pane fade show active" id="active" role="tabpanel" aria-labelledby="active-tab">
+            <div id="activeContent" class="row justify-content-center my-4">
+                <!-- 初始顯示載入中 -->
+                <div class="col-md-12 text-center">
+                    資料載入中...
+                </div>
+            </div>
+        </div>
+        <!-- 歷史紀錄分頁 -->
+        <div class="tab-pane fade" id="history" role="tabpanel" aria-labelledby="history-tab">
+            <div id="historyContent" class="row justify-content-center my-4">
+                <div class="col-md-12 text-center">
+                    資料載入中...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            // 頁面初始載入時先載入 active 頁籤資料
+            loadReservations("active");
+
+            // 當點選分頁按鈕時，根據 data-tab 屬性決定要載入哪一個分頁的內容
+            $('#reservationTab button').on('click', function () {
+                console.log("按鈕點擊:", $(this).attr('id'));
+                // 移除所有按鈕的 active 狀態，並加入目前點選按鈕
+                $('#reservationTab button').removeClass('active');
+                $(this).addClass('active');
+
+                var type = $(this).data('tab'); // 取得 active 或 history
+                console.log("要載入的類型:", type);
+                loadReservations(type);
+
+                // 同時切換對應的 tab-pane 顯示狀態
+                if (type === "active") {
+                    $('#active').addClass('show active');
+                    $('#history').removeClass('show active');
+                } else if (type === "history") {
+                    $('#history').addClass('show active');
+                    $('#active').removeClass('show active');
+                }
+            });
+
+            function loadReservations(type) {
+                console.log("發送 AJAX 請求，類型:", type);
+                $.ajax({
+                    url: '@Url.Action("LoadReservations", "UserAreaReserves")', // 請確認此 URL 與你的 Controller/Action 名稱相符
+                    type: 'GET',
+                    data: { type: type },
+                    success: function (result) {
+                        console.log("AJAX 回傳成功，類型:", type);
+                        if (type === "active") {
+                            $('#activeContent').html(result);
+                        } else if (type === "history") {
+                            $('#historyContent').html(result);
+                        }
+                    },
+                    error: function () {
+                        console.log("AJAX 請求失敗");
+                        alert('資料載入失敗');
+                    }
+                });
+            }
+        });
+    </script>
+}

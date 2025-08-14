@@ -1,0 +1,118 @@
+﻿@model Yunity.Models.CBoardwarp
+
+@{
+    Layout = "_LayoutUser";
+    ViewData["Title"] = "Details";
+}
+
+  
+<style>
+    .card-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .card-header {
+        font-size: 24px;
+        color: #3255af;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .card-body {
+        font-size: 18px;
+    }
+
+    .text {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .card img {
+        border-radius: 10px;
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        margin-top: 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-button {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        font-size: 30px;
+        color: #3255af;
+        transition: color 0.3s;
+    }
+
+        .back-button:hover {
+            color: #1e3a8a;
+        }
+
+    .line {
+        border-top: 1px solid #eae7de;
+        margin: 20px 0;
+    }
+</style>
+<div class="container mt-3 mb-3 " style="height:100%;">
+    <div style="max-width: 900px; margin: 0 auto;">
+        
+        <div class="container">
+        <div style="flex: 1; margin-right: 20px;" >
+            <h2 style="color:#3255af; margin-bottom:30px">@Model.Name</h2>
+                <p class="text" style="margin-right: 10px;">【@BoardType(Model.Type)】</p>
+                <p style="color:darkgrey; font-size:15px;">發布時間: @Model.OpenTime</p>
+            <p class="text">@Model.Info</p>
+            
+            
+        </div>
+            <div style="position: relative; flex-shrink: 0;">
+                <img src="@Model.Photo" alt="布告欄照片" style="width: 300px; height: auto; border: 1px solid black; padding: 10px; background-color:#eae7de; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);" />
+
+                <!-- Icon positioned at the bottom-right corner -->
+                <a asp-action="List">
+                    <i class="bi bi-arrow-left-circle" style="position: absolute; bottom: 0px; right: 20px; font-size: 30px; transition: color 0.3s;"></i>
+                </a>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+</div>
+
+
+@functions {
+    public static string BoardType(int? type)
+    {
+        if (type == null)
+        {
+            return "未知類型";
+        }
+
+        switch (type)
+        {
+
+            case 1:
+                return "活動通知";
+            case 2:
+                return "緊急通知";
+            case 3:
+                return "維修公告";
+            case 4:
+                return "其他";
+            default:
+                return "無類型";
+        }
+    }
+}

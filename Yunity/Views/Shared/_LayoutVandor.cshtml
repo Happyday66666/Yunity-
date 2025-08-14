@@ -1,0 +1,403 @@
+﻿<!DOCTYPE html>
+<html lang="zh-tw">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雲社區 歡迎您!</title>
+
+    <!-- CSS 引入 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+    <style>
+        body {
+            background-color: #f5f2e9; /* 淺米色背景 */
+        }
+
+        a {
+            text-decoration: none !important; /*取消連結底線*/
+        }
+
+        .logo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            padding: 10px;
+        }
+
+            .logo img {
+                max-width: 150px; /* 最大寬度限制，避免LOGO過大 */
+                height: auto; /* 保持LOGO的高度與寬度比例一致 */
+            }
+
+        /* 導航連結基本樣式 */
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #e0ddd9;
+            white-space: nowrap;
+        }
+
+            .nav-link:visited,
+            .nav-link:active,
+            .nav-link:link {
+                color: #e0ddd9;
+            }
+
+
+        /* 側邊導航樣式 */
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background-color: transparent;
+            width: 60px;
+            transition: width 0.3s ease;
+            z-index: 1000;
+            margin-top: 50px;
+        }
+
+
+        /* 導航列表樣式 */
+        .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%; /* 確保寬度隨視窗調整 */
+            transition: ease-in-out 0.3s;
+        }
+
+
+        /* 導航項目樣式 */
+        .nav-item {
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 5px;
+            background-color: rgba(179, 168, 118, 0.7);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin: 0 10px;
+            transition: all ease-in-out 0.3s;
+            overflow: hidden;
+            position: relative;
+        }
+
+            .nav-link:hover {
+                width: fit-content;
+                padding-right: 15px;
+                border-radius: 30px;
+                background: rgba(179, 168, 118, 0.8);
+                color: white;
+                transition: all ease-in-out 0.3s;
+            }
+
+        /* 圖標和文字樣式 */
+        .nav-icon {
+            font-size: 20px;
+            min-width: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease, color 0.3s ease; /* 設置過渡效果 */
+        }
+
+        /* 當滑鼠移入圖示時的樣式 */
+        .nav-link:hover .nav-icon {
+            transform: scale(1.25); /* 放大圖示 */
+            color: #fff; /* 改變顏色 */
+        }
+
+        .nav-text {
+            margin-left: 10px;
+            opacity: 0;
+            display: inline-block;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover .nav-text {
+            opacity: 1;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            color: white;
+        }
+
+
+        /* 右上角圖標樣式 */
+        .top-right-icons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .top-right-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(179, 168, 118, 0.8);
+            border-radius: 50%;
+            color: #e0ddd9;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+            .top-right-icon:hover {
+                color: white;
+                transform: scale(1.1);
+            }
+
+        /* 設定下拉選單容器 */
+        .settings-dropdown {
+            position: relative;
+        }
+
+            /* 修改下拉選單樣式 */
+            .settings-dropdown .dropdown-menu {
+                position: absolute;
+                top: 50px;
+                right: 0;
+                background-color: rgba(255, 255, 255, 0.95);
+                border-radius: 10px;
+                padding: 10px 0;
+                min-width: 150px;
+                display: none; /* 預設隱藏 */
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                z-index: 1001; /* 確保下拉選單在最上層 */
+            }
+
+            /* 下拉選單顯示狀態 */
+            .settings-dropdown.active .dropdown-menu {
+                display: block; /* 顯示下拉選單 */
+                transform: translateY(0);
+                pointer-events: auto;
+            }
+
+            /* 下拉選單項目樣式 */
+            .settings-dropdown .dropdown-item {
+                display: flex;
+                align-items: center;
+                padding: 8px 15px;
+                color: #333;
+                text-decoration: none;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+            }
+
+                .settings-dropdown .dropdown-item:hover {
+                    background-color: rgba(179, 168, 118, 0.2);
+                }
+
+                .settings-dropdown .dropdown-item i {
+                    margin-right: 10px;
+                    font-size: 20px;
+                }
+
+            .settings-dropdown .dropdown-menu.active {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+                pointer-events: auto;
+            }
+
+        /* 輪播區塊樣式 */
+        .carousel-container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .carousel-inner {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .carousel-item img {
+            height: 500px;
+            object-fit: cover;
+        }
+
+        /* 輪播指示器樣式 */
+        .carousel-indicators button {
+            width: 10px;
+            height: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            margin: 0 5px;
+        }
+
+        /* 輪播控制按鈕樣式 */
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 5%;
+            opacity: 0.7;
+        }
+
+            .carousel-control-prev:hover,
+            .carousel-control-next:hover {
+                opacity: 1;
+            }
+
+        /* 服務圖片CSS */
+        .cs-btn-img {
+            width: 100%;
+            transition: transform 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .cs-btn-link {
+            display: block;
+            text-align: center;
+        }
+
+            .cs-btn-link:hover .cs-btn-img {
+                transform: scale(1.05);
+            }
+
+        /* 麵包屑樣式 */
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: "\e5e1"; /* chevron_right 的 Unicode 編碼 */
+            font-family: 'Material Icons';
+        }
+    </style>
+</head>
+
+<body>
+    <header id="header" class="d-flex flex-column justify-content-center">
+        <div class="logo">
+            <a href="#"><img src="~/images/CS_img/YUNITY_icon_293c56.png" /></a>
+        </div>
+    </header>
+
+
+    <div class="top-right-icons">
+        <div class="settings-dropdown">
+            <a href="#" class="top-right-icon" id="settingsToggle">
+                <i class="material-icons">face</i>
+            </a>
+            <div class="dropdown-menu">
+                <a href="#" class="dropdown-item">
+                    <i class="material-icons">person</i>
+                    <span>個人資料</span>
+                </a>
+                <a href="@Url.Action("CS_List","CommunityService")" class="dropdown-item">                    
+                        <i class="material-icons">fact_check</i>
+                        <span>預約紀錄</span>                    
+                </a>
+                <a href="#" class="dropdown-item">
+                    <i class="material-icons">logout</i>
+                    <span>登出</span>
+                </a>
+            </div>
+        </div>
+        <a href="#" class="top-right-icon">
+            <i class="material-icons">chat</i>
+        </a>
+    </div>
+
+    <!-- 左側MENU START -->
+    <nav class="side-nav">
+        <ul class="nav-list">
+            <li class="nav-item">
+                <a href="#hero" class="nav-link">
+                    <i class="material-icons nav-icon">inventory_2</i>
+                    <span class="nav-text">收包裹</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#about" class="nav-link">
+                    <i class="material-icons nav-icon">local_shipping</i>
+                    <span class="nav-text">寄包裹</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#resume" class="nav-link">
+                    <i class="material-icons nav-icon">real_estate_agent</i>
+                    <span class="nav-text">管理費</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#services" class="nav-link">
+                    <i class="material-icons nav-icon">event_available</i>
+                    <span class="nav-text">公設預約</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#contact" class="nav-link">
+                    <i class="material-icons nav-icon">location_on</i>
+                    <span class="nav-text">附近商店</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#contact" class="nav-link">
+                    <i class="material-icons nav-icon">feedback</i>
+                    <span class="nav-text">意見反饋</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#contact" class="nav-link">
+                    <i class="material-icons nav-icon">person_add</i>
+                    <span class="nav-text">訪客紀錄</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#contact" class="nav-link">
+                    <i class="material-icons nav-icon">storefront</i>
+                    <span class="nav-text">社區服務</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <!-- 左側MENU END -->
+
+    <div class="container" style="margin-top: 80px">
+        @RenderBody()
+    </div>
+
+    <script>
+
+        // 設定下拉選單功能
+        const settingsToggle = document.getElementById('settingsToggle');
+        const settingsDropdown = document.querySelector('.settings-dropdown');
+        const dropdownMenu = settingsDropdown.querySelector('.dropdown-menu');
+
+        settingsToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            e.preventDefault();
+            settingsDropdown.classList.toggle('active');  // 切換 active 類別
+        });
+
+        // 點擊外部關閉所有選單
+        document.addEventListener('click', (e) => {
+            if (!settingsDropdown.contains(e.target)) {
+                settingsDropdown.classList.remove('active');
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

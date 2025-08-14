@@ -1,0 +1,10 @@
+﻿@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "確認電子郵件";
+    Layout = "_LayoutHomePage"; // 指定不同的 Layout
+}
+<div class="container text-center mt-5">
+<h1>@ViewData["Title"]</h1>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+</div>

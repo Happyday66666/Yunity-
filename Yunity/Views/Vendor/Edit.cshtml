@@ -1,0 +1,365 @@
+﻿@model Yunity.Models.CCompanyWrap
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h4>編輯模式</h4>
+<h4>@ViewBag.ComName</h4>
+<hr />
+
+<form asp-action="Edit">
+    <div class="container">
+      <div class="row">
+            <!-- Left Column (Company Info) -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="formGroup">
+                        <input type="hidden" name="ARId" value="@Model.ARId" />
+                        <input type="hidden" name="CAid" value="@Model.CAid" />
+                        <input type="hidden" name="ComId" value="@Model.ComId" />
+                        <input type="hidden" name="IFid" value="@Model.IFid" />
+                        </div>
+                        <div class="formGroup">
+                            <label asp-for="ComName" class="control-label"></label>
+                            <input asp-for="ComName" class="form-control" />
+                            <span asp-validation-for="ComName" class="text-danger"></span>
+                        </div>
+                        <div class="formGroup">
+                            <label asp-for="ComAddress" class="control-label"></label>
+                            <input asp-for="ComAddress" class="form-control" />
+                            <span asp-validation-for="ComAddress" class="text-danger fontColor"></span>
+                        </div>
+                        <div class="formGroup">
+                            <label asp-for="ComPerson" class="control-label"></label>
+                            <input asp-for="ComPerson" class="form-control" />
+                            <span asp-validation-for="ComPerson" class="text-danger"></span>
+                        </div>
+                        <div class="formGroup">
+                            <label asp-for="ComPhone" class="control-label"></label>
+                            <input asp-for="ComPhone" class="form-control" />
+                            <span asp-validation-for="ComPhone" class="text-danger"></span>
+                        </div>
+                        <div class="formGroup">
+                            <label asp-for="ComEmail" class="control-label"></label>
+                            <input asp-for="ComEmail" class="form-control" />
+                            <span asp-validation-for="ComEmail" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ComServerItem" class="control-label"></label>
+                            <select asp-for="ComServerItem" class="form-control">
+                                <option value="冷氣健檢">冷氣健檢</option>
+                                <option value="清潔服務">清潔服務</option>
+                                <option value="送洗服務">送洗服務</option>
+                                <option value="電器維修">電器維修</option>
+                            </select>
+                            <span asp-validation-for="ComServerItem" class="text-danger"></span>
+                        </div>
+
+                        <div class="formGroup">
+                            <label asp-for="ComRegistrationNumber" class="control-label"></label>
+                            <input asp-for="ComRegistrationNumber" class="form-control" />
+                            <span asp-validation-for="ComRegistrationNumber" class="text-danger"></span>
+                        </div>
+                        <div class="formGroup">
+                            <label asp-for="ComBusinessHours" class="control-label"></label>
+                            <input asp-for="ComBusinessHours" class="form-control" />
+                            <span asp-validation-for="ComBusinessHours" class="text-danger"></span>
+                        </div>
+                        <div class="formGroup">
+                            <label asp-for="ComContractStartDate" class="control-label"></label>
+                            <input asp-for="ComContractStartDate" class="form-control" type="date" />
+                            <span asp-validation-for="ComContractStartDate" class="text-danger"></span>
+                        </div>
+                        <div class="formGroup">
+                            <label asp-for="ComContractEndDate" class="control-label"></label>
+                            <input asp-for="ComContractEndDate" class="form-control" type="date" />
+                            <span asp-validation-for="ComContractEndDate" class="text-danger"></span>
+                        </div>
+                        <div class="formGroup">
+                            <label asp-for="ComAccount" class="control-label"></label>
+                            <input asp-for="ComAccount" class="form-control" />
+                            <span asp-validation-for="ComAccount" class="text-danger"></span>
+                        </div>
+                        @* <div class="formGroup"> *@
+                        @*     <label asp-for="ComPassword" class="control-label"></label> *@
+                        @*     <input asp-for="ComPassword" class="form-control" /> *@
+                        @*     <span asp-validation-for="ComPassword" class="text-danger"></span> *@
+                        @* </div> *@
+                        @* <div class="formGroup"> *@
+                        @*     <label asp-for="ComPermissions" class="control-label"></label> *@
+                        @*     <input asp-for="ComPermissions" class="form-control" /> *@
+                        @*     <span asp-validation-for="ComPermissions" class="text-danger"></span> *@
+                        @* </div> *@
+                        <div class="formGroup">
+                            <label asp-for="ComStatus" class="control-label"></label>
+                            <select asp-for="ComStatus" class="form-control">
+                                <option value="0">停用</option>
+                                <option value="1">正常</option>
+                            </select>
+                            <span asp-validation-for="ComStatus" class="text-danger"></span>
+                        </div>
+
+                        <!--儲存按鈕 -->
+                        <button type="submit" class="saveBtn">
+                            <i class="bi bi-floppy"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column (Additional Info) start -->
+            <div class="col-md-4 rightColumn">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="container">
+                            <!-- 北部區域 -->
+                            <ul class="region-list">
+                                <li class="regionTitle my-2 text-center">北部服務區域</li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="YilanC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="YilanC-switch"
+                                    @(Model.YilanC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('YilanC')" />
+                                    <input type="hidden" id="YilanC" name="YilanC" value="@(Model.YilanC == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="KeelungCity" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="KeelungCity-switch"
+                                    @(Model.KeelungCity == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('KeelungCity')" />
+                                    <input type="hidden" id="KeelungCity" name="KeelungCity" value="@(Model.KeelungCity == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="TaipeiCity" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="TaipeiCity-switch"
+                                    @(Model.TaipeiCity == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('TaipeiCity')" />
+                                    <input type="hidden" id="TaipeiCity" name="TaipeiCity" value="@(Model.TaipeiCity == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="NewTaipeiCity" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="NewTaipeiCity-switch"
+                                    @(Model.NewTaipeiCity == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('NewTaipeiCity')" />
+                                    <input type="hidden" id="NewTaipeiCity" name="NewTaipeiCity" value="@(Model.NewTaipeiCity == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="TaoyuanCity" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="TaoyuanCity-switch"
+                                    @(Model.TaoyuanCity == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('TaoyuanCity')" />
+                                    <input type="hidden" id="TaoyuanCity" name="TaoyuanCity" value="@(Model.TaoyuanCity == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="HsinchuCity" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="HsinchuCity-switch"
+                                    @(Model.HsinchuCity == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('HsinchuCity')" />
+                                    <input type="hidden" id="HsinchuCity" name="HsinchuCity" value="@(Model.HsinchuCity == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="HsinchuC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="HsinchuC-switch"
+                                    @(Model.HsinchuC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('HsinchuC')" />
+                                    <input type="hidden" id="HsinchuC" name="HsinchuC" value="@(Model.HsinchuC == 1 ? 1 : 0)" />
+                                </li>
+                            </ul>
+                            <!-- 中部區域 -->
+                            <ul class="region-list">
+                                <li class="regionTitle my-2 text-center">中部服務區域</li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="MiaoliC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="MiaoliC-switch"
+                                    @(Model.MiaoliC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('MiaoliC')" />
+                                    <input type="hidden" id="MiaoliC" name="MiaoliC" value="@(Model.MiaoliC == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="TaichungCity" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="TaichungCity-switch"
+                                    @(Model.TaichungCity == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('TaichungCity')" />
+                                    <input type="hidden" id="TaichungCity" name="TaichungCity" value="@(Model.TaichungCity == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="ChanghuaC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="ChanghuaC-switch"
+                                    @(Model.ChanghuaC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('ChanghuaC')" />
+                                    <input type="hidden" id="ChanghuaC" name="ChanghuaC" value="@(Model.ChanghuaC == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="NantouC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="NantouC-switch"
+                                    @(Model.NantouC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('NantouC')" />
+                                    <input type="hidden" id="NantouC" name="NantouC" value="@(Model.NantouC == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="YunlinC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="YunlinC-switch"
+                                    @(Model.YunlinC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('YunlinC')" />
+                                    <input type="hidden" id="YunlinC" name="YunlinC" value="@(Model.YunlinC == 1 ? 1 : 0)" />
+                                </li>
+                            </ul>
+                            <!-- 南部區域 -->
+                            <ul class="region-list">
+                                <li class="regionTitle my-2 text-center">南部服務區域</li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="ChiayiCity" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="ChiayiCity-switch"
+                                    @(Model.ChiayiCity == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('ChiayiCity')" />
+                                    <input type="hidden" id="ChiayiCity" name="ChiayiCity" value="@(Model.ChiayiCity == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="ChiayiC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="ChiayiC-switch"
+                                    @(Model.ChiayiC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('ChiayiC')" />
+                                    <input type="hidden" id="ChiayiC" name="ChiayiC" value="@(Model.ChiayiC == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="TainanCity" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="TainanCity-switch"
+                                    @(Model.TainanCity == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('TainanCity')" />
+                                    <input type="hidden" id="TainanCity" name="TainanCity" value="@(Model.TainanCity == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="KaohsiungCity" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="KaohsiungCity-switch"
+                                    @(Model.KaohsiungCity == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('KaohsiungCity')" />
+                                    <input type="hidden" id="KaohsiungCity" name="KaohsiungCity" value="@(Model.KaohsiungCity == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="PingtungC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="PingtungC-switch"
+                                    @(Model.PingtungC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('PingtungC')" />
+                                    <input type="hidden" id="PingtungC" name="PingtungC" value="@(Model.PingtungC == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="PenghuC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="PenghuC-switch"
+                                    @(Model.PenghuC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('PenghuC')" />
+                                    <input type="hidden" id="PenghuC" name="PenghuC" value="@(Model.PenghuC == 1 ? 1 : 0)" />
+                                </li>
+                            </ul>
+                            <!-- 東部區域 -->
+                            <ul class="region-list">
+                                <li class="regionTitle my-2 text-center">東部服務區域</li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="HualienC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="HualienC-switch"
+                                    @(Model.HualienC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('HualienC')" />
+                                    <input type="hidden" id="HualienC" name="HualienC" value="@(Model.HualienC == 1 ? 1 : 0)" />
+                                </li>
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="TaitungC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="TaitungC-switch"
+                                    @(Model.TaitungC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('TaitungC')" />
+                                    <input type="hidden" id="TaitungC" name="TaitungC" value="@(Model.TaitungC == 1 ? 1 : 0)" />
+                                </li>
+                            </ul>
+                            <!-- 福建省 -->
+                            <ul class="region-list">
+                                <li class="regionTitle my-2 text-center">福建省服務區域</li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="KinmenC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="KinmenC-switch"
+                                    @(Model.KinmenC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('KinmenC')" />
+                                    <input type="hidden" id="KinmenC" name="KinmenC" value="@(Model.KinmenC == 1 ? 1 : 0)" />
+                                </li>
+
+                                <li class="list-group-item form-switch switchForm">
+                                    <label asp-for="LienchiangC" class="control-label"></label>
+                                    <input class="form-check-input customSwitch" type="checkbox"
+                                           id="LienchiangC-switch"
+                                    @(Model.LienchiangC == 1 ? "checked" : "")
+                                           onchange="AreaIsOpen('LienchiangC')" />
+                                    <input type="hidden" id="LienchiangC" name="LienchiangC" value="@(Model.LienchiangC == 1 ? 1 : 0)" />
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+        </div>
+            <!-- Right Column (Additional Info) end -->
+      </div>
+    </div>
+</form>
+
+<div>
+    <!--返回按鈕(廠商詳細資料) -->
+    <a asp-controller="Vendor" asp-action="Details" asp-route-id="@Model.CAid" style="position: fixed; bottom: 20px; right: 20px; color: #293c56;font-size:3rem; z-index: 9999;">
+        <i class="bi bi-arrow-left-circle-fill"></i>
+    </a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function AreaIsOpen(area) {
+            var switchElement = document.getElementById(area + '-switch');
+            var hiddenInput = document.getElementById(area);
+
+            if (switchElement.checked) {
+                hiddenInput.value = 1;  
+            } else {
+                hiddenInput.value = 0;  
+            }
+        }
+    </script>
+}

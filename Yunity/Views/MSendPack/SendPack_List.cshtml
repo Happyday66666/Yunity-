@@ -1,0 +1,108 @@
+﻿@model IEnumerable<Yunity.Models.SendPackWrap>
+
+@{
+    Layout = "_LayoutManager";
+    ViewData["Title"] = "寄包裹";
+}
+
+<h1>待寄包裹清單</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ManagerId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GetUser)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GetTel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SendAddr)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Logistic)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PickUser)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PickTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PackPhoto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PickLogisticTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.State)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ManagerId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GetUser)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GetTel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SendAddr)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Logistic)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PickUser)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PickTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PackPhoto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PickLogisticTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.State)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

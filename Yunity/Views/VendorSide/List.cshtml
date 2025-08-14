@@ -1,0 +1,92 @@
+﻿@model IEnumerable<Yunity.Models.CsAppointmentRecord>
+
+@{
+    ViewData["Title"] = "List";
+    Layout = "~/Views/Shared/_LayoutVendorSide.cshtml";
+}
+
+<!-- list -->
+    <div class="table100">
+        <div class="table100-head">
+            <table>
+                <thead>
+                    <div class="search-container">
+                    <!-- Sort dropdown -->
+                        <select name="orderSort" id="orderSort">
+                            <option value="0">選擇排列</option>
+                            <option value="1">服務狀態</option>
+                            <option value="2">送單(新到舊)</option>
+                            <option value="3">送單(舊到新)</option>
+                        </select>
+
+                        <!-- Search input -->
+                        <input id="searchInput" placeholder="搜尋..." type="text">
+                        <button id="searchButton">
+                            <span class="material-symbols-outlined">
+                                search
+                            </span>
+                        </button>
+                    </div>
+                    <tr>
+                        <th class="column1">送單時間</th>
+                        <th class="column2">訂單編號</th>
+                        <th class="column3">用戶姓名</th>
+                        <th class="column4">聯絡電話</th>
+                        <th class="column5">服務地址</th>
+                        <th class="column6">服務狀態</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div id="listContainer" class="table100-body">
+            <!-- This will be replaced by partial view content -->
+            @Html.Partial("_ListPartial", Model)
+        </div>
+    </div>
+
+@section Scripts {
+    <script>
+
+        // searchInput enter -> searchButton
+        const sb =document.getElementById("searchButton");
+        document.addEventListener('keydown',function(event){
+            if(event.key=='Enter'){
+                sb.click();
+            };
+        });
+
+        // Handle search action
+        document.getElementById("searchButton").addEventListener("click", function() {
+            var searchInput = document.getElementById("searchInput").value;
+            var orderSort = document.getElementById("orderSort").value;
+
+            // Send Ajax request to the server
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("ListAjax", "VendorSide")",
+                data: { orderSort: orderSort, searchInput: searchInput },
+                success: function(response) {
+                    // Update the content of the list
+                    $("#listContainer").html(response);
+                }
+            });
+        });
+
+        // Handle sort change action
+        document.getElementById("orderSort").addEventListener("change", function() {
+            var orderSort = this.value; 
+            var searchInput = document.getElementById("searchInput").value;
+
+            // Send Ajax request to the server
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("ListAjax", "VendorSide")",
+                data: { orderSort: orderSort, searchInput: searchInput },
+                success: function(response) {
+                    // Update the content of the list
+                    $("#listContainer").html(response);
+                }
+            });
+        });
+    </script>
+}

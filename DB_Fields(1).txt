@@ -1,0 +1,169 @@
+create table Door_No(
+Id int primary key identity(1, 1) not null,
+BD_Id int,
+Door_No nvarchar(50),
+Square_Feet int,
+Points int,
+Motor_Park int,
+Car_Park int);
+
+create table Get_Pack(
+Id int primary key identity(1, 1) not null,
+Pack_No nvarchar(50),
+Type int,
+Door_No_Id int,
+Manager_Id int,
+Get_User nvarchar(50),
+Logistic nvarchar(50),
+Log_Time datetime,
+Pack_Photo nvarchar(100),
+Pick_User nvarchar(50),
+Pick_Time datetime,
+State int);
+
+create table Send_Pack(
+Id int primary key identity(1, 1) not null,
+User_Id int,
+Manager_Id int,
+Type int,
+Get_User nvarchar(50),
+Get_Tel nvarchar(50),
+Send_Addr nvarchar(100),
+Logistic nvarchar(50),
+Pick_User nvarchar(50),
+Pick_Time datetime,
+Pack_Photo nvarchar(100),
+Pick_Logistic_Time datetime,
+State int);
+
+create table Manage_Fee(
+Id int primary key identity(1, 1) not null,
+Fee_Name  nvarchar(50),
+Door_No_Id int,
+Price int,
+Motor_Price int,
+Car_Price int,
+Fee_End datetime,
+Pay_Type int,
+Pay_Time datetime,
+State int);
+
+
+--新增綠界信用卡付款
+CREATE TABLE EcpayOrders (
+Id int primary key identity(1, 1) not null,
+ManageFeeId INT NULL,
+MerchantTradeNo NVARCHAR(50) NOT NULL, --商家交易編號(隨機產生)
+MemberId NVARCHAR(50) NOT NULL,
+RtnCode INT NULL, --交易處理結果
+RtnMsg NVARCHAR(255) NULL, --交易狀態訊息
+TradeNo NVARCHAR(50) NOT NULL, --交易編號
+TradeAmt INT NULL, --交易金額
+PaymentDate DATETIME NULL, --付款日期 
+aymentType NVARCHAR(50) NULL, 
+PaymentTypeChargeFee NVARCHAR(50) NULL,
+TradeDate NVARCHAR(50) NULL, --交易日期
+SimulatePaid INT NULL, --是否為模擬支付
+    
+);
+
+
+
+
+
+create table Board(
+Id int primary key identity(1, 1) not null,
+BD_Id int,
+Manager_Id int,
+Type int,
+Name nvarchar(50),
+Info nvarchar(500),
+Photo nvarchar(100),
+Open_Time datetime,
+Auth int,
+State int);
+
+
+create table Public_Area_Reserve(
+Id int primary key identity(1, 1) not null,
+Bd_Id int,
+Name nvarchar(50),
+Open_Time datetime,
+Close_Time datetime,
+Deduct_Unit int,
+Use_Time nvarchar(50),
+Area_Info nvarchar(500),
+Amount int);
+
+create table User_Area_Reserve(
+Id int primary key identity(1, 1) not null,
+Area_Id int,
+Door_No_Id int,
+User_Id int,
+Reserve_Time datetime,
+Start_Time datetime,
+End_Time datetime,
+State int);
+
+create table Near_Store(
+Id int primary key identity(1, 1) not null,
+BD_Id int,
+Name nvarchar(50),
+Open_Time nvarchar(100),
+Addr nvarchar(100),
+Type int,
+Photo nvarchar(100),
+Info nvarchar(500));
+
+create table Visitor_Record(
+Id int primary key identity(1, 1) not null,
+Door_No_Id int,
+Manager_Id int,
+Visitor_Name nvarchar(50),
+Visit_Time datetime,
+Visit_Reason nvarchar(100));
+
+create table Calendar
+Id int primary key identity(1, 1) not null,
+BD_Id int,
+Manager_Id int,
+Event_Time datetime,
+Event_Name nvarchar(50),
+Info nvarchar(100),
+Log_Time datetime);
+
+----Product (產品)
+CREATE TABLE CS_Product (
+    id INT PRIMARY KEY IDENTITY(1,1) NOT NULL,                         
+    com_id INT,                               
+    product_category NVARCHAR(50),               
+    product_name NVARCHAR(100),                  
+    product_description NVARCHAR(MAX),           
+    product_photo_id   VARCHAR(50), 
+    product_price DECIMAL(10, 2),                
+    product_stock INT,                            
+    product_status INT             
+);
+
+----Photo (照片來源:商品P0001,預約A0001,用戶B0001)
+CREATE TABLE CS_Photo(
+     id INT PRIMARY KEY IDENTITY(1,1) NOT NULL, 
+     photo_id VARCHAR(50),
+     photo_path NVARCHAR(255),
+     upload_time DATETIME DEFAULT GETDATE() 
+);
+
+---- Appointment_Record(預約紀錄)
+CREATE TABLE CS_Appointment_Record (
+     id INT PRIMARY KEY IDENTITY(1,1) NOT NULL,       
+     product_id INT,                           
+     user_id INT,                              
+     customer_name NVARCHAR(100),              
+     phone NVARCHAR(20),                       
+     service_location NVARCHAR(255),           
+     email NVARCHAR(100),                      
+     photo_id INT,                             
+     ar_notes NVARCHAR(MAX),
+     created_date DATETIME DEFAULT GETDATE(),
+     status  INT
+);

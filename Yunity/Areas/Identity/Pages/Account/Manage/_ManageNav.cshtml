@@ -1,0 +1,67 @@
+﻿ @inject SignInManager<YunityUser> SignInManager
+
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+<style>
+    .nav-pills {
+        --bs-nav-pills-border-radius: var(--bs-border-radius);
+        --bs-nav-pills-link-active-color: #0c9197;
+        --bs-nav-pills-link-active-bg: white;
+        border-bottom: 3px solid #efefef; /* 增加底部分隔線 */
+    }
+
+    .nav-link {
+        color: #5a5755;
+        padding: 12px 16px;
+        font-size: 20px;
+        font-weight: 600;
+        border: none; /* 去除方框邊框 */
+        transition: color 0.3s, border-bottom 0.3s; /* 加入過渡效果 */
+    }
+
+        /* 項目選中時底部顯示顏色條 */
+        .nav-link.active, .nav-link:hover {
+            color: #0c9197; /* 保持文字顏色 */
+        
+        }
+
+    /* 預設情況下的底部分隔線顏色 */
+    .nav-pills .nav-item .nav-link {
+        border-bottom: 3px solid transparent; /* 預設為透明線條 */
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <ul class="nav nav-pills flex-row justify-content-center">
+                <li class="nav-item" style="margin-right: 20px;">
+                    <a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">
+                        <i class="bi bi-person-fill" style="margin-right: 8px;"></i>個人資料
+                    </a>
+                </li>
+                <li class="nav-item" style="margin-right: 20px;">
+                    <a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">
+                        <i class="bi bi-envelope-fill" style="margin-right: 8px;"></i>電子郵件
+                    </a>
+                </li>
+                <li class="nav-item" style="margin-right: 20px;">
+                    <a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">
+                        <i class="bi bi-key-fill" style="margin-right: 8px;"></i>密碼
+                    </a>
+                </li>
+
+                @if (hasExternalLogins)
+                {
+                    <li id="external-logins" class="nav-item" style="margin-right: 20px;">
+                        <a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">
+                            <i class="bi bi-box-arrow-in-right" style="margin-right: 8px;"></i>External Logins
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+

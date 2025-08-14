@@ -1,0 +1,116 @@
+﻿@model Yunity.Models.CUsersInfoWrap
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<style>
+    /* Custom button style */
+    .custom-button {
+        font-size: 25pt;
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+        .custom-button:hover {
+            background-color: #0056b3;
+        }
+
+    
+    .blue-link {
+        color: black; 
+        font-size:30px;
+    }
+
+        
+
+        .blue-link:hover {
+            color: darkgray;  
+        }
+    }
+
+    dt, dd {
+        font-size: 18px; /* 設置 dt 和 dd 內的字體大小 */
+        margin-top: 8px;
+   
+    }
+
+    .col-sm-2 {
+        font-size: 18px; /* 設置標題欄位的字體大小 */
+      
+    }
+
+    .col-sm-10 {
+        font-size: 18px; /* 設置內容欄位的字體大小 */
+        margin-top:8px;
+    }
+
+    .text-danger {
+        font-size: 18px; /* 設置錯誤提示的字體大小 */
+    }
+
+    
+</style>
+<h1>用戶基本資料</h1>
+<div class="text-end">
+    @Html.ActionLink(" ", "Edit", new { id = Model.FId }, new { @class = "bi bi-pencil-square edit-icon blue-link fs-8", @style = "color: green; font-size: 30px; margin-left: 10px;" })
+    @Html.ActionLink(" ", "List", new { id = Model.FId }, new { @class = "bi bi-check-circle edit-icon fs-8", @style = "color: green; font-size: 30px; margin-left: 10px;" })
+</div>
+<div>
+ 
+    <hr />
+    <dl class="row">
+        
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FName)
+        </dd>
+         
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FPhone)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FPhone)
+        </dd>
+         
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FUserAddress)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FUserAddress)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FEmail)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FEmail)
+        </dd>
+        <dt class="col-sm-2">
+            所屬大樓
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.BuildingNames != null && Model.BuildingNames.Any())
+            {
+                <ul>
+                    @foreach (var buildingName in Model.BuildingNames)
+                    {
+                        <li>@buildingName</li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <p>無大樓資料</p>
+            }
+        </dd>
+    </dl>
+</div>
+<div>
+   
+</div>

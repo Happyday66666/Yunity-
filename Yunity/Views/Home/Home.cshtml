@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Yunity.ViewModels.CHome_Model>
+
+@{
+    ViewData["Title"] = "首頁";
+}
+
+
+<div class="container">
+    <div class="row" style="margin-left:10%">
+        <div class="col-5">
+            <div class="pt-4 ps-4 pb-2 bg-white">
+                <h2>@Html.DisplayNameFor(model => model.BD_ContractEnd)</h2>
+            </div>
+            @foreach (var item in Model) {
+                <div class ="pt-3 ps-3 pb-5 bg-white text-center" style="font-size:120px; color:darkred">
+                    @Html.DisplayFor(modelItem => item.BD_ContractEnd)
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5">
+    <div class="row" style="margin-left:10%">
+        <div class="col-5">
+            <div class="pt-4 ps-4 pb-2 bg-white ">
+                <h2>@Html.DisplayNameFor(model => model.com_ContractEnd)</h2>
+            </div>
+            @foreach (var item in Model)
+            {
+                <div class=" pt-3 ps-3 pb-5 bg-white text-center" style="font-size:120px; color:darkred">
+                    @Html.DisplayFor(modelItem => item.com_ContractEnd)
+                </div>
+            }
+        </div>
+    </div>
+</div>

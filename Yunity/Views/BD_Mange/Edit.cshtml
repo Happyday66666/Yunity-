@@ -1,0 +1,305 @@
+﻿@model Yunity.Models.BdListWrap
+
+@{
+    ViewData["Title"] = "編輯大樓資訊";
+}
+
+<style>
+	.form-check-input:checked {
+		background-color: #293c56;
+		border-color: #293c56;
+	}
+
+	.form-switch .form-check-input {
+		width: 3em;
+	}
+</style>
+
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-4">
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item">
+			<a href="@Url.Action("Index","Home")" class="breadcrumb-item active" aria-current="page">
+				首頁
+			</a>
+		</li>
+		<li class="breadcrumb-item">
+			<a href="@Url.Action("BD_List","BD_Mange")" class="breadcrumb-item active" aria-current="page">
+				大樓管理
+			</a>
+		</li>
+		<li class="breadcrumb-item">
+			<a href="@Url.Action("BD_Detailed","BD_Mange", new { id = Model.Id })" class="breadcrumb-item active" aria-current="page">
+				@Model.BdName
+			</a>
+		</li>
+		<li class="breadcrumb-item">
+			<a href="@Url.Action("Edit","BD_Mange", new { id = Model.Id })" class="breadcrumb-item active" aria-current="page" style="color:#293C56">
+				@(Model.BdName)編輯模式
+			</a>
+		</li>
+	</ol>
+</nav>
+<h1>編輯大樓資訊</h1>
+
+<hr />
+<div class="container ">
+	<form id="BD_Edit" method="post" asp-action="Edit">
+		<div class="row">
+			<div class="text-danger col-6 ">
+				<table class="table fs-6">
+					<tr>
+						<th class="text-center" colspan="2">大樓資訊</th>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="BdName" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="BdName" class="form-control" />
+							<span asp-validation-for="BdName" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="BdAddr" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="BdAddr" class="form-control" />
+							<span asp-validation-for="BdAddr" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="ContractStart" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="ContractStart" class="form-control" type="date" />
+							<span asp-validation-for="ContractStart" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="ContractEnd" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="ContractEnd" class="form-control" type="date" />
+							<span asp-validation-for="ContractEnd" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="FirstContact" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="FirstContact" class="form-control" />
+							<span asp-validation-for="FirstContact" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="FstContactTel" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="FstContactTel" class="form-control" />
+							<span asp-validation-for="FstContactTel" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="SecondContact" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="SecondContact" class="form-control" />
+							<span asp-validation-for="SecondContact" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="SecContactTel" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="SecContactTel" class="form-control" />
+							<span asp-validation-for="SecContactTel" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="HouseCount" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="HouseCount" class="form-control" />
+							<span asp-validation-for="HouseCount" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="BdState" class="control-label mt-2"></label>
+						</th>
+						<td class="d-flex justify-content-end mt-2 ">
+							<span style="color: @(Model.BdState == 1 ? "#01814A" : "darkred"); font-size:20px" class="me-4 fw-bold" id="txtBdstate">
+								@((Model.BdState == 1) ? "正常" : "關閉")
+							</span>
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" onchange="updateBdState()"
+									   name="ChkBdState" @(Model.BdState == 0 ? "" : "checked") id="ChkBdState" />
+								<input type="hidden" id="BdState" name="BdState" value="@(Model.BdState == 1 ? "1" : "0")" />
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-6 form-check form-switch">
+				<table class="table fs-6">
+					<tr>
+						<th class="text-center" colspan="2">
+							<input type="hidden" id="BD_id" value="@Model.BdPermission.Id" />
+							功能開啟
+						</th>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.ReceivePackage)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input " type="checkbox" onchange="updatepermission('ReceivePackage')"
+								   id="ChkReceivePackage" @(Model.ReceivePackage == 0 ? "" : "checked") />
+							<input type="hidden" id="ReceivePackage" name="ReceivePackage" value="@(Model.ReceivePackage == 1 ? "1" : "0")" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.SentPackage)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission('SentPackage')"
+								   id="ChkSentPackage" @(Model.SentPackage == 0 ? "" : "checked") />
+							<input type="hidden" id="SentPackage" name="SentPackage" value="@(Model.SentPackage == 1 ? "1" : "0")" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.ManageFee)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission('ManageFee')"
+								   id="ChkManageFee" @(Model.ManageFee == 0 ? "" : "checked") />
+							<input type="hidden" id="ManageFee" name="ManageFee" value="@(Model.ManageFee == 1 ? "1" : "0")" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.Bulletin)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission('Bulletin')"
+								   id="ChkBulletin" @(Model.Bulletin == 0 ? "" : "checked") />
+							<input type="hidden" id="Bulletin" name="Bulletin" value="@(Model.Bulletin == 1 ? "1" : "0")" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.PublicAreaReserve)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission('PublicAreaReserve')"
+								   id="ChkPublicAreaReserve" @(Model.PublicAreaReserve == 0 ? "" : "checked") />
+							<input type="hidden" id="PublicAreaReserve" name="PublicAreaReserve" value="@(Model.PublicAreaReserve == 1 ? "1" : "0")" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.NearbyStore)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission('NearbyStore')"
+								   id="ChkNearbyStore" @(Model.NearbyStore == 0 ? "" : "checked") />
+							<input type="hidden" id="NearbyStore" name="NearbyStore" value="@(Model.NearbyStore == 1 ? "1" : "0")" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.CommunityService)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission('CommunityService')"
+								   id="ChkCommunityService" @(Model.CommunityService == 0 ? "" : "checked") />
+							<input type="hidden" id="CommunityService" name="CommunityService" value="@(Model.CommunityService == 1 ? "1" : "0")" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.Feedback)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission('Feedback')"
+								   id="ChkFeedback" @(Model.Feedback == 0 ? "" : "checked") />
+							<input type="hidden" id="Feedback" name="Feedback" value="@(Model.Feedback == 1 ? "1" : "0")" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.VisitorRecord)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission('VisitorRecord')"
+								   id="ChkVisitorRecord" @(Model.VisitorRecord == 0 ? "" : "checked") />
+							<input type="hidden" id="VisitorRecord" name="VisitorRecord" value="@(Model.VisitorRecord == 1 ? "1" : "0")" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.Calendar)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission('Calendar')"
+								   id="ChkCalendar" @(Model.Calendar == 0 ? "" : "checked") />
+							<input type="hidden" id="Calendar" name="Calendar" value="@(Model.Calendar == 1 ? "1" : "0")" />
+						</td>
+					</tr>
+				</table>
+				<div class="text-center" >
+					<i class="bi bi-arrow-left-circle-fill icon-pointer" style="position: fixed; bottom: 20px; right: 20px; color: #293c56;font-size:3rem; z-index: 9999;" onclick="location.href = '/BD_Mange/BD_Detailed/@Model.Id'">	</i>
+					<i class="bi bi-floppy icon-pointer saveBtn" onclick="document.getElementById('BD_Edit').submit();">	</i>
+				</div>
+			</div>
+		</div>
+    </form>
+</div>
+
+@section Scripts {
+	<script>
+		function updatepermission(bd_name) {
+			if (document.getElementById("Chk" + bd_name).checked) {
+				document.getElementById(bd_name).value = 1;
+			}
+			else{
+				document.getElementById(bd_name).value = 0;
+			}
+		}
+		function updateBdState() {
+			var txtBdstate = document.getElementById("txtBdstate");
+			var bdStateInput = document.getElementById("BdState");
+			var checkbox = document.getElementById("ChkBdState");
+
+			if (checkbox.checked) {
+				bdStateInput.value = "1";
+				txtBdstate.textContent = "正常";
+				txtBdstate.style.color = "#01814A";
+			}
+			else {
+				bdStateInput.value = "0";
+				txtBdstate.textContent = "關閉";
+				txtBdstate.style.color = "darkred";
+			}
+		}
+	</script>
+}

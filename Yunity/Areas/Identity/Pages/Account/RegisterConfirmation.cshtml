@@ -1,0 +1,46 @@
+﻿@page
+@model RegisterConfirmationModel
+@{
+    ViewData["Title"] = "註冊確認";
+    Layout = "_LayoutHomePage"; // 指定不同的 Layout
+}
+
+<div class="container text-center mt-5">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
+
+    @if (Model.DisplayConfirmAccountLink)
+    {
+        <div class="alert alert-info">
+            <p>請檢查您的電子郵件 (<strong>@Model.Email</strong>)，然後點擊驗證連結來啟動您的帳戶。</p>
+            <p><strong>如果沒有收到郵件，請檢查垃圾郵件夾，或稍後再試。</strong></p>
+        </div>
+    }
+    else
+    {
+        @if (!string.IsNullOrEmpty(Model.Email))
+        {
+            @if (Model.IsManager)
+            {
+                <div class="alert alert-warning">
+                    <p>您的管理員帳戶 (<strong>@Model.Email</strong>) 已成功註冊。</p>
+                    <p>目前正在等待系統管理員的審核。</p>
+                    <p>當您的帳戶獲得批准後，我們將寄送驗證信至您的電子郵件。</p>
+                    <p>若有任何問題，請聯繫 <a href="mailto:ineedyunity@gmail.com">雲社區</a>。</p>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-success">
+                    <p>您的帳戶 (<strong>@Model.Email</strong>) 已成功註冊。</p>
+                    <p>請檢查您的電子郵件，並點擊驗證連結來啟動您的帳戶。</p>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-danger">
+                <p>發生錯誤：無法取得您的電子郵件地址，請稍後再試。</p>
+            </div>
+        }
+    }
+</div>

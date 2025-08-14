@@ -1,0 +1,314 @@
+﻿@model Yunity.Models.BdListWrap
+
+@{
+	ViewData["Title"] = "新增大樓資訊";
+}
+
+<style>
+	.form-check-input:checked {
+		background-color: #293c56;
+		border-color: #293c56;
+	}
+
+	.form-switch .form-check-input {
+		width: 3em;
+	}
+</style>
+
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item">
+			<a href="@Url.Action("Index","Home")" class="breadcrumb-item active" aria-current="page">
+				首頁
+			</a>
+		</li>
+		<li class="breadcrumb-item">
+			<a href="@Url.Action("BD_List","BD_Mange")" class="breadcrumb-item active" aria-current="page">
+				大樓管理
+			</a>
+		</li>
+		<li class="breadcrumb-item">
+			<a href="@Url.Action("Create","BD_Mange")" class="breadcrumb-item active" aria-current="page" style="color:#293C56">
+				新增大樓資訊
+			</a>
+		</li>
+	</ol>
+</nav>
+<div style="display: flex; justify-content: space-between; align-items: flex-end;">
+	<h1>新增大樓資訊</h1>
+	<img src="~/images/building-city-svgrepo-com.svg" alt="City Building" style="width:100px" onclick="enter_val()">
+</div>
+<hr />
+<div class="container mb-0">
+	<form asp-action="Create" id="BD_Create" method="post">
+		<div class="row">
+			<div class="text-danger col-6">
+				<table class="table fs-6">
+					<tr>
+						<th class="text-center" colspan="2">大樓資訊</th>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="BdName" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="BdName" class="form-control" id="BdName" />
+							<span asp-validation-for="BdName" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="BdAddr" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="BdAddr" class="form-control" id="BdAddr" />
+							<span asp-validation-for="BdAddr" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="ContractStart" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="ContractStart" class="form-control" type="date" id="ContractStart" />
+							<span asp-validation-for="ContractStart" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="ContractEnd" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="ContractEnd" class="form-control" type="date" id="ContractEnd" />
+							<span asp-validation-for="ContractEnd" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="FirstContact" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="FirstContact" class="form-control" id="FirstContact" />
+							<span asp-validation-for="FirstContact" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="FstContactTel" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="FstContactTel" class="form-control" id="FstContactTel" />
+							<span asp-validation-for="FstContactTel" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="SecondContact" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="SecondContact" class="form-control" id="SecondContact" />
+							<span asp-validation-for="SecondContact" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="SecContactTel" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="SecContactTel" class="form-control" id="SecContactTel" />
+							<span asp-validation-for="SecContactTel" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="HouseCount" class="control-label mt-2"></label>
+						</th>
+						<td>
+							<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+							<input asp-for="HouseCount" class="form-control" id="HouseCount" />
+							<span asp-validation-for="HouseCount" class="text-danger"></span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							<label asp-for="BdState" class="control-label mt-2"></label>
+						</th>
+						<td class="d-flex justify-content-end mt-2 ">
+							<span class="me-4 fw-bold" id="txtBdstate" style="color: #38a169; font-size:25px">
+								正常
+							</span>
+							<div class="form-check form-switch">
+								<input class="form-check-input" type="checkbox" onchange="createBdState()"
+									   name="ChkBdState" id="ChkBdState" checked />
+								<input type="hidden" id="BdState" name="BdState" value="1" />
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-5 form-check form-switch">
+				<table class="table fs-6">
+					<tr>
+						<th class="text-center" colspan="2">
+							功能開啟
+						</th>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.ReceivePackage)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input " type="checkbox" onchange="createBD('ReceivePackage')"
+								   id="ChkReceivePackage" />
+							<input type="hidden" id="ReceivePackage" name="ReceivePackage" value="0" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.SentPackage)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="createBD('SentPackage')"
+								   id="ChkSentPackage" />
+							<input type="hidden" id="SentPackage" name="SentPackage" value="0" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.ManageFee)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="createBD('ManageFee')"
+								   id="ChkManageFee" />
+							<input type="hidden" id="ManageFee" name="ManageFee" value="0" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.Bulletin)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="createBD('Bulletin')"
+								   id="ChkBulletin" />
+							<input type="hidden" id="Bulletin" name="Bulletin" value="0" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.PublicAreaReserve)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="createBD('PublicAreaReserve')"
+								   id="ChkPublicAreaReserve" />
+							<input type="hidden" id="PublicAreaReserve" name="PublicAreaReserve" value="0" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.NearbyStore)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="createBD('NearbyStore')"
+								   id="ChkNearbyStore" />
+							<input type="hidden" id="NearbyStore" name="NearbyStore" value="0" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.CommunityService)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="createBD('CommunityService')"
+								   id="ChkCommunityService" />
+							<input type="hidden" id="CommunityService" name="CommunityService" value="0" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.Feedback)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="createBD('Feedback')"
+								   id="ChkFeedback" />
+							<input type="hidden" id="Feedback" name="Feedback" value="0" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.VisitorRecord)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="createBD('VisitorRecord')"
+								   id="ChkVisitorRecord" />
+							<input type="hidden" id="VisitorRecord" name="VisitorRecord" value="0" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.Calendar)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="createBD('Calendar')"
+								   id="ChkCalendar" />
+							<input type="hidden" id="Calendar" name="Calendar" value="0" />
+						</td>
+					</tr>
+				</table>
+				<div class="text-center">
+					<i class="bi bi-arrow-left-circle-fill icon-pointer" style="position: fixed; bottom: 20px; right: 20px; color: #293c56;font-size:3rem; z-index: 9999;" onclick="location.href = '/BD_Mange/BD_List'">	</i>
+					<i class="bi bi-floppy icon-pointer saveBtn" onclick="document.getElementById('BD_Create').submit();">	</i>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+@section Scripts {
+	<script>
+		function createBD(bd_name) {
+			if (document.getElementById("Chk" + bd_name).checked) {
+				document.getElementById(bd_name).value = 1;
+			}
+			else{
+				document.getElementById(bd_name).value = 0;
+			}
+		}
+
+		function createBdState() {
+			var txtBdstate = document.getElementById("txtBdstate");
+			var bdStateInput = document.getElementById("BdState");
+			var checkbox = document.getElementById("ChkBdState");
+
+			if (checkbox.checked) {
+				bdStateInput.value = "1";
+				txtBdstate.textContent = "正常";
+				txtBdstate.style.color = "#01814A";
+			} 
+			else {
+				bdStateInput.value = "0";
+				txtBdstate.textContent = "關閉";
+				txtBdstate.style.color = "darkred";
+			}
+		}
+
+		function enter_val() {
+			document.getElementById("BdName").value = "明洋社區"
+			document.getElementById("BdAddr").value = "彰化縣鹿港鎮平等路20號";
+			document.getElementById("ContractStart").value = "2025-02-11";
+			document.getElementById("ContractEnd").value = "2035-02-10";
+			document.getElementById("FirstContact").value = "林子涵";
+			document.getElementById("FstContactTel").value = "0988667664";
+			document.getElementById("SecondContact").value = "張柏宇";
+			document.getElementById("SecContactTel").value = "0913978991";
+			document.getElementById("HouseCount").value = "150";
+		}
+	</script>
+}

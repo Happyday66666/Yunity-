@@ -1,0 +1,147 @@
+﻿@model Yunity.Models.GetPackWrap
+
+@{
+    Layout = "_LayoutManager";
+    ViewData["Title"] = "Detail";
+}
+
+@section Styles {
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border-bottom: 1.5px solid #345463;
+            padding: 5px;
+            text-align: left;
+            font-size: 20px;
+        }
+
+        .type-0 {
+            color: red;
+            font-weight: bold;
+        }
+
+        .type-1 {
+            color: green;
+            font-weight: bold;
+        }
+
+        .floating-btn {
+            position: fixed;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            z-index: 9999;
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-size: 24px;
+        }
+
+        .deleteBtn {
+            background-color: #e63946;
+            bottom: 150px;
+        }
+
+        .editPen {
+            background-color: #AFBF73;
+            bottom: 75px;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 3px 6px 12px rgba(0, 0, 0, 0.3);
+            color: beige;
+        }
+    </style>
+}
+
+<div class="container mt-3 mb-3">
+    <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" asp-area="Concierge" style="color:#9BA8Ab;">首頁</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" asp-area="MGetPack" style="color:#9BA8Ab;">收件包裹列表</a></li>
+            <li class="breadcrumb-item active" aria-current="page" style="color:#31515e">包裹詳細資訊</li>
+        </ol>
+    </nav>
+    <h3 class="text-center m-4">包裹詳細資訊</h3>
+
+    <div class="container mt-4" style="width:85%">
+        <h5 class="text-center">@Model.PackNo</h5>
+        <div class="row">
+            <div class="col-6" style="font-size:18px;font-weight:600;">
+                包裹類型：
+                @(
+                    Model.Type == 1 ? "信件" :
+                    Model.Type == 2 ? "一般包裹" :
+                    Model.Type == 3 ? "冷藏包裹" :
+                    "未知"
+                    )
+            </div>
+            <div class="col-6 text-end">
+                登錄時間：@Model.LogTime
+            </div>
+        </div>
+    </div>
+    <div class="container mt-4" style="width:85%">
+        <div class="row shadow border py-5" style="background:white;border-radius:15px;">
+            <div class="col-md-7">
+                <h4 class="text-end mt-2 @(Model.State == 0 ? "type-0" : "type-1")">
+                    @(Model.State == 0 ? "未領取" : "已領取")
+                </h4>
+                <table class="mt-3" style="width:90%">
+                    <tr><th class="col-sm-2">門牌號</th><td class="col-sm-10">@Model.DoorNo</td></tr>
+                    <tr><th class="col-sm-2">收件人</th><td class="col-sm-10">@Html.DisplayFor(model => model.GetUser)</td></tr>
+                    <tr><th class="col-sm-2">物流公司</th><td class="col-sm-10">@Html.DisplayFor(model => model.Logistic)</td></tr>
+                    <tr><th class="col-sm-2">領取人</th><td class="col-sm-10">@Html.DisplayFor(model => model.PickUser)</td></tr>
+                    <tr><th class="col-sm-2">領取時間</th><td class="col-sm-10">@Html.DisplayFor(model => model.PickTime)</td></tr>
+                    <tr><th class="col-sm-2">管理員</th><td class="col-sm-10">@Html.DisplayFor(model => model.Poster)</td></tr>
+                </table>
+            </div>
+            <div class="col-md-5 my-auto">
+                <div>
+                    <img src="@Model.ImageUrl" class="img-fluid shadow border" alt="" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" onclick="confirmDelete()" class="floating-btn deleteBtn">
+        <i class="bi bi-trash3-fill"></i>
+    </a>
+
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="floating-btn editPen">
+        <i class="bi bi-pencil-fill"></i>
+    </a>
+
+    <form id="deleteForm" asp-action="Delete" asp-route-id="@Model.Id" method="post" style="display: none;"></form>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmDelete() {
+            Swal.fire({
+                title: "確定要刪除嗎?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#e63946",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "確定",
+                cancelButtonText: "取消"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById("deleteForm").submit();
+                }
+            });
+        }
+    </script>
+}

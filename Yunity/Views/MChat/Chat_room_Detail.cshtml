@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Yunity.Models.ChatRoom>
+
+@foreach (var item in Model)
+{
+    var messageDateTime = item.MsgTime ?? DateTime.MinValue;
+    var isToday = messageDateTime.Date == DateTime.Today;
+    @if (!string.IsNullOrEmpty(item.MangerId))
+    {
+        <div class="message message-right mine">
+            <div class="time">
+                @if (isToday)
+                {
+                    @messageDateTime.ToString("HH:mm")
+                }
+                else
+                {
+                    @messageDateTime.ToString("yyyy-MM-dd")
+                }
+            </div>
+            <div class="message last">@Html.DisplayFor(modelItem => item.MsgText)</div>
+        </div>
+    }
+    else
+    {
+        <div class="message message-left">
+            <div class="bubble-left">@Html.DisplayFor(modelItem => item.MsgText)</div>
+            <div class="time">
+                @if (isToday)
+                {
+                    @messageDateTime.ToString("HH:mm")
+                }
+                else
+                {
+                    @messageDateTime.ToString("yyyy-MM-dd")
+                }
+            </div>
+        </div>
+    }
+}
+

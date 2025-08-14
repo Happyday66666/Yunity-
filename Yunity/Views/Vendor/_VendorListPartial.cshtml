@@ -1,0 +1,66 @@
+﻿@model List<Yunity.Models.CCompanyInfoWrap>
+
+<table class="table  table-hover mt-3">
+    <thead>
+        <tr>
+            <th>
+                #
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].ComName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].ComServerItem)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].ComContractStartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model[0].ComContractEndDate)
+            </th>
+            <th class="text-center">
+                @Html.DisplayNameFor(model => model[0].ComStatus)
+            </th>
+            <th class="text-center">
+                維修紀錄
+            </th>
+            <th class="text-center">詳細資料</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int num = 0;
+            foreach (var item in Model)
+            {
+                num++;
+                <tr>
+                    <td class="align-middle">
+                        @num
+                    </td>
+                    <td class="align-middle">
+                        @Html.DisplayFor(modelItem => item.ComName)
+                    </td>
+                    <td class="align-middle">
+                        @Html.DisplayFor(modelItem => item.ComServerItem)
+                    </td>
+                    <td class="align-middle">
+                        @Html.DisplayFor(modelItem => item.ComContractStartDate)
+                    </td>
+                    <td class="align-middle">
+                        @Html.DisplayFor(modelItem => item.ComContractEndDate)
+                    </td>
+                    <td id="status- +@item.CAid" data-status="@item.ComStatus" class="text-center align-middle">
+                    </td>
+                    <td class="text-center">
+                        <a href="@Url.Action("FixList","Vendor", new { id = item.CAid })" class="btn btn-light"><i class="bi bi-tools"></i></a>
+                    </td>
+                    <td class="text-center">
+                        <a href="@Url.Action("Details","Vendor", new { id = item.CAid })" class="btn btn-light"><i class="bi bi-three-dots"></i></a>
+                    </td>
+               </tr>
+            }
+        }
+
+    </tbody>
+</table>

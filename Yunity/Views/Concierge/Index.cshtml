@@ -1,0 +1,493 @@
+﻿@{
+    Layout = "_LayoutManager";
+    ViewData["Title"] = "首頁";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.15/index.min.css">
+    <!-- 引入 Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <style>
+        .card-board {
+            margin-top: 45px;
+            position: relative;
+            box-shadow: 5px 5px 10px rgba(150, 150, 150, 0.3), -5px -5px 20px rgba(200, 200, 200, 0.4);
+            border-radius: 10px;
+            overflow: hidden;
+            border:none;
+        }
+
+        .card-header {
+            color:#f9f0ee;
+            background: #31515e;
+            font-size: 19px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .card-header:hover {
+            color: #fff;
+            background: #2a4f5e;
+        }
+
+        #board-list {
+            cursor: pointer;
+        }
+
+        .pType {
+            font-size: 12px;
+            color: #31515e;
+            margin-bottom: 5px;
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 5px;
+        }
+         .typelabelone {
+            background: #c5f5c4;
+            border: 1px solid #bafab9;
+        }
+         .typelabelTwo {
+            background: #f5d5d5;
+            border: 1px solid #f2c4c4;
+        }
+         .typelabelThree {
+            background: #f7fab9;
+            border: 1px solid #f6faaf;
+        }
+
+        .list-group-item {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px 15px;
+        }
+
+        .pName {
+            font-weight: bold;
+            font-size: 19px;
+                margin-bottom: 5px;
+        }
+
+        .pTime {
+            color: #D0D0D0;
+            font-size: 10px;
+            margin-top: -15px;
+            margin-bottom: -5px;
+        }
+
+        .marT {
+            margin-top:45px;
+        }
+
+        .calendar-outer{
+            box-shadow: 5px 5px 10px rgba(150, 150, 150, 0.3), -5px -5px 20px rgba(200, 200, 200, 0.4);
+            border-radius: 10px;
+            width:auto;
+            padding:20px 6px 20px 6px;
+            background: #fff;
+        }
+
+        .btn-Delite {
+            background-color: #c8624b;
+            color: white;
+        }
+
+        .btn-Delite:hover {
+            background-color: #e6d4cc;
+            color: dimgray;
+        }
+
+        .copyright {
+            font-size: 14px;
+            text-align: center;
+        }
+        
+    </style>
+}
+
+<div class="container mt-3 mb-3" >
+    <div class="row">
+        <div class="col-lg-5">
+            <div class="card card-board">
+                <a href="/MBoard/Index" class="card-header text-center d-block text-decoration-none">
+                    最新公告
+                </a>
+                <div class="card-body">
+                    <ul id="board-list" class="list-group"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7 marT">
+            <div class="calendar-outer">
+            <div id='calendar' class="w-100"></div> @* 行事曆安置處 *@
+            </div>
+        </div>
+    </div>
+</div>
+
+@* 新增事件 *@
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form id="eventForm">
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <h5 class="modal-title mb-2 text-center" id="eventModalLabel">新增行事曆</h5>
+                    <div class="mb-3 form-group">
+                        <input type="text" class="form-control rounded-pill" id="eventTitle" placeholder="標題" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="eventDate" class="form-label">事件日期：</label>
+                        <input type="text" class="form-control rounded-pill" id="eventDate" placeholder="選擇日期" autocomplete="off" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control rounded-pill" id="eventStartTime" placeholder="選擇開始時間" autocomplete="off" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control rounded-pill" id="eventEndTime" placeholder="選擇結束時間" autocomplete="off" required>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="allDayEvent">
+                        <label class="form-check-label" for="allDayEvent">全天</label>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">儲存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@* 詳細資料 *@
+<div class="modal fade" id="DetailModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventModalLabel">行事曆</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="DetailTitle" class="text-center fw-bold fs-5"></p>
+                <p class="text-center"><strong>開始時間：</strong><span id="eventStart"></span></p>
+                <p class="text-center"><strong>結束時間：</strong><span id="eventEnd"></span></p>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-Delite" id="deleteEventButton">我要取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+         async function loadBoardList() {
+            try {
+                const response = await fetch('/Concierge/GetBoardList');
+                if (!response.ok) {
+                    throw new Error('Failed');
+                }
+                const data = await response.json();
+                console.log(data);
+                renderBoardList(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function renderBoardList(boards) {
+            const listElement = document.getElementById('board-list');
+            listElement.innerHTML = "";
+
+            boards.forEach(board => {
+                let type = "";
+                let typeClass = "";
+
+                if (board.type == 1) {
+                    type = "社區活動公告";
+                    typeClass = "typelabelone";
+                } else if (board.type == 2) {
+                    type = "水電及設備維護公告";
+                    typeClass = "typelabelTwo";
+                } else if (board.type == 3) {
+                    type = "管理費公告";
+                    typeClass = "typelabelThree";
+                }
+
+                const li = document.createElement('li');
+                li.classList.add('list-group-item', 'list-group-item-action');
+                li.innerHTML = `
+                    <div>
+                        <p class="pType ${typeClass}">${type}</p>
+                        <p class="pName">${board.name}</p>
+                    </div>
+                    <p class="text-end pTime">${new Date(board.time).toLocaleString()}</p>
+                `;
+                li.onclick = () => window.location.href = `/MBoard/Detail/${board.id}`;
+
+                listElement.appendChild(li);
+            });
+        }
+            document.addEventListener("DOMContentLoaded", loadBoardList);
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            //時間選擇器
+            flatpickr("#eventDate", {
+                dateFormat: "Y-m-d", 
+                defaultDate: new Date(), 
+                minDate: "today" 
+            });
+
+            flatpickr("#eventStartTime", {
+                enableTime: true,
+                noCalendar: true, 
+                dateFormat: "H:i", 
+                time_24hr: true ,
+                 allowInput: true 
+            });
+
+            flatpickr("#eventEndTime", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                 allowInput: true
+            });
+
+
+            //行事曆
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'zh-tw',
+                selectable: true,
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'addEventButton dayGridMonth,timeGridDay,listWeek'
+                },
+                customButtons: {
+                    addEventButton: {
+                        text: ' ',
+                        classNames: ['add-event-btn'],
+                        click: function () {
+                            showModal();
+                        }
+                    }
+                },
+                eventSources: [
+                    {
+                        url: '/api/MCalender/GetEventC',
+                        color: '#FDD692',
+                        textColor: '#011638'
+                    },
+                    {
+                        url: '/api/MCalender/GetEventR',
+                        color: '#C5E99B',
+                        textColor: '#3F4B3B'
+                    }
+                ],
+                dateClick: function (info) {
+                    calendar.changeView('timeGridDay', info.dateStr);
+                },
+                eventClick: function(info) {
+                    showEventModal(info.event);
+                },
+            });
+
+            calendar.render();
+
+            setTimeout(() => {
+                const button = document.querySelector('.fc-addEventButton-button');
+                if (button) {
+                  button.innerHTML = '<i class="bi bi-calendar-plus"></i>';
+                }
+            }, 100);
+
+            // 顯示詳細資料麻豆+取消
+            function showEventModal(event) {
+                const title = event.title;
+                const start = event.start.toLocaleString();
+                const end = event.end ? event.end.toLocaleString() : '--';
+
+                document.getElementById('DetailTitle').textContent = title;
+                document.getElementById('eventStart').textContent = start;
+                document.getElementById('eventEnd').textContent = end;
+
+                const myModalEl = document.getElementById('DetailModal');
+                const myModal = new bootstrap.Modal(myModalEl);
+                myModal.show();
+
+                const deleteButton = document.getElementById('deleteEventButton');
+
+                deleteButton.replaceWith(deleteButton.cloneNode(true));
+                const newDeleteButton = document.getElementById('deleteEventButton');
+
+                newDeleteButton.addEventListener('click', function () {
+                    Swal.fire({
+                        title: "確定要取消這項事件嗎?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "確定",
+                        cancelButtonText: "返回"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            deleteEvent(event).then(success => {
+                                if (success) {
+                                    const modalInstance = bootstrap.Modal.getInstance(myModalEl);
+                                    if (modalInstance) {
+                                        modalInstance.hide();
+                                    }
+
+                                    Swal.fire({
+                                        title: "已刪除！",
+                                        text: "事件已成功刪除。",
+                                        icon: "success",
+                                        confirmButtonText: "確定"
+                                    });
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            // 顯示-新增麻豆
+            function showModal() {
+                var modal = new bootstrap.Modal(document.getElementById("eventModal"));
+                modal.show();
+
+                // 設定 Flatpickr 預設值
+                eventDatePicker.setDate(new Date(), true);
+                eventStartTimePicker.setDate("09:00", true);
+                eventEndTimePicker.setDate("10:00", true);
+            }
+
+            const allDayCheckbox = document.getElementById('allDayEvent');
+            const startTimeInput = document.getElementById('eventStartTime');
+            const endTimeInput = document.getElementById('eventEndTime');
+
+            allDayCheckbox.addEventListener('change', function () {
+                if (this.checked) {
+                    startTimeInput.value = '00:00';
+                    endTimeInput.value = '23:59';
+                }
+            });
+
+            // 新增事件
+            document.getElementById('eventForm').onsubmit = function(event) {
+                event.preventDefault();
+
+                var eventTitle = document.getElementById('eventTitle').value;
+                var eventDate = document.getElementById('eventDate').value;
+                var eventStart = eventDate + 'T' + document.getElementById('eventStartTime').value + ':00';
+                var eventEnd = eventDate + 'T' + document.getElementById('eventEndTime').value + ':00';
+
+                fetch('/api/MCalender/AddEvent', {
+                  method: 'POST',
+                  headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                  body: JSON.stringify({
+                    Title: eventTitle,
+                    Start: eventStart,
+                    End: eventEnd
+                  })
+                })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.success) {
+                            Swal.fire({
+                                title: '成功!',
+                                text: '事件已新增至行事曆!',
+                                icon: 'success',
+                                confirmButtonText: 'OK',
+                                timer: 3000,
+                            });
+
+                            var modal = bootstrap.Modal.getInstance(document.getElementById('eventModal'));
+                            modal.hide();
+
+                            calendar.refetchEvents();
+                  } else {
+                    Swal.fire({
+                      title: '噢不!',
+                      text: '新增事件失敗!',
+                      icon: 'error',
+                      confirmButtonText: 'OK'
+                    });
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+
+                  Swal.fire({
+                    title: 'OOPS!',
+                    text: '新增事件時發生錯誤。',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                  });
+                });
+            };
+
+            //刪除行事曆
+          async function deleteEvent(event) {
+                if (!event || !event.id || event.extendedProps.deletable === undefined) {
+                    Swal.fire({ icon: 'error', title: '錯誤', text: '資料不完整，無法刪除事件。' });
+                    return false;
+                }
+
+                try {
+                    const response = await fetch(`/api/MCalender/DeleteEvent`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            Id: event.id,
+                            title: event.title || "未知",
+                            deletable: event.extendedProps.deletable
+                        }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log("刪除事件結果:", data);
+
+                    if (data.success) {
+                        Swal.fire({ icon: 'success', title: '已成功取消!', text: data.message });
+                        event.remove();
+                        calendar.refetchEvents();
+                        return true;
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'OOPS！', text: data.message });
+                        return false;
+                    }
+                } catch (error) {
+                    console.error('刪除行事曆失敗:', error);
+                    Swal.fire({ icon: 'error', title: '操作失敗', text: error.message });
+                    return false;
+                }
+            }
+
+        });
+
+
+    </script>
+}
+

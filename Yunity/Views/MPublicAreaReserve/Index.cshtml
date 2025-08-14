@@ -1,0 +1,519 @@
+﻿@{
+    Layout = "_LayoutManager";
+    ViewData["Title"] = "公設預約";
+}
+
+<div id="PA_photo" style="height: 400px; width: 100%; opacity: 0.9; background-position: center 80%; background-size: cover; position: relative; filter: grayscale(70%);">
+    <h1 class="pa_title" >公 設 預 約</h1>
+    <div id="pa_info" class="Pa_info">
+    </div>
+</div>
+
+<div class="container mt-5">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Concierge")">首頁</a></li>
+            <li class="breadcrumb-item active" aria-current="page">公設預約</li>
+        </ol>
+    </nav>
+</div>
+<div class="carousel-container mb-3">
+    <button class="button left" id="leftBtn">
+        <span class="material-symbols-outlined">
+            arrow_back_ios_new
+        </span>
+    </button>
+    <div class="carousel" id="carousel">  
+    </div>
+    <button class="button right" id="rightBtn">
+        <span class="material-symbols-outlined">
+            arrow_forward_ios
+        </span>
+    </button>
+</div>
+<div class="d-flex justify-content-end container mb-4">
+    <input type="text" class="Search_text w-25" style="border-radius: 50px 0 0 50px;" id="keyword" placeholder="請輸入關鍵字" />
+    <div>
+        <span class="material-symbols-outlined Search_div" style="border-radius: 0 50px 50px 0; font-size:2rem; color: #A9A9A9" id="search-icon">
+            search
+        </span>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center p-3">
+            <table class="table align-middle table_border">
+                <thead style="vertical-align: middle">
+                    <tr style="border-bottom:solid black 2px;" class="tr-bg-color">
+                        <th>序號</th>
+                        <th>住戶</th>
+                        <th>預約公設</th>
+                        <th>預約日期</th>
+                        <th>預約時間</th>
+                        <th>狀態</th>
+                    </tr>
+                </thead>
+                <tbody id="List">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:800px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-4" id="exampleModalLabel" onclick="enter_val()">新增公設項目</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Create_PA" method="post" enctype="multipart/form-data" id="PA_Detail">
+                <div class="modal-body">
+                    <table class="table align-middle table-borderless">
+                        <tr style="height:70px">
+                            <td>
+                                <label class="fs-5">選擇公設項目</label>
+                            </td>
+                            <td colspan="3">
+                                <div class="input-group" style="width:150px">
+                                    <select id="PaName" name="PaName" class="form-select">
+                                    </select>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr style="height:70px">
+                            <td>
+                                <label class="fs-5">開放時間</label>
+                            </td >
+                            <td>
+                                <div style="display: flex; align-items: center;">
+                                    <select id="OpenTime" name="OpenTime" class="form-select">
+                                        <option value="00:00">00:00</option>
+                                        <option value="01:00">01:00</option>
+                                        <option value="02:00">02:00</option>
+                                        <option value="03:00">03:00</option>
+                                        <option value="04:00">04:00</option>
+                                        <option value="05:00">05:00</option>
+                                        <option value="06:00">06:00</option>
+                                        <option value="07:00">07:00</option>
+                                        <option value="08:00">08:00</option>
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00">18:00</option>
+                                        <option value="19:00">19:00</option>
+                                        <option value="20:00">20:00</option>
+                                        <option value="21:00">21:00</option>
+                                        <option value="22:00">22:00</option>
+                                        <option value="23:00">23:00</option>
+                                        <option value="24:00">24:00</option>
+                                    </select>
+                                    <p style="margin: 0 10px;">　-　</p>
+                                    <select id="CloseTime" name="CloseTime" class="form-select">
+                                        <option value="00:00">00:00</option>
+                                        <option value="01:00">01:00</option>
+                                        <option value="02:00">02:00</option>
+                                        <option value="03:00">03:00</option>
+                                        <option value="04:00">04:00</option>
+                                        <option value="05:00">05:00</option>
+                                        <option value="06:00">06:00</option>
+                                        <option value="07:00">07:00</option>
+                                        <option value="08:00">08:00</option>
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00">18:00</option>
+                                        <option value="19:00">19:00</option>
+                                        <option value="20:00">20:00</option>
+                                        <option value="21:00">21:00</option>
+                                        <option value="22:00">22:00</option>
+                                        <option value="23:00">23:00</option>
+                                        <option value="24:00">24:00</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <label class="fs-5">扣點單位</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" style="width:100px" id="DeductUnit" name="DeductUnit" />
+                            </td>
+                        </tr>
+                        <tr style="height:70px">
+                            <td>
+                                <label class="fs-5">人數上限</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" style="width:100px" id="Amount" name="Amount" />
+                            </td>
+                            <td>
+                                <label class="fs-5">使用時間單位</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" style="width:100px" id="UseTime" name="UseTime" />
+                            </td>
+                        </tr>
+                        <tr style="height:70px">
+                            <td>
+                                <label class="fs-5">公設簡介</label>
+                            </td>
+                            <td colspan="3">
+                                <textarea class="form-control" style="resize:none;" rows="5" cols="50" id="AreaInfo" name="AreaInfo"></textarea>
+                            </td>
+                        </tr>
+                        <tr style="height:70px">
+                            <td class="text-center" colspan="4">
+                                <img id="image" src="/images/noPic.jpeg" alt="Image Preview" class="img-fluid mb-3" style="max-height:330px" />
+                                <input type="file" name="ImageFile" id="file" onchange="previewImage(event)" class="form-control w-75 m-auto" accept="image/*" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer mb-5" style="display:block">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="float: left">取消</button>
+                    <button type="button" class="btn btn-primary" style="float: right" onclick="CreatePA()" data-bs-dismiss="modal" id="Create_PA">確定</button>
+                    <button type="button" class="btn btn-primary" style="float: right; display:none" onclick="edit_PAA()" data-bs-dismiss="modal" id="edit_PA">修改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        var PA_ID = [];
+        var PA_photo = document.getElementById('PA_photo');
+        var PA_img = [];
+        var PA_info = [];
+        var rowId = -1;
+        var totalDivs;
+        var PubilcArea_id = [];
+
+        window.onload = function () {
+            loadHtml();
+            UpdateHtml();
+            PA_load();
+        };
+
+        document.getElementById("keyword").addEventListener("input", function () {
+            loadHtml();
+            UpdateHtml();
+        });
+
+        function loadHtml() {
+            var idx = 0;
+            totalDivs = 0;
+            fetch("/MPublicAreaReserve/PA_List")
+                .then(response => response.json())
+                .then(data => {
+                    let carousel = document.getElementById("carousel");
+                    carousel.innerHTML = data.length === 0 ?
+                        `<tr><td colspan="8" class="text-center">沒有公設項目</td></tr>` : '';
+                    carousel.innerHTML += `<div class="pa_link ${rowId == -1 ? 'active' : ''}" onclick="PA_Click(event,-1)">
+                                                <img src="/images/building.png" style="width: 75%; height: 75%; display: block;">
+                                                <a>全部公設</a>
+                                           </div>`
+                    totalDivs += 2
+                    data.forEach((PA_List) => {
+                        carousel.innerHTML += `<div id="PA_Click-${idx}" class="pa_link ${rowId == idx ? 'active' : ''}" onclick="PA_Click(event, ${idx})">
+                                                   <img src="/publicArea/${PA_List.icont}" style="width: 75%; height: 75%; display: block;">
+                                                   <a>${PA_List.paName}</a>
+                                               </div>`
+                        PubilcArea_id[idx] = PA_List.pubilcArea_id;
+                        PA_img[idx] = PA_List.photo;
+                        PA_ID[idx] = PA_List.id;
+                        PA_info[idx] = `<div class="d-flex justify-content-between align-items-center">
+                                            <h3 class="mb-3 mt-2 text-white" id ="detail_paName">${PA_List.paName}</h3>
+                                            <span class="material-symbols-outlined" onclick="edit()" style="cursor: pointer" data-bs-toggle="modal" data-bs-target="#exampleModal" >edit</span>
+                                        </div>
+                                        <p>開放時間：　<span id ="detail_openTime">${PA_List.openTime}</span> ~ <span id ="detail_closeTime">${PA_List.closeTime}</span></p>
+                                        <p>人數上限：　<span id ="detail_amount">${PA_List.amount}</span> 人</p>
+                                        <p>扣點單位：　<span id ="detail_deductUnit">${PA_List.deductUnit}</span> 點</p>
+                                        <p>使用時間單位：　每次 <span id ="detail_useTime">${PA_List.useTime}</span> 小時</p>
+                                        <p>公設簡介：　<span id ="detail_areaInfo">${PA_List.areaInfo}</span></p>`;
+                        console.log(PA_img[idx]);
+                        console.log(PA_ID[idx]);
+                        idx += 1;
+                        totalDivs += 1;
+                    });
+                    carousel.innerHTML += `<div class="pa_link" onclick="PA_Create(event)" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                               <img src="/images/plus.png" style="width: 75%; height: 75%; display: block;">
+                                               <a>新增公設</a>
+                                           </div>`;
+                    if (PA_img.length > 0) {
+                        PA_photo.style.backgroundImage = `url(/publicArea/${PA_img[0]})`;
+                    }
+                    if (rowId != -1)
+                    {
+                        document.getElementById('PA_Click-' + rowId).click();
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        function UpdateHtml() {
+            let keyword_json = { "Keyword": document.getElementById("keyword").value, "Pa_id": PA_ID[rowId] };
+            console.log(keyword_json);
+            fetch("/MPublicAreaReserve/List", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(keyword_json)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    let List = document.getElementById("List");
+                    List.innerHTML = data.length === 0 ?
+                        `<tr><td colspan="8" class="text-center">沒有預約記錄</td></tr>` : '';
+
+                    data.forEach((Reserve, index) => {
+                        
+                        let Start = new Date(Reserve.startTime);
+                        let Startdate = moment(Start).format('YYYY-MM-DD');
+                        let StartTime = moment(Start).format('HH:mm:ss');
+                        console.log(Reserve.startTime);
+                        List.innerHTML += `
+                                <tr id="row-${Reserve.id}">
+                                <td>${index + 1}</td>
+                                <td>${Reserve.fName}</td>
+                                <td>${Reserve.paName}</td>
+                                <td>${Startdate}</td>
+                                <td>${StartTime}</td>
+                                <td style="color: ${Reserve.state === 1 && new Date(Reserve.endTime) < new Date() ? 'gray' : 
+                                            Reserve.state === 2 ? 'red' : 
+                                            Reserve.state === 1 ? 'green' : 'black'};">
+                                    ${Reserve.state === 1 && new Date(Reserve.endTime) < new Date() ? "使用完畢" : { 1: "預約中", 2: "取消預約" }[Reserve.state]}
+                                </td>
+                                </tr>
+                    `;
+                    });
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        function PA_load() {
+            fetch("/MPublicAreaReserve/PA")
+                .then(response => response.json())
+                .then(data => {
+                    let PaName = document.getElementById("PaName");
+                    PaName.innerHTML = data.length === 0 ?
+                        `<tr><td colspan="8" class="text-center">沒有公設項目</td></tr>` : '';
+                    data.forEach((PA) => {
+                        PaName.innerHTML += `<option value="${PA.id}">${PA.paName}</option>`
+                    });
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        function PA_Click(event, img_id) {
+            document.querySelectorAll('.pa_link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            var pa_info = document.getElementById('pa_info')
+            if (img_id >= 0) {
+                PA_photo.style.backgroundImage = `url(/publicArea/${PA_img[img_id]})`;
+                rowId = img_id;
+                UpdateHtml();
+                pa_info.innerHTML = PA_info[img_id];
+            }
+            else {
+                rowId = img_id;
+                UpdateHtml();
+                pa_info.innerHTML = '';
+                PA_photo.style.backgroundImage = `url(/publicArea/${PA_img[0]})`;
+            }
+        }
+
+        function PA_Create(event) {
+            document.querySelectorAll('.pa_link').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            var edit_PA = document.getElementById('edit_PA');
+            edit_PA.style.display = "none" ;
+            var Create_PA = document.getElementById('Create_PA');
+            Create_PA.style.display = "inline-block" ;
+        }
+
+        function edit() {
+            var Create_PA = document.getElementById('Create_PA');
+            Create_PA.style.display = "none" ;
+            var edit_PA = document.getElementById('edit_PA');
+            edit_PA.style.display = "inline-block" ;
+            document.getElementById("PaName").value = PubilcArea_id[rowId];
+            document.getElementById("OpenTime").value = document.getElementById("detail_openTime").innerText.substring(0, 5);
+            document.getElementById("CloseTime").value = document.getElementById("detail_closeTime").innerText.substring(0, 5);
+            document.getElementById("DeductUnit").value = document.getElementById("detail_deductUnit").innerText;
+            document.getElementById("Amount").value = document.getElementById("detail_amount").innerText;
+            document.getElementById("UseTime").value = document.getElementById("detail_useTime").innerText;
+            document.getElementById("AreaInfo").value = document.getElementById("detail_areaInfo").innerText;
+            document.getElementById("image").src = '/publicArea/' + PA_img[rowId];
+        }
+
+        function previewImage(event) {
+            var file = event.target.files[0];
+            if (file) {
+                if (!file.type.startsWith("image/")) {
+                    Swal.fire({
+                        title: "請上傳公設圖片！!",
+                        icon: "warning",
+                        draggable: true
+                    });
+                    return;
+                }
+
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var imagePreview = document.getElementById('image');
+                    if (imagePreview) {
+                        imagePreview.src = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function edit_PAA() {
+            var form = new FormData();
+            form.append("Id", PA_ID[rowId]);
+            form.append("OpenTime", document.getElementById('OpenTime').value);
+            form.append("CloseTime", document.getElementById('CloseTime').value);
+            form.append("DeductUnit", document.getElementById('DeductUnit').value);
+            form.append("Amount", document.getElementById('Amount').value);
+            form.append("UseTime", document.getElementById('UseTime').value);
+            form.append("AreaInfo", document.getElementById('AreaInfo').value);
+            form.append("Icon", document.getElementById('PaName').value);
+            form.append("ImageFile", document.getElementById('file').files[0]);
+            fetch('/MPublicAreaReserve/Edit', {
+                method: 'POST',
+                body: form
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: "公設資訊更新成功！!",
+                        icon: "success",
+                        draggable: true
+                    });
+                    loadHtml();
+                    document.getElementById('PA_Detail').reset();
+                     $("#image").attr("src", "@Url.Content("/images/noPic.jpeg")");
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "公設資訊更新失敗",
+                        text: "請再試一次!"
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('錯誤:', error);
+                Swal.fire({
+                    icon: "error",
+                    title: "更新失敗",
+                    text: "請稍後再試!"
+                });
+            });
+        }
+
+        function CreatePA() {
+            rowId = PA_ID.length;
+            var form = new FormData();
+            form.append("Id", PA_ID[rowId]);
+            form.append("OpenTime", document.getElementById('OpenTime').value);
+            form.append("CloseTime", document.getElementById('CloseTime').value);
+            form.append("DeductUnit", document.getElementById('DeductUnit').value);
+            form.append("Amount", document.getElementById('Amount').value);
+            form.append("UseTime", document.getElementById('UseTime').value);
+            form.append("AreaInfo", document.getElementById('AreaInfo').value);
+            form.append("Icon", document.getElementById('PaName').value);
+            form.append("ImageFile", document.getElementById('file').files[0]);
+            console.log(form);
+            fetch('/MPublicAreaReserve/Create', {
+                method: 'POST',
+                body: form
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: "成功新增公設！!",
+                        icon: "success",
+                        draggable: true
+                    });
+                    loadHtml();
+                    document.getElementById('PA_Detail').reset();
+                     $("#image").attr("src", "@Url.Content("/images/noPic.jpeg")");
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "公設新增失敗",
+                        text: "請再試一次!"
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('錯誤:', error);
+                Swal.fire({
+                    icon: "error",
+                    title: "新增失敗",
+                    text: "請稍後再試!"
+                });
+            });
+        }
+
+        const carousel = document.getElementById('carousel');
+        const leftBtn = document.getElementById('leftBtn');
+        const rightBtn = document.getElementById('rightBtn');
+        var visibleDivs = 5;
+        let currentIndex = 0;
+        leftBtn.addEventListener('click', () => {
+            if (currentIndex === 0) {
+                currentIndex = totalDivs - visibleDivs;
+            } else {
+                currentIndex--;
+            }
+            console.log(currentIndex);
+            updateCarousel();
+        });
+
+        rightBtn.addEventListener('click', () => {
+            if (currentIndex === totalDivs - visibleDivs) {
+                currentIndex = 0;
+            } else {
+                currentIndex++;
+            }
+            console.log(currentIndex);
+            updateCarousel();
+        });
+
+        function updateCarousel() {
+            const offset = -currentIndex * (100 / visibleDivs);
+            console.log(offset);
+            console.log(carousel.style.transform);
+            carousel.style.transform = `translateX(${offset}%)`;
+            console.log(carousel.style.transform);
+        }
+
+        function enter_val() {
+            document.getElementById("PaName").value = "6";
+            document.getElementById("OpenTime").value = "08:00";
+            document.getElementById("CloseTime").value = "20:00";
+            document.getElementById("DeductUnit").value = "1";
+            document.getElementById("Amount").value = "15";
+            document.getElementById("UseTime").value = "1";
+            document.getElementById("AreaInfo").value = "充滿歡笑與冒險，讓孩子們盡情玩耍，探索無限樂趣！";
+        }
+    </script>
+}

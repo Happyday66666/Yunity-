@@ -1,0 +1,100 @@
+﻿@model IEnumerable<Yunity.Models.BdMemberWrap>
+
+@{
+	ViewData["Title"] = Model.FirstOrDefault()?.BdName + "住戶名單";
+}
+
+<style>
+ .table{
+	 font-size:20px;
+ }
+</style>
+
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-4">
+	<ol class="breadcrumb">
+		<li class="breadcrumb-item">
+			<a href="@Url.Action("Index","Home")" class="breadcrumb-item active" aria-current="page">
+				首頁
+			</a>
+		</li>
+		<li class="breadcrumb-item">
+			<a href="@Url.Action("BD_List","BD_Mange")" class="breadcrumb-item active" aria-current="page">
+				大樓管理
+			</a>
+		</li>
+		<li class="breadcrumb-item">
+			<a href="@Url.Action("BD_Detailed","BD_Mange", new { id = Model.FirstOrDefault()?.BdId})" class="breadcrumb-item active" aria-current="page">
+				@Model.FirstOrDefault()?.BdName
+			</a>
+		</li>
+		<li class="breadcrumb-item">
+			<a href="@Url.Action("Menber_List","BD_Mange", new { id = Model.FirstOrDefault()?.BdId })" class="breadcrumb-item active" aria-current="page" style="color:#293C56">
+				@(Model.FirstOrDefault()?.BdName)-住戶名單
+			</a>
+		</li>
+	</ol>
+</nav>
+
+<div class="container mt-4">
+	<div class="row" style="position: relative;">
+		<div class="col-4 mt-4 ">
+			<h1>@Model.FirstOrDefault()?.BdName - 住戶名單</h1>
+		</div>
+		<div class="col-8 mt-4" style="position: relative;">
+			<strong style="position: absolute; right: 20px; bottom: -20px; font-size:20px;">地址：　@Model.FirstOrDefault()?.BdAddr</strong>
+		</div>
+	</div>
+</div>
+<hr />
+<table class="table">
+	<thead>
+		<tr>
+			<th class="text-center">
+				序號
+			</th>
+			<th class="ps-5">
+				@Html.DisplayNameFor(model => model.DoorNo)
+			</th>
+			<th class="ps-5">
+				@Html.DisplayNameFor(model => model.FName)
+			</th>
+			<th class="ps-5">
+				@Html.DisplayNameFor(model => model.FAccount)
+			</th>
+			<th class="ps-5">
+				@Html.DisplayNameFor(model => model.FEmail)
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		@{
+			int count = 0;
+
+			@foreach (var item in Model)
+			{
+				count++;
+				<tr>
+					<td class="text-center">
+						@count
+					</td>
+					<td class="ps-5">
+						@Html.DisplayFor(modelItem => item.DoorNo)
+					</td>
+					<td class="ps-5">
+						@Html.DisplayFor(modelItem => item.FName)
+					</td>
+					<td class="ps-5">
+						@Html.DisplayFor(modelItem => item.FAccount)
+					</td>
+					<td class="ps-5">
+						@Html.DisplayFor(modelItem => item.FEmail)
+					</td>
+				</tr>
+			}
+		}
+	</tbody>
+</table>
+<div class="text-center">
+	<i class="bi bi-arrow-left-circle-fill icon-pointer" style="position: fixed; bottom: 20px; right: 20px; color: #293c56;font-size:3rem; z-index: 9999;" onclick="location.href = '/BD_Mange/BD_Detailed/@Model.FirstOrDefault()?.BdId'"></i>
+</div>
+

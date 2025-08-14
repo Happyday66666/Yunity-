@@ -1,0 +1,77 @@
+﻿@model Yunity.Models.UserAreaReserveWithAreaInfo
+
+@{
+    ViewData["Title"] = "公設預約詳情";
+    Layout = "_LayoutUser"; // 使用 _LayoutUser 版面
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header text-center bg-primary text-white">
+                    <h2>預約詳情</h2>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <!-- 顯示公設名稱 -->
+                        <dt class="col-sm-4">公設名稱</dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.PublicArea.Name)
+                        </dd>
+
+                        <!-- 顯示預約時間 -->
+                        <dt class="col-sm-4">預約時間</dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.ReserveTime)
+                        </dd>
+
+                        <!-- 顯示開始時間 -->
+                        <dt class="col-sm-4">開始時間</dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.StartTime)
+                        </dd>
+
+                        <!-- 顯示結束時間 -->
+                        <dt class="col-sm-4">結束時間</dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.EndTime)
+                        </dd>
+                        <!-- 顯示預約人數 -->
+                        <dt class="col-sm-4">預約人數</dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.ReservedPeople)
+                        </dd>
+
+
+                        <!-- 顯示預約狀態 -->
+                        <dt class="col-sm-4">預約狀態</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.State == 2)
+                            {
+                                <span class="text-secondary">使用完畢</span>
+                            }
+                            else if (Model.State == 1)
+                            {
+                                <span class="text-success">預約完成</span>
+                            }
+                            else if (Model.State == 3)
+                            {
+                                <span class="text-danger">已取消</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">未確認</span>  <!-- 如果狀態是其他值的話 -->
+                            }
+                        </dd>
+
+                    </dl>
+                </div>
+                <div class="card-footer text-center">
+                    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">編輯</a>
+                    <a asp-action="Index" class="btn btn-secondary">返回列表</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

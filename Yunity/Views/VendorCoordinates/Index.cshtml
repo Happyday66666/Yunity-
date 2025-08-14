@@ -1,0 +1,23 @@
+﻿
+
+@{
+    ViewData["Title"] = "管理後台";
+}
+
+<h2>手動更新經緯度</h2>
+<!-- 顯示更新的狀態與筆數 -->
+
+<p>@ViewBag.StatusMessage</p>
+
+
+<form asp-action="UpdateVendorCoordinatesManually" method="post">
+    <div class="form-group">
+        <label for="startDate">開始日期</label>
+        <input type="date" id="startDate" name="startDate" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="endDate">結束日期</label>
+        <input type="date" id="endDate" name="endDate" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">手動更新經緯度</button>
+</form>

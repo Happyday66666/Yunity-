@@ -1,0 +1,109 @@
+﻿@{
+    Layout = "_LayoutUser";
+    ViewData["Title"] = "意見反饋";
+}
+
+
+<div style="
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/backgrounds/意見反饋背景4.png');
+    background-size: 90%;
+    background-repeat: no-repeat;
+    background-position: top;
+    z-index: -1;">
+</div>
+<div class="container" style="margin-top:2%;">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index","UHome")">首頁</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">意見反饋</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="container mt-4">
+    <h1 onclick="enter_val()">意見反饋</h1>
+    <hr class="mb-5">
+    <div class="container justify-content-center FB_Style" style="width:80%; background-color: rgba(255, 255, 255, 0.8);">
+        <div class="row">
+            <div class="input_container">
+                <h4>反饋主題</h4>
+                <input type="text" class="input_no_border" id="title" placeholder="輸入您的反饋主題" />
+            </div>
+
+            <div class="input_container mt-4">
+                <h4>反饋內容</h4>
+                <textarea class="input_no_border" rows="10" id="body" placeholder="輸入您的反饋內容"></textarea>
+            </div>
+
+            <div class="mt-5 text-center">
+                <a href="javascript: void(0)" class="fb_btn" onclick="SendFeedback()">
+                    確定送出
+                    <span></span><span></span><span></span><span></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+
+@section Scripts {
+    <script>
+        function SendFeedback() {
+            let keyword_json = { "title": document.getElementById("title").value, "body": document.getElementById("body").value };
+                console.log(keyword_json);
+                fetch("/UuserFeedback/Sendmail", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(keyword_json)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    document.getElementById("title").value = "";
+                    document.getElementById("body").value = "";
+                    Swal.fire({
+                        title: "反饋已送出，感謝您的意見！",
+                        icon: "success",
+                        draggable: true
+                    });
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        function enter_val() {
+            document.getElementById("title").value = "大樓設施與管理改進建議";
+            document.getElementById("body").value = `您好！首先感謝貴單位一直以來對大樓的精心管理和維護，為我們提供了舒適的居住環境。作為一名住戶，我在此提出一些對大樓設施和管理方面的建議與意見，希望能夠為未來的改善貢獻一份力量。
+
+        電梯運行效率：近期發現，電梯在高峰時段常常出現等待時間過長的情況，尤其是在上下班高峰期。建議可以考慮在電梯數量或運行方式上進行優化，減少住戶的等待時間，提高使用效率。
+
+        大廳空調調節：大廳的空調溫度過低，特別是在冬季，導致進出大廳時的溫差過大，容易引起不適。建議可以調整空調設置，讓溫度更加舒適，避免浪費能源。
+
+        樓道清潔問題：雖然管理處定期進行清潔工作，但有些樓道地面仍然會有些髒污或堆積的垃圾，特別是在一些隱蔽的角落。建議可以加強清潔頻次，確保每一個角落都能保持乾淨。
+
+        停車場設施：停車場內的車位數量偏少，且某些車位位置較為狹窄，停車難度較大。若能進行空間的合理規劃或適當增設車位，將大大改善住戶的停車體驗。
+
+        安保系統：近來我發現大樓的安保系統有時反應遲緩，進出大樓的門禁系統偶爾會出現故障，造成安全隱患。建議對現有的安保設施進行檢查與升級，確保住戶的居住安全。
+
+        總結來說，整體居住環境良好，僅有些小問題需要改善。我相信在管理處的努力下，這些問題能夠得到有效解決，為大家創造更加舒適、安全的生活空間。
+
+        謝謝您的聆聽與關注，期待您的回應與改進。
+
+        此致
+        敬禮！
+
+        住戶：許明新
+        日期：2025年2月26日
+                `;
+        }
+    </script>
+}

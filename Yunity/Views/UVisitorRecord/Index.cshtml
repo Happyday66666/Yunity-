@@ -1,0 +1,246 @@
+﻿@{
+    Layout = "_LayoutUser";
+    ViewData["Title"] = "訪客列表";
+}
+
+ <style>
+    /* 固定分頁容器位置 */
+    .pagination-container {
+        position: fixed;
+        bottom: 50px; /* 距離底部20px */
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000; /* 確保分頁在其他內容之上 */
+        background-color: #fff; /* 可選：給定背景顏色來提高可讀性 */
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 添加陰影讓分頁區塊更突出 */
+    }
+
+    .pagination {
+        justify-content: center; 
+    }
+   
+    .fixed-bottom {
+        z-index: 1050;  
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f1f1f1;  
+    }
+
+    .active > .page-link, .page-link.active {
+        z-index: 3;
+        color: var(--bs-pagination-active-color);
+        background-color: #0c9197;
+        border-color: #0c9197;
+    }
+
+    .page-link {
+        position: relative;
+        display: block;
+        padding: var(--bs-pagination-padding-y) var(--bs-pagination-padding-x);
+        font-size: var(--bs-pagination-font-size);
+        color: #0c9197;
+        text-decoration: none;
+        background-color: var(--bs-pagination-bg);
+        border: var(--bs-pagination-border-width) solid var(--bs-pagination-border-color);
+        transition: color .15sease-in-out, background-color .15sease-in-out, border-color .15sease-in-out, box-shadow .15sease-in-out;
+    }
+ </style>
+ 
+<h3 class="text-center m-4">訪客列表</h3>
+
+<div class="container position-relative">
+<div class="d-flex justify-content-center mx-auto" style="width:70%;">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>訪客姓名</th>
+                <th>原因</th>
+                <th>拜訪時間</th>
+            </tr>
+        </thead>
+        <tbody id="VisitorList">
+        </tbody>
+    </table>
+</div>
+
+ 
+
+<div class="d-flex justify-content-center">
+    <nav aria-label="Page navigation">
+        <ul class="pagination" id="Pagination"></ul>
+    </nav>
+</div>
+    <div class="position-fixed bottom-0 end-0 me-4" style="margin-bottom: 45%">
+        <a type="button" data-bs-toggle="modal" data-bs-target="#CreateModal" id="CreateButton" style="font-size:50px; color:#0c9197;">
+            <i class="bi bi-plus-circle-fill"></i>
+        </a>
+    </div>
+</div>
+<form asp-action="Create" method="post" id="CreateForm">
+    <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" id="CreateModal" tabindex="-1" aria-labelledby="CreateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="CreateModalLabel">新增訪客</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="VisitorName" class="form-label">訪客姓名</label>
+                        <input type="text" id="VisitorName" name="VisitorName" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="VisitReason" class="form-label">拜訪原因</label>
+                        <input type="text" id="VisitReason" name="VisitReason" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="VisitTime" class="form-label">拜訪時間</label>
+                        <input type="datetime-local" id="VisitTime" name="VisitTime" class="form-control" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-success">確定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+ 
+
+
+@section Scripts {
+ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+
+            document.addEventListener("DOMContentLoaded", function () {
+           
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');  
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            const currentTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+            document.getElementById('VisitTime').setAttribute('min', currentTime);
+
+            
+            loadVisitorData(currentPage);
+        });
+        let currentPage = 1;  
+        const pageSize = 10;  
+
+         
+        function loadVisitorData(pageNumber) {
+            fetch(`/UVisitorRecord/GetVisitorList?pageNumber=${pageNumber}&pageSize=${pageSize}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    let VisitorList = document.getElementById("VisitorList");
+                    VisitorList.innerHTML = ""; 
+                    if (data.data.length === 0) {
+                        VisitorList.innerHTML = `<tr><td colspan="4" class="text-center">沒有訪客記錄</td></tr>`;
+                        return;
+                    }
+
+                  
+                    data.data.forEach((Visitor, index) => {
+                        let row = `<tr style="cursor: pointer;">
+                                      <td>${(pageNumber - 1) * pageSize + index + 1}</td>
+                                      <td>${Visitor.visitorName || '未知'}</td>
+                                      <td>${Visitor.visitReason || '未提供'}</td>
+                                      <td>${new Date(Visitor.visitTime).toLocaleString()}</td>
+                                  </tr>`;
+                        VisitorList.innerHTML += row;
+                    });
+
+                   
+                    updatePagination(data.totalRecords, pageNumber);
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    let VisitorList = document.getElementById("VisitorList");
+                    VisitorList.innerHTML = `<tr><td colspan="4" class="text-center text-danger">無法載入數據，請稍後再試</td></tr>`;
+                });
+        }
+
+      
+        function updatePagination(totalRecords, currentPage) {
+            const totalPages = Math.ceil(totalRecords / pageSize);  
+            const Pagination = document.getElementById("Pagination");
+            Pagination.innerHTML = '';  
+
+            
+            Pagination.innerHTML += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                                        <a class="page-link" href="#" onclick="loadVisitorData(${currentPage - 1})">&laquo;</a>
+                                      </li>`;
+
+         
+            for (let i = 1; i <= totalPages; i++) {
+                Pagination.innerHTML += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                                            <a class="page-link" href="#" onclick="loadVisitorData(${i})">${i}</a>
+                                          </li>`;
+            }
+
+        
+            Pagination.innerHTML += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                                        <a class="page-link" href="#" onclick="loadVisitorData(${currentPage + 1})">&raquo;</a>
+                                      </li>`;
+        }
+
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            loadVisitorData(currentPage);
+        });
+
+         
+        $(document).ready(function () {
+            $("#CreateForm").submit(function () {
+                event.preventDefault();
+
+                var form = $(this);
+                $.ajax({
+                    type: "POST",
+                    url: form.attr("action"),
+                    data: form.serialize(),
+                    dataType: "json",
+                    success: function (response) {
+                        if (!response.success) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "錯誤",
+                                text: response.message
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: "success",
+                                title: "成功",
+                                text: response.message
+                            }).then(function () {
+                                location.reload();
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "發生錯誤",
+                            text: "伺服器錯誤：" + error
+                        });
+                    }
+                });
+            });
+        });
+
+
+    </script>
+}
+

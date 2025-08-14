@@ -1,0 +1,122 @@
+﻿@model IEnumerable<Yunity.Models.BdManagerWrap>
+
+@{
+    ViewData["Title"] = Model.FirstOrDefault()?.BdName + "管理員名單";
+}
+
+<style>
+    .table {
+        font-size: 20px;
+    }
+</style>
+
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index","Home")" class="breadcrumb-item active" aria-current="page">
+                首頁
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("BD_List","BD_Mange")" class="breadcrumb-item active" aria-current="page">
+                大樓管理
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("BD_Detailed","BD_Mange", new { id = Model.FirstOrDefault()?.BdId})" class="breadcrumb-item active" aria-current="page">
+                @Model.FirstOrDefault()?.BdName
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Manger_List","BD_Mange", new { id = Model.FirstOrDefault()?.BdId })" class="breadcrumb-item active" aria-current="page" style="color:#293C56">
+                @(Model.FirstOrDefault()?.BdName)-管理員名單
+            </a>
+        </li>
+    </ol>
+</nav>
+<div class="container mt-4">
+    <div class="row" style="position: relative;">
+        <div class="col-4 mt-4 ">
+            <h1>@Model.FirstOrDefault()?.BdName - 管理員名單</h1>
+        </div>
+        <div class="col-8 mt-4" style="position: relative;">
+            <strong style="position: absolute; right: 20px; bottom: -20px; font-size:20px;">地址：　@Model.FirstOrDefault()?.BdAddr</strong>
+        </div>
+    </div>
+</div>
+<hr />
+<form id="Manger_List" method="post" asp-action="Manger_List">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center">
+                                序號
+                            </th>
+                            <th class="ps-5">
+                                @Html.DisplayNameFor(model => model.FName)
+                            </th>
+                            <th class="ps-5">
+                                @Html.DisplayNameFor(model => model.FAccount)
+                            </th>
+                            <th class="ps-5">
+                                @Html.DisplayNameFor(model => model.FEmail)
+                            </th>
+                            <th class="ps-5">
+                                @Html.DisplayNameFor(model => model.Permissions)
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int count = 0;
+                            @foreach (var item in Model)
+                            {
+                                count++;
+                                <tr>
+                                    <td class="text-center">
+                                        <input type="hidden" name="Id" value="@item.Id" />
+                                        @count
+                                    </td>
+                                    <td class="ps-5">
+                                        @Html.DisplayFor(modelItem => item.FName)
+                                    </td>
+                                    <td class="ps-5">
+                                        @Html.DisplayFor(modelItem => item.FAccount)
+                                    </td>
+                                    <td class="ps-5">
+                                        @Html.DisplayFor(modelItem => item.FEmail)
+                                    </td>
+                                    <td class="ps-5">
+                                        @Html.DropDownListFor(model => item.Permissions,
+                                            new SelectList(new[] {
+                                            new { Value = "1", Text = "管理經理" },
+                                            new { Value = "2", Text = "管委會" },
+                                            new { Value = "3", Text = "管理員" }}, "Value", "Text"),
+                                             new { @class = "form-select", id = "selectPermissions_" + @item.Id, onchange = "updatepermission('" + @item.Id + "')" }
+                                            )
+                                        <input type="hidden" name="Permissions_@item.Id" id="Permissions_@item.Id" value="@Html.DisplayFor(model => item.Permissions)" />
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="text-center">
+    <i class="bi bi-floppy icon-pointer saveBtn" onclick="document.getElementById('Manger_List').submit()"></i>
+    <i class="bi bi-arrow-left-circle-fill icon-pointer" style="position: fixed; bottom: 20px; right: 20px; color: #293c56;font-size:3rem; z-index: 9999;" onclick="location.href = '/BD_Mange/BD_Detailed/@Model.FirstOrDefault()?.BdId'"></i>
+</div>
+@section Scripts {
+    <script>
+        function updatepermission(id) {
+                document.getElementById('Permissions_' + id).value = document.getElementById('selectPermissions_' + id).value;
+        }
+    </script>
+}
+

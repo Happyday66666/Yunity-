@@ -1,0 +1,313 @@
+﻿@model Yunity.Models.BdListWrap
+
+
+
+@{
+	ViewData["Title"] = @Html.DisplayFor(model => Model.BdName);
+}
+<style>
+	.form-check-input:checked {
+		background-color: #293c56;
+		border-color: #293c56;
+	}
+
+	.form-switch .form-check-input {
+		width: 3em;
+	}
+</style>
+
+
+<div class="container ">
+	<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-4">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item">
+				<a href="@Url.Action("Index","Home")" class="breadcrumb-item active" aria-current="page">
+					首頁
+				</a>
+			</li>
+			<li class="breadcrumb-item">
+				<a href="@Url.Action("BD_List","BD_Mange")" class="breadcrumb-item active" aria-current="page">
+					大樓管理
+				</a>
+			</li>
+			<li class="breadcrumb-item">
+				<a href="@Url.Action("BD_Detailed","BD_Mange", new { id = Model.Id })" class="breadcrumb-item active" aria-current="page" style="color:#293C56">
+					@Model.BdName
+				</a>
+			</li>
+		</ol>
+	</nav>
+	<h1 class="mb-3 mt-3">@Html.DisplayFor(modelItem => Model.BdName)</h1>
+	<hr />
+	<form>
+		<div class="row">
+			<div class="col-6">
+				<table class="table fs-6">
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.BdName)
+						</th>
+						<td>
+							@Html.DisplayFor(model => Model.BdName)
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.BdAddr)
+						</th>
+						<td>
+							@Html.DisplayFor(model => Model.BdAddr)
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.ContractStart)
+						</th>
+						<td>
+							@if (Model.ContractStart != null)
+							{
+								@Html.Raw(Model.ContractStart.Value.ToString("yyyy-MM-dd"))
+							}
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.ContractEnd)
+						</th>
+						<td>
+							@if (Model.ContractEnd != null)
+							{
+								@Html.Raw(Model.ContractEnd.Value.ToString("yyyy-MM-dd"))
+							}
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.FirstContact)
+						</th>
+						<td>
+							@Html.DisplayFor(model => Model.FirstContact)
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.FstContactTel)
+						</th>
+						<td>
+							@Html.DisplayFor(model => Model.FstContactTel)
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.SecondContact)
+						</th>
+						<td>
+							@Html.DisplayFor(model => Model.SecondContact)
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.SecContactTel).
+						</th>
+						<td>
+							@Html.DisplayFor(model => Model.SecContactTel)
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.BdState)
+						</th>
+						<td>
+							<span style="color: @(Model.BdState == 1 ? "#01814A" : "darkred"); font-size:25px" class="me-4 fw-bold">
+								@((Model.BdState == 1) ? "正常" : "關閉")
+							</span>
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.HouseCount)
+						</th>
+						<td>
+							@Html.DisplayFor(model => Model.HouseCount) 戶
+						</td>
+					</tr>
+					<tr>
+						<td>
+							@Html.DisplayNameFor(model => model.Usercount)
+						</td>
+						<td>
+							<u style="color:	#0072E3">
+							<a asp-controller="BD_Mange" asp-action="Menber_List" asp-route-id="@Model.BdList.Id" style="color:	#0072E3">
+								@Html.DisplayFor(model => Model.Usercount) 名住戶
+							</a>
+							</u>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							@Html.DisplayNameFor(model => model.Managercount)
+						</td>
+						<td>
+							<u style="color:	#0072E3">
+								<a asp-controller="BD_Mange" asp-action="Manger_List" asp-route-id="@Model.BdList.Id" style="color:	#0072E3">
+									@Html.DisplayFor(model => Model.Managercount) 名管理者
+								</a>
+							</u>
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div class="col-6 form-check form-switch">
+				<table class="table fs-6">
+					<tr>
+						<th class="text-center " colspan="2">
+							<input type="hidden" id="BD_id" value="@Model.BdPermission.Id" />
+							功能開啟
+						</th>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.ReceivePackage)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission()"
+								   id="ReceivePackage" @(Model.ReceivePackage == 0 ? "disabled" : "checked disabled") />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.SentPackage)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission()"
+								   id="SentPackage" @(Model.SentPackage == 0 ? "disabled" : "checked disabled") />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.ManageFee)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission()"
+								   id="ManageFee" @(Model.ManageFee == 0 ? "disabled" : "checked disabled") />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.Bulletin)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission()"
+								   id="Bulletin" @(Model.Bulletin == 0 ? "disabled" : "checked disabled") />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.PublicAreaReserve)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission()"
+								   id="PublicAreaReserve" @(Model.PublicAreaReserve == 0 ? "disabled" : "checked disabled") />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.NearbyStore)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission()"
+								   id="NearbyStore" @(Model.NearbyStore == 0 ? "disabled" : "checked disabled") />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.CommunityService)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission()"
+								   id="CommunityService" @(Model.CommunityService == 0 ? "disabled" : "checked disabled") />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.Feedback)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission()"
+								   id="Feedback" @(Model.Feedback == 0 ? "disabled" : "checked disabled") />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.VisitorRecord)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onchange="updatepermission()"
+								   id="VisitorRecord" @(Model.VisitorRecord == 0 ? "disabled" : "checked disabled") />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.Calendar)
+						</th>
+						<td class="d-flex justify-content-end">
+							<input class="form-check-input" type="checkbox" onclick="updatepermission()"
+								   id="Calendar" @(Model.Calendar == 0 ? "disabled" : "checked disabled") />
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div>
+				<a asp-controller="BD_Mange" asp-action="Edit" asp-route-id="@Model.BdList.Id">
+					<i class="bi bi-pencil" style="position: fixed; bottom: 100px; right: 20px; background-color:#004aad; border-radius: 50%; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; color: white; font-size: 1.5rem; text-decoration: none; z-index: 9999;"></i>
+				</a>
+				<a asp-action="BD_List" style="position: fixed; bottom: 20px; right: 20px; color: #293c56;font-size:3rem; z-index: 9999;">
+					<i class="bi bi-arrow-left-circle-fill"></i>
+				</a>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+@section Scripts {
+	<script>
+		var BU_ID = document.getElementById("BD_id").value;
+		var baseAddress="https://localhost:7091"
+		async function updatepermission() {
+			var p = {
+					ReceivePackage: document.getElementById("ReceivePackage").checked ? 1 : 0,
+					SentPackage: document.getElementById("SentPackage").checked ? 1 : 0,
+					ManageFee: document.getElementById("ManageFee").checked ? 1 : 0,
+					Bulletin: document.getElementById("Bulletin").checked ? 1 : 0,
+					PublicAreaReserve: document.getElementById("PublicAreaReserve").checked ? 1 : 0,
+					NearbyStore: document.getElementById("NearbyStore").checked ? 1 : 0,
+					CommunityService: document.getElementById("CommunityService").checked ? 1 : 0,
+					Feedback: document.getElementById("Feedback").checked ? 1 : 0,
+					VisitorRecord: document.getElementById("VisitorRecord").checked ? 1 : 0,
+					Calendar: document.getElementById("Calendar").checked ? 1 : 0
+			};
+			var response = await fetch(`${baseAddress}/Ajax/UpdatePermission/${BU_ID}`
+			, {
+				method:"POST",
+				body:JSON.stringify(p),
+				headers:{
+					"content-type":"application/json"
+				}
+			});
+			console.log(response);
+			if (response.ok)
+			{
+				var data = await response.json();
+				alert("Permissions updated successfully");
+			}
+			else
+			{
+				alert("Failed to update permissions: " + response.statusText);
+			}
+		}
+	</script>
+}
+
+
+

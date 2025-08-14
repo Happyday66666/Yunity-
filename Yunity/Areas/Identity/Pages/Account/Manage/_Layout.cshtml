@@ -1,0 +1,31 @@
+﻿@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
+    {
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+}
+
+<div class="container d-flex flex-column justify-content-center align-items-center" style="min-height: 100vh;">
+    <h2 class="text-center" >管理您的帳號</h2> 
+
+    <div class="w-100">
+        
+        <div class="row justify-content-center">
+            <div  >
+                <partial name="_ManageNav" />
+            </div>
+            <div style="height: 800px; overflow-y: auto;">
+
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

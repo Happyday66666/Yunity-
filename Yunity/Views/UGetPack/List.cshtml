@@ -1,0 +1,224 @@
+﻿ @model IEnumerable<Yunity.Models.GetPacksWrap>
+
+@{
+    Layout = "_LayoutUser";
+    ViewData["Title"] = "包裹通知";
+    
+}
+<style>
+
+    /* 為所有按鈕加上底線，並設置初始顏色為灰色 */
+    .btn-custom {
+        border: none;
+        text-decoration: none;
+        position: relative;
+    }
+
+        .btn-custom::after {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 2px; /* 底線的粗細 */
+            background-color: #D0D0D0; /* 底線顏色 */
+            bottom: 0; /* 放到底部 */
+            left: 0;
+            transition: background-color 0.3s ease; /* 設置過渡效果 */
+        }
+
+        /* 當鼠標懸停時，底線變為深藍色 */
+        .btn-custom:hover::after {
+            background-color: #3255af; /* 深藍色 */
+        }
+
+        /* 當按鈕被點擊或在焦點時，底線顏色也變為深藍色 */
+        .btn-custom:focus::after, .btn-custom:active::after {
+            background-color: #3255af; /* 深藍色 */
+        }
+
+
+    .card {
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 10px rgba(50, 85, 175, 0.2); /* 默認陰影 */
+        transition: transform 0.2s ease, box-shadow 0.2s ease; /* 使變化過渡平滑 */
+    }
+
+        .card:hover {
+            box-shadow: 0 8px 20px rgba(50, 85, 175, 0.2); /* 滑鼠懸停時增加陰影 */
+            transform: translateY(-5px); /* 使卡片向上漂浮 */
+        }
+
+        .card:active {
+            transform: translateY(2px); /* 按下時使卡片稍微向下移動，模擬點擊效果 */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 按下時的陰影效果 */
+        }
+
+    .card-text{
+        font-size:20px;
+    }
+    .card-body {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+</style>
+<div class="container mt-3 mb-3 ">
+    <h2 class="d-flex justify-content-center" style="color:#3255af;">包裹領取通知</h2>
+    
+
+    <div class="container mt-3 mb-3 d-flex justify-content-center">
+        <div class="d-flex my-5" style="gap: 15px; ">
+            <button id="btnAll" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-box2-heart-fill" style="margin-right:5px; font-size: 40px;"></i>全部</button>
+            <button id="btnGet" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-bag-check-fill" style="margin-right:5px; font-size: 40px;"></i>已領取</button>
+            <button id="btnNotGet" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-bag-x-fill" style="margin-right:5px; font-size: 40px;"></i>未領取</button>
+    </div>
+    </div>
+    @if (ViewBag.HasUncollectedPackage != null && ViewBag.HasUncollectedPackage)
+    {
+        <!-- 提示訊息 -->
+        <div id="alertMessage" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong style="font-size:20px;">通知：您有未領取的包裹，請儘快領取。</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- 提示音 -->
+        <audio id="alertSound" src="your-sound-file.mp3" preload="auto"></audio>
+
+    }
+    <div class="row  d-flex justify-content-center">
+        <div class="container">
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-6 mb-4">
+                        <div class="card d-flex">
+                            <div class="row no-gutters">
+                                <!-- 文字部分在左边 -->
+                                <div class="col-md-6 d-flex align-items-center">
+                                    <div class="card-body">
+                                        <h5 class="card-title " style="color:#3255af;">
+                                            @if (item.State == "已領取")  // 根據已領取狀態顯示圖標
+                                            {
+                                                <i class="bi bi-bag-check-fill"></i>
+                                            }
+                                            else if (item.State == "未領取")  // 根據未領取狀態顯示圖標
+                                            {
+                                                <i class="bi bi-bag-x-fill"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-box"></i>
+                                                // 默認圖標
+                                            }
+                                           
+                                            包裹編號: 
+                                        </h5>
+                                        <h5 class="card-title " style="color:#3255af;">
+                                        @item.PackNo
+                                        </h5>
+                                        <p class="card-text">
+                                            <strong>包裹類型:</strong> @item.Type<br>
+                                            <strong>領取人:</strong> @item.PickUser<br>
+                                            <strong>狀態:</strong>
+                                            @if (@item.State == "已領取")
+                                            {
+                                                <span style="color: forestgreen; font-weight:600;">@item.State</span>
+                                            }
+                                            else if (@item.State == "未領取")
+                                            {
+                                                <span style="color: red; font-weight:600;">@item.State</span>  <!-- 未領取文字變紅 -->
+                                            }
+                                            else
+                                            {
+                                                @item.State
+                                            }
+                                        </p>
+                                        
+
+                                    </div>
+                                </div>
+
+                                <!-- 图片部分在右边 -->
+                                <div class="col-md-6" style="height: 200px; overflow: hidden;">
+                                    <img src="@item.PackPhoto" class="card-img-top img-fluid" alt="包裹照片" style="height: 200px; object-fit: cover;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+</div>
+</div>
+@functions {
+    
+
+
+
+}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+
+        $(document).ready(function(){
+                console.log('Document is ready');
+             //點擊全部
+             $('#btnAll').click(function(){
+                   console.log('Sent button clicked');
+                   filterPackages("全部");
+             })
+            //點擊已寄出
+              $('#btnGet').click(function(){
+                     console.log('Sent button clicked');
+                filterPackages("已領取");
+            })
+            //點擊未寄出
+            $('#btnNotGet').click(function(){
+                      console.log('Not Sent button clicked');
+                filterPackages("未領取");
+            })
+
+            //篩選包裹---根據state
+            function filterPackages(state){
+                     console.log('Filtering packages with state: ' + state);
+                         var stateValue;
+                    if (state === "全部") {
+                        stateValue = -1;
+                    } else if (state === "已領取") {
+                        stateValue = 1;
+                    } else if (state === "未領取") {
+                        stateValue = 0;
+                    }
+                $.ajax({
+                    url:'@Url.Action("FilterAjax", "UGetPack")',
+                    type:'GET',
+                        data:{state:stateValue},
+                    success:function(data){
+                            console.log('Data received: ', data);
+                        $('.row').html(data);
+                    },
+                    error:function(){
+                        alert('錯誤:無法加載資料')
+                    }
+
+                });
+            }
+        })
+
+         
+    </script>
+
+}
+
+
+
+
+
+
+
+
+
+

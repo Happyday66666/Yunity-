@@ -1,0 +1,11 @@
+﻿@page
+@model ConfirmEmailChangeModel
+@{
+    Layout= "_LayoutUser"; // 指定不同的 Layout
+    Layout = "_LayoutHomePage"; // 指定不同的 Layout
+
+}
+<div class="container text-center mt-5">
+<h1>@ViewData["Title"]</h1>
+<partial name="_StatusMessage" model="Model.StatusMessage" />
+</div>

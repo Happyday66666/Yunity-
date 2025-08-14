@@ -1,0 +1,156 @@
+﻿{
+   "CodeGenerationMode": 4,
+   "ContextClassName": "BuildingDataContext",
+   "ContextNamespace": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": false,
+   "ModelNamespace": null,
+   "OutputContextPath": null,
+   "OutputPath": "Models",
+   "PreserveCasingWithRegex": true,
+   "ProjectRootNamespace": "Yunity",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 2,
+   "SelectedToBeGenerated": 0,
+   "T4TemplatePath": null,
+   "Tables": [
+      {
+         "Name": "[dbo].[BD_List]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BD_Manager]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BD_Member]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[BD_Permissions]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Board]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Calendar]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Company_Account]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Company_Login_History]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Company_Profile]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Company_Service_Area]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CS_Appointment_Record]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CS_Order_Photo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CS_Product]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[CS_Product_Photo]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Door_No]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[EcpayOrders]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Get_Pack]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Manage_Fee]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Near_Store]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Public_Area_Reserve]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Send_Pack]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Server_History]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tManager_Info]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tManager_Login_History]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tSystem_Info]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[tusers_Info]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[User_Area_Reserve]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Visitor_Record]",
+         "ObjectType": 0
+      }
+   ],
+   "UiHint": null,
+   "UncountableWords": null,
+   "UseAsyncStoredProcedureCalls": true,
+   "UseBoolPropertiesWithoutDefaultSql": false,
+   "UseDatabaseNames": false,
+   "UseDatabaseNamesForRoutines": true,
+   "UseDateOnlyTimeOnly": true,
+   "UseDbContextSplitting": false,
+   "UseDecimalDataAnnotationForSprocResult": true,
+   "UseFluentApiOnly": true,
+   "UseHandleBars": false,
+   "UseHierarchyId": false,
+   "UseInflector": true,
+   "UseLegacyPluralizer": false,
+   "UseManyToManyEntity": false,
+   "UseNoDefaultConstructor": false,
+   "UseNoNavigations": false,
+   "UseNoObjectFilter": false,
+   "UseNodaTime": false,
+   "UseNullableReferences": false,
+   "UsePrefixNavigationNaming": false,
+   "UseSchemaFolders": false,
+   "UseSchemaNamespaces": false,
+   "UseSpatial": false,
+   "UseT4": false,
+   "UseT4Split": false
+}

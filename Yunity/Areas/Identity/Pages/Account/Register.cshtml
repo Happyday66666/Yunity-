@@ -1,0 +1,93 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "註冊";
+    Layout = "_LayoutHomePage"; // 讓登入畫面也使用 _LayoutHomePage
+}
+
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-6">
+            <div class="card card-log">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-3 log-text">Sign Up</h2>
+                    <!-- 四個角落的圓形陰影 -->
+                    <div id="Manager" class="shadow-sm Log_corner Log_top_left"></div>
+                    <div id="User" class="shadow-sm Log_corner Log_top_right"></div>
+                    <div id="Conpany" class="shadow-sm Log_corner Log_bottom_left"></div>
+                    <div class="shadow-sm Log_corner Log_bottom_right"></div>
+                    <hr />
+                    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                        <div class="form-floating mb-3">
+                            <input id="emailInput" asp-for="Input.Email" class="form-control log-input rounded-pill" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                            <label asp-for="Input.Email">電子郵件</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input id="passwordInput" asp-for="Input.Password" class="form-control log-input rounded-pill" autocomplete="new-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.Password">密碼</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input id="confirmpasswordInput" asp-for="Input.ConfirmPassword" class="form-control log-input rounded-pill" autocomplete="new-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.ConfirmPassword">確認密碼</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input id="nameInput" asp-for="Input.FName" class="form-control log-input rounded-pill" placeholder="姓名" />
+                            <label asp-for="Input.FName">姓名</label>
+                            <span asp-validation-for="Input.FName" class="text-danger"></span>
+                        </div>
+                      
+                        <div class="form-floating mb-3">
+                            <input id="phoneInput" asp-for="Input.PhoneNumber" class="form-control log-input rounded-pill" autocomplete="username" aria-required="true" placeholder="電話號碼" />
+                            <label asp-for="Input.PhoneNumber">電話號碼</label>
+                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <select asp-for="Input.Role" id="roleSelect" class="form-control rounded-pill" aria-required="true">
+                                <option value="">-- 請選擇身份 --</option>
+                                <option value="User">住戶</option>
+                                <option value="Manager">管理員</option>
+                                
+                            </select>
+                            <label asp-for="Input.Role">身份</label>
+                            <span asp-validation-for="Input.Role" class="text-danger"></span>
+                        </div>
+                        <div class="d-flex justify-content-center w-100 mt-1">
+                            <button id="registerSubmit" type="submit" class="btn-log mx-auto">註冊</button>
+                        </div>
+                        <div class="text-center mt-4">
+                            <p>
+                                <a href='/Identity/Account/Login' class="text-decoration-none">已經有帳戶了</a>
+                            </p>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+     
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+                document.getElementById('Manager').addEventListener('click', function () {
+                    document.getElementById('emailInput').value = 'Alexchang0309@gmail.com';
+                    document.getElementById('passwordInput').value = "Alex0309/";
+                document.getElementById('confirmpasswordInput').value = "Alex0309/";
+        document.getElementById('nameInput').value = "張天民";
+        document.getElementById('phoneInput').value = "0922556998";
+            });
+
+    </script>
+}

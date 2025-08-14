@@ -1,0 +1,212 @@
+﻿ @model Yunity.ViewModels.CHomeWrap
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@section Styles {
+    @* 引用放這 *@
+    <style>
+        /* 自訂樣式 */
+        /* 行事曆外層容器，確保佔頁面高度的 1/3 */
+        #calendar-container {
+            width: 100%; /* 行事曆寬度佔滿 */
+            height: 75vh; /* 高度設置為 1/3 頁面高度 (33% of viewport height) */
+            display: flex;
+            justify-content: center; /* 水平置中 */
+            align-items: center; /* 垂直置中 */
+            color: black !important;
+        }
+
+        #calendar {
+            width: 100%; /* 行事曆寬度，視需求調整 */
+            height: 100%; /* 確保高度充滿父容器 */
+        }
+        /* 日期文字顏色加深 */
+        .fc-daygrid-day-number {
+            color: #222; /* 深色文字 */
+            font-weight: bold; /* 加粗顯示 */
+        }
+        /* 星期文字顏色加深 */
+        .fc-col-header-cell {
+            color: #222; /* 星期文字顏色 */
+            font-weight: bold; /* 加粗顯示 */
+        }
+
+        /* 控制事件文字顯示樣式 */
+        .fc-event-title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100px;
+            position: relative; /* 確保工具提示能顯示 */
+        }
+
+
+        /* 工具提示樣式 */
+        .fc-tooltip {
+            font-size: 14px;
+            line-height: 1.5;
+            border-radius: 4px;
+        }
+
+        a {
+            color: black;
+        }
+    </style>
+}
+
+<div class="text-center">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Productivity Tips! 這塊我要 -->
+            <div class="col-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h4 class="mt-7">大樓合作到期</h4>
+                        <h1 class="mt-7" style="color:red" id="bd-count">@Model.DateLineCount.BDCount</h1>
+                        <h4 class="mt-7">件</h4>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h4 class="mt-7">廠商合作到期</h4>
+                        <h1 class="mt-7 " style="color:red" id="cp-count">@Model.DateLineCount.CPCount</h1>
+                        <h4 class="mt-7">件</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body text-center">
+
+
+
+
+                        <div id="calendar-container">
+                            @* 初次載入 Partial View *@
+                            @await Html.PartialAsync("_CalendarPartial")
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function initializeCalendar(calendarEl) {
+            if (calendarEl) {
+                const calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    events: function (fetchInfo, success, failure) {
+                        fetch(`/Calendar/GetEvents?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`)
+                            .then(response => response.json())
+                            .then(data => success(data))
+                            .catch(error => failure(error));
+                    },
+                     eventMouseEnter: function (info) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'fc-tooltip';
+                    tooltip.style.position = 'absolute';
+                    tooltip.style.background = '#fff';
+                    tooltip.style.border = '1px solid #ccc';
+                    tooltip.style.padding = '5px';
+                    tooltip.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)';
+                    tooltip.style.zIndex = 1000;
+                    tooltip.style.pointerEvents = 'none';
+                    tooltip.innerText = info.event.title;
+
+                    document.body.appendChild(tooltip);
+
+                    function positionTooltip(e) {
+                        tooltip.style.left = `${e.pageX + 10}px`;
+                        tooltip.style.top = `${e.pageY + 10}px`;
+                    }
+                    positionTooltip(info.jsEvent);
+
+                    info.el.addEventListener('mousemove', positionTooltip);
+
+                    info.el.tooltip = tooltip;
+                },
+                eventMouseLeave: function (info) {
+                    if (info.el.tooltip) {
+                        info.el.tooltip.remove();
+                        delete info.el.tooltip;
+                    }
+                }
+                });
+               calendar.render();
+            }
+        }
+
+        function refreshCalendar() {
+            const calendarContainer = document.getElementById('calendar-container');
+            calendarContainer.classList.add('loading');
+
+            fetch('/Calendar/LoadCalendarPartial')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('無法加載日曆頁面：' + response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    calendarContainer.innerHTML = html;
+                    calendarContainer.classList.remove('loading');
+
+                    const calendarEl = document.getElementById('calendar');
+                    initializeCalendar(calendarEl);
+                })
+                .catch(error => {
+                    calendarContainer.classList.remove('loading');
+                    console.error('刷新行事曆失敗:', error);
+                });
+        }
+
+        function refreshCounts() {
+            fetch('/Home/GetDateLineCounts')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('bd-count').textContent = data.bdCount;
+                    document.getElementById('cp-count').textContent = data.cpCount;
+                })
+                .catch(error => console.error('無法刷新數據:', error));
+        }
+
+        function scheduleRefresh(hours) {
+            function scheduleNext(hour) {
+                const now = new Date();
+                const nextRefresh = new Date();
+                nextRefresh.setHours(hour, 0, 0, 0);
+
+                if (now > nextRefresh) {
+                    nextRefresh.setDate(nextRefresh.getDate() + 1);
+                }
+
+                const delay = nextRefresh - now;
+                setTimeout(() => {
+                    refreshCalendar();
+                    refreshCounts();
+                    scheduleNext(hour);
+                }, delay);
+            }
+
+            hours.forEach(scheduleNext);
+        }
+
+        // 初次加載
+        refreshCalendar();
+        refreshCounts();
+        // 設置每天早上8點、中午12點、下午5點刷新
+        scheduleRefresh([8, 12, 17]);
+
+    </script>
+}

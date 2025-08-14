@@ -1,0 +1,196 @@
+﻿@model Yunity.ViewModels.CBoardDetailViewModel
+@{
+    Layout = "_LayoutManager";
+    ViewData["Title"] = "公告詳情";
+}
+
+@{
+    int typeValue = 0;
+    if (!string.IsNullOrEmpty(Model.Type) && int.TryParse(Model.Type, out int result))
+    {
+        typeValue = result;
+    }
+    int stateValue = 0;
+    if (!string.IsNullOrEmpty(Model.State) && int.TryParse(Model.State, out int result1))
+    {
+        stateValue = result1;
+    }
+}
+
+@section Styles {
+    <style>
+        .board-title {
+            text-align: center;
+        }
+
+        .board-Info {
+            background: white;
+            box-shadow: 0px 4px 10px 2px rgba(120, 120, 120, 0.2);
+            padding: 30px;
+            border-radius: 20px;
+            width: 95%;
+            margin: 0 auto;
+        }
+
+        .Info {
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+        }
+
+        .col-md-4 img {
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .floating-btn {
+            position: fixed;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            z-index: 9999;
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-size: 24px;
+        }
+
+        .deleteBtn {
+            background-color: #e63946;
+            bottom: 150px;
+        }
+
+        .editPen {
+            background-color: #AFBF73;
+            bottom: 75px;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 3px 6px 12px rgba(0, 0, 0, 0.3);
+            color:beige;
+        }
+
+        #state{
+            font-size:20px;
+            color:forestgreen;
+        }
+
+        #type{
+            font-size: 20px;
+            color:darkblue;
+            font-weight:bold;
+        }
+    </style>
+}
+
+<div class="container mt-3 mb-3">
+    <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" asp-area="Concierge" style="color:#9BA8Ab;">首頁</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index" asp-area="MBoard" style="color:#9BA8Ab;">公告列表</a></li>
+            <li class="breadcrumb-item active" aria-current="page" style="color:#31515e">@Model.Title</li>
+        </ol>
+    </nav>
+
+    <div class="board-title mb-2">
+        <h3 class="m-4">@Model.Title</h3>
+    </div>
+
+    <div class="board-Info">
+        <div class="mt-1 mx-auto">
+            <div class="container Info">
+                <table class="w-100">
+                    <tr>
+                        <td class="align-middle">
+                            <b id="state">
+                                <i class="bi bi-bookmark-dash-fill"></i>
+                                @(stateValue == 1 ? "草稿" :
+                                    stateValue == 2 ? "已撤銷" :
+                                    stateValue == 3 ? "已發佈" :
+                                    "其他")
+                            </b>
+                        </td>
+                        <td></td>
+                        <td class="align-middle">
+                            <p class=" text-type text-end" id="type">
+                                @(typeValue == 1 ? "活動通知" :
+                                    typeValue == 2 ? "緊急通知" :
+                                    typeValue == 3 ? "維修通告" :
+                                    "其他公告")
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="align-middle ">
+                            <p class="text-muted">
+                                <i class="bi bi-person-fill"></i> 發布人：@Model.Poster
+                            </p>
+                        </td>
+                        <td></td>
+                        <td class="text-end text-muted">
+                            <i class="bi bi-calendar-heart me-2"></i> @Model.Time
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="container mt-5">
+                <div class="row">
+                    <div class="col-md-4 p-3 d-flex justify-content-center align-items-center">
+                        <img src="@Model.ImageUrl" class="img-fluid" alt="公告圖片" />
+                    </div>
+                    <div class="col-md-7 px-3 py-1">
+                        <div class="px-2 py-2">
+                            <p class="fs-4" style="white-space: pre-wrap;">@Model.Description</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="#" onclick="confirmDelete()" class="floating-btn deleteBtn">
+            <i class="bi bi-trash3-fill"></i>
+        </a>
+
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="floating-btn editPen">
+            <i class="bi bi-pencil-fill"></i>
+        </a>
+
+        <form id="deleteForm" asp-action="Delete" asp-route-id="@Model.Id" method="post" style="display: none;"></form>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmDelete() {
+            Swal.fire({
+                title: "確定要刪除嗎?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#e63946",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "確定",
+                cancelButtonText: "取消"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById("deleteForm").submit();
+                }
+            });
+        }
+    </script>
+
+}

@@ -1,0 +1,185 @@
+﻿@{
+    Layout = "_LayoutManager";
+    ViewData["Title"] = "公告欄";
+}
+
+@section Styles {
+    <style>
+        td {
+            vertical-align: middle;
+            height: 60px;
+        }
+
+        #CreateButton {
+            position: fixed;
+            bottom: 75px;
+            right: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #CreateButton:hover {
+            transform: scale(1.1);
+        }
+
+        .btn{
+            border-radius:50%;
+        }
+
+        .search {
+            font-size: 1.1rem;
+            background: rgb(255 255 255);
+            color: #3a525e;
+        }
+
+
+    </style>
+}
+
+<div class="container my-3">
+    <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Concierge")" style="color:#9BA8Ab;">首頁</a></li>
+            <li class="breadcrumb-item " aria-current="page" style="color:#31515e">公告列表</li>
+        </ol>
+    </nav>
+
+    <h3 class="text-center m-4">公告欄管理</h3>
+    <div class="my-4" style="width:90%;">
+        <form id="searchForm" method="post" onsubmit="fetchBoardList(event)" class="d-flex justify-content-end align-items-center gap-3">
+            <input type="text" id="keywordtxt" name="keyword" placeholder="搜尋公告" class="form-control search rounded-pill" style="width: 30%;" />
+            <select id="stateFilter" name="state" class="form-select search rounded-pill" style="width: 150px;">
+                <option value="">全部</option>
+                <option value="1">草稿</option>
+                <option value="3">已發佈</option>
+                <option value="2">已撤銷</option>
+            </select>
+            <button type="submit" class="btn btn-primary-Manager"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+
+    <div class="d-flex justify-content-center mx-auto mb-3">
+        <table class="table table-hover align-middle table-container" id="boardTable">
+            <thead style="vertical-align: middle">
+                <tr style="border-bottom:solid black 2px; height:70px;font-size:19px;" class="tr-bg-color">
+                    <th style="padding-left:30px">序號</th>
+                    <th>標題</th>
+                    <th>類型</th>
+                    <th>發布人</th>
+                    <th>發布時間</th>
+                    <th>狀態</th>
+                </tr>
+            </thead>
+            <tbody id="boardList" style="font-size:17px;">
+            
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<a asp-action="Create" id="CreateButton">
+    <i class="bi bi-plus-circle-fill btn-create"></i>
+</a>
+
+
+
+@section Scripts{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("/MBoard/GetBoardList")
+                .then(response => response.json())  
+                .then(data => {
+                    let boardList = document.getElementById("boardList");
+                    boardList.innerHTML = "";
+
+                    if (data.length === 0) {
+                        boardList.innerHTML = `<tr><td colspan="7" class="text-center">沒有公告紀錄</td></tr>`;
+                        return;
+                    }
+
+                    data.forEach((board, index) => {
+                        let row = `
+                             <tr onclick="location.href='/MBoard/Detail/${board.id}'" style="cursor: pointer;">
+                                <td style="text-align:center">${index + 1}</td>
+                                <td>${board.name}</td>
+                                <td>${getBoardType(board.type)}</td>
+                                <td>${board.poster}</td>
+                                <td>${new Date(board.time).toLocaleString()}</td>
+                                <td>${getBoardState(board.state)}</td>
+                            </tr>
+                        `;
+                        boardList.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    boardList.innerHTML = `<tr><td colspan="7" class="text-center text-danger">無法載入數據，請稍後再試</td></tr>`;
+                });
+        });
+
+        function fetchBoardList(event) {
+            event.preventDefault(); 
+
+            const form = document.getElementById('searchForm');
+            const formData = new FormData(form);
+
+            fetch('/MBoard/SearchBoard', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("伺服器回應錯誤");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let boardList = document.getElementById("boardList");
+                    boardList.innerHTML = "";
+
+                    if (data.length === 0) {
+                        boardList.innerHTML = `<tr><td colspan="7" class="text-center">沒有公告記錄</td></tr>`;
+                        return;
+                    }
+
+                    data.forEach((board, index) => {
+                        let row = `
+                             <tr onclick="location.href='/MBoard/Detail/${board.id}'" style="cursor: pointer;">
+                                <td style="text-align:center">${index + 1}</td>
+                                <td>${board.name}</td>
+                                <td>${getBoardType(board.type)}</td>
+                                <td>${board.poster}</td>
+                                <td>${new Date(board.time).toLocaleString()}</td>
+                                <td>${getBoardState(board.state)}</td>
+                            </tr>
+                        `;
+                        boardList.innerHTML += row;
+                    });
+
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    boardList.innerHTML = `<tr><td colspan="7" class="text-center text-danger">無法載入數據，請稍後再試</td></tr>`;
+                });
+        }
+
+        function getBoardType(type) {
+            switch (type) {
+                case 1: return "活動通知";
+                case 2: return "緊急通知";
+                case 3: return "維修公告";
+                default: return "其他公告";
+            }
+        }
+
+        function getBoardState(state){
+            switch (state){
+                case 1: return "草稿";
+                case 2: return "已撤銷";
+                case 3: return "已發布";
+                default: return "其他";
+            }
+        }
+
+    </script>
+}

@@ -1,0 +1,13 @@
+﻿@page
+@model LockoutModel
+@{
+    ViewData["Title"] = "帳戶已被鎖定";
+   
+    Layout = "_LayoutHomePage"; // 指定不同的 Layout
+
+}
+
+<header>
+    <h1 class="text-danger">@ViewData["Title"]</h1>
+    <p class="text-danger">此帳戶已被鎖定，請稍後再試。</p>
+</header>

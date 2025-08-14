@@ -1,0 +1,193 @@
+﻿@model IEnumerable<Yunity.ViewModels.PublicAreaReserveViewModel>
+
+@{
+    ViewData["Title"] = "公設列表";
+    Layout = "_LayoutUser"; // 使用 _LayoutUser 版面
+}
+
+<div class="container my-5 text-center">
+    <!-- 頁面標題 -->
+    <div class="text-center mb-4">
+        <h1 class="mb-3">公設列表</h1>
+    </div>
+
+    <!-- 卡片列表 -->
+    <div class="row g-4 justify-content-center">
+        @{
+            int index = 0;
+        }
+        @foreach (var item in Model)
+        {
+            <div class="col-md-8 @(index % 2 == 0 ? "image-left" : "image-right") fade-in">
+                <!-- 卡片交錯排列並帶有淡入動畫 -->
+                <div class="card border-0 shadow-lg overflow-hidden rounded-4 mx-auto">
+                    <div class="row g-0">
+                        @if (index % 2 == 0)
+                        {
+                            <div class="col-7">
+                                <img src="@(string.IsNullOrEmpty(item.Photo) ? "/images/default-placeholder.jpg" : item.Photo)"
+                                     alt="@item.Name" class="w-100 h-100 object-fit-cover">
+                            </div>
+                            <div class="col-5 d-flex flex-column justify-content-center" style="background-color: #fff;">
+                                <div class="p-3 text-center">
+                                    <h5 class="fw-bold">@Html.DisplayFor(modelItem => item.Name)</h5>
+                                    <p>
+                                        <strong>開放時間：</strong>@Html.DisplayFor(modelItem => item.OpenTime)<br>
+                                        <strong>關閉時間：</strong>@Html.DisplayFor(modelItem => item.CloseTime)<br>
+                                        <strong>扣點單位：</strong>@Html.DisplayFor(modelItem => item.DeductUnit)<br>
+                                        
+                                        <strong>使用時間：</strong>
+                                        @(item.UseTime == "不限時" ? "不限時" : item.UseTime + "小時")<br>
+                                        <strong>人數限制：</strong>@Html.DisplayFor(modelItem => item.Amount)
+                                    </p>
+                                    <a class="btn btn-reserve w-100"
+                                       asp-controller="UserAreaReserves"
+                                       asp-action="Create"
+                                       asp-route-areaId="@item.Id">預約</a>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-5 d-flex flex-column justify-content-center" style="background-color: #fff;">
+                                <div class="p-3 text-center">
+                                    <h5 class="fw-bold">@Html.DisplayFor(modelItem => item.Name)</h5>
+                                    <p>
+                                        <strong>開放時間：</strong>@Html.DisplayFor(modelItem => item.OpenTime)<br>
+                                        <strong>關閉時間：</strong>@Html.DisplayFor(modelItem => item.CloseTime)<br>
+                                        <strong>扣點單位：</strong>@Html.DisplayFor(modelItem => item.DeductUnit)<br>
+                                        
+                                        <strong>使用時間：</strong>
+@(item.UseTime == "不限時" ? "不限時" : item.UseTime + "小時")<br>
+                                        <strong>人數限制：</strong>@Html.DisplayFor(modelItem => item.Amount)
+                                    </p>
+                                    <a class="btn btn-reserve w-100"
+                                       asp-controller="UserAreaReserves"
+                                       asp-action="Create"
+                                       asp-route-areaId="@item.Id">預約</a>
+                                </div>
+                            </div>
+                            <div class="col-7">
+                                <img src="@(string.IsNullOrEmpty(item.Photo) ? "~/default-placeholder.jpg" : item.Photo)"
+                                     alt="@item.Name" class="w-100 h-100 object-fit-cover">
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            index++;
+        }
+    </div>
+</div>
+
+<!-- 固定右側 Icon 按鈕 -->
+<a asp-controller="UserAreaReserves" asp-action="Index"
+   class="reservation-record-btn"
+   title="查看我的預約紀錄">
+    <i class="bi bi-calendar-check" style="font-size: 1.5rem;"></i>
+</a>
+
+<style>
+    /* 圖片設定：保持 5:2 的比例 */
+    img.object-fit-cover {
+        object-fit: cover;
+        aspect-ratio: 5 / 2;
+    }
+
+    /* 卡片寬度與間距 */
+    .col-md-8 {
+        width: calc(66.66% - 1rem);
+        margin-bottom: 1rem;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* 淡入動畫效果 */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 1s ease-out, transform 1s ease-out;
+    }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    /* 交錯排列的偏移 */
+    .image-left {
+        margin-left: -3rem;
+    }
+
+    .image-right {
+        margin-right: -3rem;
+    }
+
+    /* 固定右側 Icon 按鈕 */
+    .reservation-record-btn {
+        position: fixed;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 60px;
+        height: 60px;
+        background-color: #49cdd1;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1050;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .reservation-record-btn:hover {
+            background-color: #7cdee0;
+        }
+
+        .reservation-record-btn i {
+            /* Updated icon color to dark gray */
+            color: #333333;
+        }
+
+        .reservation-record-btn:hover i {
+            color: #333333;
+        }
+
+    /* 預約按鍵 inside cards */
+    .btn-reserve {
+        background-color: #ffdf70 !important;
+        border-color: #ffdf70 !important;
+        color: #000 !important;
+    }
+
+        .btn-reserve:hover {
+            background-color: #fdf4a6 !important;
+            border-color: #fdf4a6 !important;
+            color: #000 !important;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const elements = document.querySelectorAll('.fade-in');
+            const observer = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.3 });
+            elements.forEach(element => {
+                observer.observe(element);
+            });
+        });
+    </script>
+}

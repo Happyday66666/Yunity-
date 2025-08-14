@@ -1,0 +1,182 @@
+﻿@model Yunity.Models.BoardWrap
+
+@{
+    Layout = "_LayoutManager";
+    ViewData["Title"] = "編輯公告";
+}
+
+@section Styles{
+    <!-- 引入 SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+    <style>
+        label{
+            font-size:19px;
+            margin-bottom:5px;
+            margin-left:10px;
+            color:#203740;
+        }
+
+        .form-control {
+            font-size: 1.1rem;
+            box-shadow: 5px 5px 10px rgba(150, 150, 150, 0.3), -5px -5px 15px rgba(240, 240, 240, 0.4);
+            border: 1px solid;
+            background: rgb(255 255 255);
+            margin-bottom: 20px;
+            color: #3a525e;
+        }
+
+        img{
+            border-radius: 10px;
+            margin-top:15px;
+            max-height: 400px;
+        }
+
+        .btn{
+            border-radius:100px;
+        }
+    </style>
+}
+
+<div class="container mt-3 mb-3">
+
+    <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" asp-area="Concierge" style="color:#9BA8Ab;">首頁</a></li>
+            <li class="breadcrumb-item "><a asp-action="Index" asp-area="MBoard" style="color:#9BA8Ab;">公告列表</a></li>
+            <li class="breadcrumb-item "><a asp-action="Detail" asp-route-id="@Model.Id" asp-area="MBoard" style="color:#9BA8Ab;">@Model.Name</a></li>
+            <li class="breadcrumb-item " aria-current="page" style="color:#31515e">編輯公告</li>
+        </ol>
+    </nav>
+
+    <h3 class="text-center m-4">編輯公告</h3>
+
+    <div class=" d-flex justify-content-center mb-3" >
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" id="Edit" class="w-100">
+            <div class="row pt-3">
+                <div class="col-md-6">
+                    <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+                    <div class="form-group mb-2">
+                        <label>標題</label>
+                        <input asp-for="Name" id="Name" class="form-control rounded-pill" />
+                        <span asp-validation-for="Name" id="errorTitle" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>公告類型</label>
+                        <select asp-for="Type" id="Type" class="form-control rounded-pill">
+                            <option value="1">活動通知</option>
+                            <option value="2">緊急通知</option>
+                            <option value="3">維修公告</option>
+                            <option value="4">其他公告</option>
+                        </select>
+                        <span asp-validation-for="Type" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label>圖片</label>
+                        <input type="file" id="Photo" asp-for="Photo" class="form-control rounded-pill" onchange="previewImage(event)" />
+                        <div style="height:400px;width:auto;">
+                            @if (!string.IsNullOrEmpty(Model.Board.Photo))
+                            {
+                                <img id="imagePreview" src="@Url.Content("~/boardPhoto/" + Model.Board.Photo)" alt="Image Preview" class="img-fluid" />
+                            }
+                            else
+                            {
+                                <img id="imagePreview" src="@Url.Content("~/images/noPic.jpeg")" alt="Image Preview" class="img-fluid" />
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label>內容</label>
+                        <textarea id="Info" asp-for="Info" class="form-control" maxlength="500" style="height:500px;">@Model.Info</textarea>
+                        <span asp-validation-for="Info" id="errorContent" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group text-center" style="margin-top: 15px;">
+                    <button type="submit" name="action" value="edit" class="btn btn-secondary" style="width:30%">暫存為草稿</button>
+                    <button type="submit" name="action" value="post" class="btn btn-primary-Manager" style="width:30%" id="publishBtn">發佈</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div>
+        <a asp-action="Detail" asp-route-id="@Model.Id" style="position: fixed; bottom: 75px; right: 20px; color: #293c56;font-size:3rem; z-index: 9999;">
+            <i class="bi bi-arrow-left-circle-fill"></i>
+        </a>
+    </div>
+
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <!-- 引入 SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <script>
+        function previewImage(event) {
+            var file = event.target.files[0];
+
+            // 限制檔案類型
+            var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            var maxSize = 5 * 1024 * 1024; // 5MB
+
+            if (file) {
+                if (!allowedTypes.includes(file.type)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '錯誤',
+                        text: '請選擇 JPEG、JPG、PNG 圖片檔案。',
+                    });
+                    event.target.value = ''; 
+                    return;
+                }
+
+                if (file.size > maxSize) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '錯誤',
+                        text: '圖片大小不能超過 5MB。',
+                    });
+                    event.target.value = ''; 
+                    return;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var imagePreview = document.getElementById('imagePreview');
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block'; 
+                };
+
+                reader.readAsDataURL(file); 
+            }
+        }
+
+        document.getElementById('publishBtn').addEventListener('click', function (e) {
+            e.preventDefault(); 
+
+            Swal.fire({
+                title: '確認發佈此公告?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '發佈',
+                cancelButtonText: '取消',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let form = document.getElementById('Edit');
+
+                    // 手動設定 action 欄位
+                    let actionInput = document.createElement('input');
+                    actionInput.type = 'hidden';
+                    actionInput.name = 'action';
+                    actionInput.value = 'post';
+                    form.appendChild(actionInput);
+
+                    form.submit();
+                }
+            });
+        });
+   </script>
+}

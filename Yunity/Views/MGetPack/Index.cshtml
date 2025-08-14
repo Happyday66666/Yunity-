@@ -1,0 +1,348 @@
+﻿﻿
+@{
+    Layout = "_LayoutManager";
+    ViewData["Title"] = "包裹列表";
+}
+
+@section Styles {
+    <style>
+        td {
+            vertical-align: middle;
+            height:60px;
+        }
+
+        #CreateButton {
+            position: fixed;
+            bottom: 75px;
+            right: 20px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #CreateButton:hover {
+            transform: scale(1.1);
+        }
+
+        .btnS {
+            border-radius: 50%;
+        }
+
+        .search {
+            font-size: 1.1rem;
+            background: rgb(255 255 255);
+            color: #3a525e;
+        }
+       
+    </style>
+}
+
+
+<div class="container my-3">
+    <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Concierge")" style="color:#9BA8Ab;">首頁</a></li>
+            <li class="breadcrumb-item " aria-current="page" style="color:#31515e">收包裹清單</li>
+        </ol>
+    </nav>
+
+    <h3 class="text-center m-4">收件包裹列表</h3>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Message"]
+        </div>
+    }
+    <div class="my-4" style="width:90%;">
+        <form id="searchForm" method="post" onsubmit="fetchPackList(event)" class="d-flex justify-content-end align-items-center gap-3">
+            <input type="text" id="keywordtxt" name="keyword" placeholder="搜尋包裹" class="form-control search rounded-pill" style="width: 30%;" />
+            <select id="stateFilter" name="state" class="form-select search rounded-pill" style="width:150px;">
+                <option value="">全部</option>
+                <option value="0">未領取</option>
+                <option value="1">已領取</option>
+            </select>
+            <button type="submit" class="btn btn-primary-Manager btnS"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+
+    <div class="d-flex justify-content-center mx-auto mb-3">
+        <table class="table table-hover align-middle table-container" id="boardTable">
+            <thead style="vertical-align: middle">
+                <tr style="border-bottom:solid black 2px; height:70px;font-size:19px;" class="tr-bg-color">
+                    <th style="padding-left:30px">序號</th>
+                    <th>門牌號</th>
+                    <th>收件人</th>
+                    <th>包裹編號</th>
+                    <th>包裹類型</th>
+                    <th>登陸時間</th>
+                    <th>領取時間</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="PackList" style="font-size:17px;">
+            </tbody>
+        </table>
+    </div>
+
+    @* 新增按鈕 *@
+    <a asp-action="Create" id="CreateButton">
+        <i class="bi bi-plus-circle-fill btn-create"></i>
+    </a>
+
+    @* 包裹領取 *@
+    <form id="updateStatusForm" asp-action="UpdateStatus" method="post">
+        <div class="modal fade" id="pickupModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="pickupModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="pickupModalLabel">領取包裹</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+            
+                    <div class="modal-body">
+                        <input type="hidden" id="packageId" name="Id" value="" readonly>
+                        <label for="recipientName" class="form-label">領取人姓名：</label>
+                        <div class="input-group">
+                            <input type="text" id="recipientName" name="PickUser" class="form-control" required />
+                            <button type="button" id="qrScanbtn" class="btn btn-outline-secondary">
+                                <i class="bi bi-camera"></i>
+                            </button>
+                        </div>
+                        @* QR掃描 *@
+                        <div id="qrScannerArea" class="mt-3" style="display: none;">
+                            <video id="preview" class="w-100" style="height: 300px;"></video>
+                            <div id="qrScanResult" class="mt-2 text-primary fw-bold"></div>
+                            <button type="button" id="stopQrScan" class="btn btn-danger mt-2">停止掃描</button>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="submit" id="submitBtn" class="btn btn-success">確定領取</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+
+@section Scripts {
+    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const pickupModal = new bootstrap.Modal(document.getElementById("pickupModal"));
+            const qrScannerArea = document.getElementById("qrScannerArea");
+            let scanner = null;
+            let selectedPackageId = null;
+
+            fetch("/MGetPack/GetPackList")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    let PackList = document.getElementById("PackList");
+                    PackList.innerHTML = "";
+
+                    if (data.length === 0) {
+                        PackList.innerHTML = `<tr><td colspan="8" class="text-center">沒有包裹記錄</td></tr>`;
+                        return;
+                    }
+
+                    data.forEach((pack, index) => {
+                        let row = `<tr style="cursor: pointer;">
+                                                <td style="text-align:center">${index + 1}</td>
+                                                <td onclick="location.href='/MGetPack/Detail/${pack.id}'">${pack.doorNo || '未提供'}</td>
+                                                <td onclick="location.href='/MGetPack/Detail/${pack.id}'">${pack.getUser || '未知'}</td>
+                                                <td onclick="location.href='/MGetPack/Detail/${pack.id}'">${pack.packNo || '未提供'}</td>
+                                                <td onclick="location.href='/MGetPack/Detail/${pack.id}'">${getPackType(pack.type)}</td>
+                                                <td onclick="location.href='/MGetPack/Detail/${pack.id}'">${new Date(pack.logTime).toLocaleString()}</td>
+                                                <td onclick="location.href='/MGetPack/Detail/${pack.id}'">${pack.pickTime ? new Date(pack.pickTime).toLocaleString() : '未領取'}</td>
+                                                <td>
+                                                   <button class="btn btn-primary-Manager pickup-btn" data-id="${pack.id}" ${pack.state === 0 ? "" : "disabled"}>領取包裹</button>
+                                                </td>
+                                            </tr>
+                                           `;
+                        PackList.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    PackList.innerHTML = `<tr><td colspan="8" class="text-center text-danger">無法載入數據，請稍後再試</td></tr>`;
+                });
+
+            document.addEventListener("click", function (event) {
+                if (event.target.classList.contains("pickup-btn")) {
+                    event.stopPropagation();
+                    selectedPackageId = event.target.dataset.id;
+                    document.getElementById("packageId").value = selectedPackageId;
+
+                    pickupModal.show();
+                }
+            });
+
+            document.getElementById("qrScanbtn").addEventListener("click", function () {
+                qrScannerArea.style.display = "block"; 
+                startScanner();
+            });
+
+            function startScanner() {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(stream => {
+                        document.getElementById("preview").srcObject = stream;
+                        console.log("相機存取成功");
+                    })
+                    .catch(error => {
+                        console.error("相機存取失敗:", error);
+                        alert("請允許相機存取");
+                    })
+                    .then(() => {
+                        if (!scanner) {
+                            scanner = new Instascan.Scanner({ video: document.getElementById("preview") });
+                            scanner.addListener("scan", function (content) {
+                                console.log("掃描內容:", content);
+
+                                document.getElementById("recipientName").value = content;
+
+                                document.getElementById("qrScanResult").innerText = `掃描成功: ${content}`;
+
+                                stopScanner();
+                                qrScannerArea.style.display = "none";
+                            });
+                        }
+
+                        Instascan.Camera.getCameras().then(function (cameras) {
+                            if (cameras.length > 0) {
+                                scanner.start(cameras[0]);
+                            } else {
+                                console.error("未找到攝像頭");
+                                alert("未找到攝像頭");
+                            }
+                        }).catch(function (e) {
+                            console.error("相機存取錯誤:", e);
+                            alert("相機存取錯誤");
+                        });
+
+
+                    }).catch(error => {
+                        console.error("使用者拒絕存取相機:", error);
+                        alert("請允許相機存取，否則無法掃描 QR Code");
+                    });
+            }
+
+
+            function stopScanner() {
+                if (scanner) {
+                    scanner.stop();
+                }
+            }
+
+            // 關閉 QR 掃描區
+            document.getElementById("stopQrScan").addEventListener("click", function () {
+                stopScanner();
+                qrScannerArea.style.display = "none";
+            });
+
+            //領取包裹
+            const form = document.getElementById("updateStatusForm");
+            form.addEventListener("submit", function (event) {
+                event.preventDefault(); 
+
+                const formData = new FormData(form);
+                fetch('/MGetPack/UpdateStatus', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: '成功！',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                location.reload(); 
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: '錯誤！',
+                                text: data.message
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('錯誤:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: '發生錯誤！',
+                            text: '請稍後再試'
+                        });
+                    });
+            });
+
+
+        });
+
+
+        function fetchPackList(event) {
+            event.preventDefault();
+
+            const form = document.getElementById('searchForm');
+            const formData = new FormData(form);
+
+            fetch('/MGetPack/SearchPack', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('伺服器回應錯誤');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let PackList = document.getElementById('PackList');
+                    PackList.innerHTML = '';
+
+                    if (data.length === 0) {
+                        PackList.innerHTML = `<tr><td colspan="8" class="text-center">沒有包裹記錄</td></tr>`;
+                        return;
+                    }
+
+                    data.forEach((pack, index) => {
+                        let row = `<tr style="cursor: pointer;">
+                                                        <td style="text-align:center">${index + 1}</td>
+                                                        <td onclick="location.href='/MGetPack/Detail/${pack.id}'">${pack.doorNo || '未提供'}</td>
+                                                        <td onclick="location.href='/MGetPack/Detail/${pack.id}'">${pack.getUser || '未知'}</td>
+                                                        <td onclick="location.href='/MGetPack/Detail/${pack.id}'">${pack.packNo || '未提供'}</td>
+                                                        <td onclick="location.href='/MGetPack/Detail/${pack.id}'">${getPackType(pack.type)}</td>
+                                                        <td onclick="location.href='/MGetPack/Detail/${pack.id}'">${new Date(pack.logTime).toLocaleString()}</td>
+                                                        <td onclick="location.href='/MGetPack/Detail/${pack.id}'">${pack.pickTime ? new Date(pack.pickTime).toLocaleString() : '未領取'}</td>
+                                                        <td>
+                                                           <button class="btn btn-primary-Manager pickup-btn" data-id="${pack.id}" ${pack.state === 0 ? "" : "disabled"}>領取包裹</button>
+                                                        </td>
+                                                    </tr>
+                                                   `;
+                        PackList.innerHTML += row;
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    PackList.innerHTML = `<tr><td colspan="8" class="text-center text-danger">無法載入數據，請稍後再試</td></tr>`;
+                });
+        }
+
+        function getPackType(type) {
+            const types = { 1: "信件", 2: "一般包裹", 3: "冷藏包裹" };
+            return types[type] || "其他包裹";
+        }
+
+        
+
+
+    </script>
+}

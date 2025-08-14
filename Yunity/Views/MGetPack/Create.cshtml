@@ -1,0 +1,258 @@
+﻿@model Yunity.Models.GetPackWrap
+
+@{
+    Layout = "_LayoutManager";
+    ViewData["Title"] = "新增包裹";
+}
+
+@section Styles{
+    <style>
+        #barcodeScannerModal .modal-footer {
+            position: relative;
+            z-index: 10;
+        }
+
+        #scanner-container canvas {
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-control {
+            font-size: 1.1rem;
+            box-shadow: 5px 5px 10px rgba(150, 150, 150, 0.3), -5px -5px 15px rgba(240, 240, 240, 0.4);
+            border: 1px solid;
+            background: rgb(255 255 255);
+            margin-bottom: 20px;
+            color: #3a525e;
+        }
+
+        .control-label {
+            font-size: 19px;
+            color: #203740;
+        }
+
+        td{
+            vertical-align: middle;
+        }
+
+        .creaBtn{
+            border-radius: 100px;
+            width: 150px;
+            margin-top: 45px;
+        }
+       
+    </style>
+}
+
+<div class="container my-3">
+    <nav style="--bs-breadcrumb-divider:'>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index" asp-area="Concierge" style="color:#9BA8Ab;">首頁</a></li>
+            <li class="breadcrumb-item "><a asp-action="Index" asp-area="MGetPack" style="color:#9BA8Ab;">收包裹列表</a></li>
+            <li class="breadcrumb-item " aria-current="page" style="color:#31515e">新增包裹</li>
+        </ol>
+    </nav>
+
+    <h3 class="text-center m-4">新增包裹資訊</h3>
+    <div class="d-flex justify-content-center">
+            <form asp-action="Create" method="post" enctype="multipart/form-data" style="width:80%">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <td class="align-middle"><label class="control-label">包裹類型</label></td>
+                            <td>
+                                <select asp-for="Type" id="Type" class="form-control rounded-pill">
+                                    <option value="1">信件</option>
+                                    <option value="2" selected>一般包裹</option>
+                                    <option value="3">冷藏包裹</option>
+                                </select>
+                                <span asp-validation-for="Type" class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="align-middle"><label class="control-label">包裹編號</label></td>
+                            <td>
+                                <div class="input-group">
+                                    <input asp-for="PackNo" class="form-control rounded-start" id="packNoInput" placeholder="" />
+                                    <button type="button"  style="height:40.39px;" class="btn btn-secondary rounded-end" onclick="openBarcodeScanner()">
+                                        <i class="bi bi-camera-fill" style="color:#fff"></i> 掃描
+                                    </button>
+                                </div>
+                                <span asp-validation-for="PackNo" class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="align-middle"><label class="control-label">門牌號</label></td>
+                            <td>
+                                <input asp-for="DoorNo" class="form-control rounded-pill" />
+                                <span asp-validation-for="DoorNo" class="text-danger"></span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="align-middle"><label class="control-label">收件人</label></td>
+                            <td>
+                                <input asp-for="GetUser" class="form-control rounded-pill" />
+                                <span asp-validation-for="GetUser" class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="align-middle"><label class="control-label">物流公司</label></td>
+                            <td>
+                                <input asp-for="Logistic" class="form-control rounded-pill" />
+                                <span asp-validation-for="Logistic" class="text-danger"></span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="align-middle"><label class="control-label">照片</label></td>
+                            <td>
+                            <input type="file" asp-for="ImageFile" class="form-control rounded-pill mt-1" onchange="previewImage(event)" accept="image/*" />
+                                <div class="d-flex justify-content-center align-items-center mt-2" style="width: 500px; height: 500px; border: 1px solid #ddd;">
+                                    <img id="imagePreview" src="@Url.Content("~/images/noPic.jpeg")" alt="照片預覽" class="img-fluid" style="max-width: 490px; max-height: 490px; object-fit: contain;">
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="form-group mt-3 text-center">
+                    <input type="submit" value="新增包裹" class="btn btn-primary-Manager creaBtn" />
+                </div>
+            </form>
+    </div>
+</div>
+
+<div class="modal fade" id="barcodeScannerModal" tabindex="-1" aria-labelledby="barcodeScannerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="barcodeScannerModalLabel">包裹條碼掃描</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="stopScanner()"></button>
+            </div>
+
+            <div class="modal-body text-center">
+                <div id="scanner-container" class="mx-auto" style="width:640px; height:480px; background-color:#000;"></div>
+                <div id="scan-result" class="mt-3 text-primary fw-bold mt-1"></div>
+            </div>
+
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="stopScanner()">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="~/js/quagga.js"></script>
+    <script>
+        let isScanning = false;
+
+        // 開啟 QR Code/條碼掃描器
+        function openBarcodeScanner() {
+            if (isScanning) return;
+
+            const modal = new bootstrap.Modal(document.getElementById('barcodeScannerModal'));
+            modal.show();
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    stream.getTracks().forEach(track => track.stop()); // 確保先關閉舊的相機
+
+                    // 初始化 Quagga
+                    Quagga.init({
+                        inputStream: {
+                            name: "Live",
+                            type: "LiveStream",
+                            target: document.querySelector('#scanner-container'),
+                            constraints: { facingMode: "environment" }
+                        },
+                        decoder: {
+                            readers: ["code_128_reader", "ean_reader", "upc_reader"]
+                        }
+                    }, function (err) {
+                        if (err) {
+                            console.error("Quagga 初始化失敗:", err);
+                            alert("無法啟動相機！請檢查權限及設備。");
+                            return;
+                        }
+                        Quagga.start();
+                    });
+
+                    Quagga.onDetected(function (result) {
+                        if (!result || !result.codeResult) {
+                            document.getElementById('scan-result').innerText = "無法讀取條碼，請重試！";
+                            return;
+                        }
+
+                        const code = result.codeResult.code;
+                        document.getElementById('packNoInput').value = code;
+                        document.getElementById('scan-result').innerText = `掃描成功：${code}`;
+
+                        setTimeout(() => {
+                            stopScanner();
+                            modal.hide();
+                        }, 1000);
+                    });
+                })
+                .catch((err) => {
+                    alert("相機存取失敗，請檢查瀏覽器權限設定！");
+                    console.error("相機初始化失敗：", err);
+                });
+        }
+
+        // 停止掃描器
+        function stopScanner() {
+            if (isScanning) {
+                Quagga.stop();
+                Quagga.offDetected();
+                isScanning = false;
+            }
+            document.getElementById('scan-result').innerText = "";
+        }
+
+        function previewImage(event) {
+            var file = event.target.files[0];
+
+            var allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+            var maxSize = 5 * 1024 * 1024; 
+
+            if (file) {
+                if (!allowedTypes.includes(file.type)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '錯誤',
+                        text: '請選擇 JPEG、JPG、PNG 圖片檔案。',
+                    });
+                    event.target.value = '';
+                    return;
+                }
+
+                if (file.size > maxSize) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: '錯誤',
+                        text: '圖片大小不能超過 5MB。',
+                    });
+                    event.target.value = '';
+                    return;
+                }
+
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    var imagePreview = document.getElementById('imagePreview');
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+}

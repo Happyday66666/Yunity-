@@ -1,0 +1,209 @@
+﻿@model IEnumerable<Yunity.ViewModels.ManageFeeViewModel>
+
+@{
+    Layout = "_LayoutUser";
+    ViewData["Title"] = "List";
+}
+
+<style>
+    .form-row {
+        display: flex;
+        flex-wrap: nowrap;  
+    }
+
+        .form-row .col-md-3 {
+            flex: 1;
+            padding-right: 15px; 
+            padding-left: 15px;
+        }
+
+    .card-customs {
+        border-radius: 50px;  
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+        background-color: #f8f9fa; 
+    }
+
+    .card-header-customs {
+        background-color: #0c9197;
+        color: white;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        border-top-left-radius: 50px;
+        border-top-right-radius: 50px;
+    }
+
+    .card-body-customs {
+        text-align: center;
+    }
+
+    .amount-due {
+        color: #e74c3c;
+        font-size: 1.8rem;
+        font-weight: bold;
+    }
+
+    .btn-customs {
+        background-color: #0c9197;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: background-color 0.3s;
+    }
+
+        .btn-customs:hover {
+            background-color: #49cdd1;
+            color: white;
+        }
+
+</style>
+
+<div class="container mt-3 mb-3 ">
+    <h2 class="d-flex justify-content-center" style="color:#3255af;">管理費繳費狀態</h2>
+
+
+    <div class="button-group mb-3">
+        <button id="current" class="btn custom-btn">當期未繳費</button>
+        <button id="previous" class="btn custom-btn">前期所有</button>
+    </div>
+    <hr />
+    
+    
+    
+    
+    <div id="filter-section" class="mb-3" style="display: none;">
+     
+        <div class="form-row">
+         
+            <div class="col-md-3 filter">
+                <label for="payType">付款方式</label>
+                <select id="payType" class="form-control">
+                    <option value="">-- 選擇付款方式 --</option>
+                    <option value="信用卡">信用卡</option>
+                    <option value="現金">現金</option>
+                </select>
+            </div>
+
+       
+            <div class="col-md-3 filter">
+                <label for="startDate">繳費截止日(開始)</label>
+                <input type="date" id="startDate" class="form-control">
+            </div>
+
+           
+            <div class="col-md-3 filter">
+                <label for="endDate">繳費截止日(結束)</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+
+          
+           
+        </div>
+        <div class=" d-flex justify-content-end align-items-end filter">
+            <button id="applyFilters" class="btn btn-primary mt-4" style="border-radius:30px;margin-right:5px;">篩選</button>
+        </div>
+    </div>
+
+    
+     
+
+    <div id="loading" style="display:none;" class="text-center">
+        <i class="bi bi-house-door-fill" style="font-size: 3rem; animation: spin 2s linear infinite;"></i>
+        <br>
+        <span>加載中...</span>
+    </div>
+</div>
+
+ 
+<div id="fee-list">
+    @Html.Partial("_ManageFeeList", Model)
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+         
+        $('#current').click();
+    });
+
+    
+    $('#current').on('click', function() {
+        
+        $('#current').addClass('btn-primary').removeClass('btn-secondary');
+        $('#previous').addClass('btn-secondary').removeClass('btn-primary');
+        
+        $('#filter-section').hide();
+         
+        $('#loading').show();
+
+         
+        $.ajax({
+            url: '@Url.Action("List", "UManagementFee", new { type = "current" })',
+            type: 'GET',
+            success: function(data) {
+                $('#fee-list').html(data);  
+            },
+            complete: function() {
+             
+                $('#loading').hide();
+            }
+        });
+    });
+
+     
+    $('#previous').on('click', function() {
+        
+        $('#previous').addClass('btn-primary').removeClass('btn-secondary');
+        $('#current').addClass('btn-secondary').removeClass('btn-primary');
+
+
+        $('#filter-section').show();
+
+         
+        $('#loading').show();
+
+         
+        $.ajax({
+            url: '@Url.Action("List", "UManagementFee", new { type = "previous" })',
+            type: 'GET',
+            success: function(data) {
+                $('#fee-list').html(data);   
+            },
+            complete: function() {
+              
+                $('#loading').hide();
+            }
+        });
+    });
+        $('#applyFilters').on('click', function() {
+        var payType = $('#payType').val();
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+
+         
+        $('#loading').show();
+
+        $.ajax({
+            url: '@Url.Action("List", "UManagementFee", new { type = "previous" })',
+            type: 'GET',
+            data: {
+                payType: payType,
+                startDate: startDate,
+                endDate: endDate
+            },
+            success: function(data) {
+                $('#fee-list').html(data);  
+            },
+            complete: function() {
+                
+                $('#loading').hide();
+            }
+        });
+    });
+
+
+
+
+</script>
+ 

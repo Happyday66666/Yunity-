@@ -1,0 +1,324 @@
+﻿@{
+    Layout = "_LayoutManager";
+    ViewData["Title"] = "寄送包裹";
+}
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">
+        @TempData["Message"]
+    </div>
+}
+
+<style>
+    .underline {
+        border-bottom: 3px solid #DDDDDD;
+    }
+
+    .underline.active {
+        border-bottom: 3px solid #74aca7;
+    }
+
+    .underline.active h4 {
+        color: #74aca7;
+    }
+
+    .MF_table th{
+        background-color: #DDDDDD;
+        
+    }
+
+    .MF_table tr{
+        height: 60px;
+    }
+</style>
+
+<div class="container mt-5">
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="@Url.Action("Index","Concierge")">首頁</a></li>
+            <li class="breadcrumb-item active" aria-current="page">大樓管理費</li>
+        </ol>
+    </nav>
+    <h3 class="text-center mb-4">大 樓 管 理 費</h3>
+</div>
+<div class="d-flex justify-content-end container">
+    <input type="text" class="Search_text w-25" style="border-radius: 50px 0 0 50px;" id="keyword" placeholder="請輸入關鍵字" />
+    <div>
+        <span class="material-symbols-outlined Search_div" style="border-radius: 0 50px 50px 0; font-size:2rem; color: #A9A9A9" id="search-icon">
+            search
+        </span>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-2 underline active" id="title_MF"><h4 class="text-center mb-4">期別列表</h4></div>
+        <div class="col-2 underline" id="title_MF_Detail"><h4 class="text-center mb-4">繳費列表</h4></div>
+        <div class="col-8 underline">
+
+        </div>
+    </div>
+</div>
+<div class="container mt-5 p-0" id="ManagerFeeDetail">
+@*      <table class="table align-middle MF_table">
+         <tr class="">
+             <th class="ps-4">序號</th>
+             <th>期別名稱</th>
+             <th>建立日期</th>
+             <th>繳費情形</th>
+             <th>繳費金額統計</th>
+             <th>狀態</th>
+         </tr>
+         <tbody id="ManagerFee">
+         </tbody>
+     </table> *@
+</div>
+<a class="CreateButton" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    <i class="bi bi-plus-circle-fill btn-create"></i>
+</a>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:800px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="material-symbols-outlined me-2" style="font-size:30px" onclick="enter_val()">wallet</span>
+                <h1 class="modal-title fs-4" id="exampleModalLabel">新建管理費</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-action="Create" method="post" enctype="multipart/form-data" id="ManagerFee1">
+                <div class="modal-body">
+                    <table class="table align-middle table-borderless">
+                        <tr style="height:70px">
+                            <td>
+                                <label class="fs-5">管理費期別名稱</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" id="FeeName" name="FeeName" />
+                            </td>
+                        </tr>
+                        <tr style="height:70px">
+                            <td>
+                                <label class="fs-5">繳交期限</label>
+                            </td>
+                            <td>
+                                <input type="date" class="form-control" id="FeeEnd" name="FeeEnd" />
+                            </td>
+                        </tr>
+                        <tr style="height:70px">
+                            <td>
+                                <label class="fs-5">管理費價格</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" style="width:200px" id="MF_Pricce" name="MF_Pricce" />
+                            </td>
+                        </tr>
+                        <tr style="height:70px">
+                            <td>
+                                <label class="fs-5">機車清潔費</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" style="width:200px" id="MF_Motor" name="MF_Motor" />
+                            </td>
+                        </tr>
+                        <tr style="height:70px">
+                            <td>
+                                <label class="fs-5">汽車清潔費</label>
+                            </td>
+                            <td>
+                                <input type="text" class="form-control" style="width:200px" id="MF_Car" name="MF_Car" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer mb-5" style="display:block">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="float: left">取消</button>
+                    <button type="button" class="btn btn-primary" style="float: right" onclick="Create_ManagerFee()" data-bs-dismiss="modal">確定</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        var feeName = [];
+        var select_id = -1;
+        window.onload = function () {
+            loadHtml();
+        };
+
+        document.getElementById("keyword").addEventListener("input", loadHtml);
+
+        var title_MF = document.getElementById('title_MF');
+        title_MF.onclick = function () {
+            title_MF.classList.toggle("active");
+            document.getElementById("title_MF_Detail").classList.remove("active"); 
+            loadHtml();
+        }
+
+        function loadHtml() {
+            var idx = 0;
+            let keyword_json = { "Keyword": document.getElementById("keyword").value};
+            fetch("/ManageFee/ManageFee_List", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(keyword_json)
+            })
+            .then(response => response.json())
+            .then(data => {
+                let ManagerFeeDetail = document.getElementById("ManagerFeeDetail");
+                ManagerFeeDetailhtml = "";
+
+                    ManagerFeeDetailhtml += `<table class="table align-middle MF_table table-hover">
+                                                <tr class="">
+                                                    <th class="ps-4">序號</th>
+                                                    <th>期別名稱</th>
+                                                    <th>建立日期</th>
+                                                    <th>繳費情形</th>
+                                                    <th>繳費金額統計</th>
+                                                    <th>狀態</th>
+                                                </tr>
+                                                <tbody id="ManagerFee">`;
+                    ManagerFeeDetailhtml += data.length === 0 ?
+                        `<tr><td colspan="8" class="text-center">沒有管理費期別</td></tr>` : '';
+                data.forEach((ManageFee_List) => {
+                        ManagerFeeDetailhtml += `<tr style="cursor:pointer">
+                                                <td style="padding-left:40px" onclick="MF_Deyail()">${idx + 1}</td>
+                                                <td onclick="MF_Deyail(${idx})">${ManageFee_List.feeName}</td>
+                                                <td onclick="MF_Deyail(${idx})">${ManageFee_List.logTime ? new Date(ManageFee_List.logTime).toLocaleString().replace(/\//g, '-') : '-'}</td>
+                                                <td onclick="MF_Deyail(${idx})">${ManageFee_List.payUser} / ${ManageFee_List.feeName_Count}</td>
+                                                <td onclick="MF_Deyail(${idx})">${ManageFee_List.payPrice} / ${ManageFee_List.totalPrice}</td>
+                                                <td onclick="MF_Deyail(${idx})" style="color: ${new Date() < new Date(ManageFee_List.feeEnd) ? 'green' : 'gray'};">
+                                                    ${new Date() < new Date(ManageFee_List.feeEnd) ? '啟用中' : '已關閉'}
+                                                </td>
+                                             </tr>`
+                    feeName[idx] = ManageFee_List.feeName;
+                    idx += 1;
+                });
+                    ManagerFeeDetailhtml += `</tbody>
+                                           </table>`;
+                document.getElementById("ManagerFeeDetail").innerHTML = ManagerFeeDetailhtml;
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        function loadHtml_Detail() {
+            let keyword_json = { "Keyword": document.getElementById("keyword").value, "MFeeName": feeName[select_id] };
+            fetch("/ManageFee/ManageFee_Detail", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(keyword_json)
+            })
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById("ManagerFeeDetail").innerHTML = html;
+
+            })
+            .catch(error => console.error("載入失敗", error));
+        }
+
+        function MF_Deyail(MF_Id) {
+            select_id = MF_Id;
+            title_MF.classList.remove("active");
+            document.getElementById("title_MF_Detail").classList.toggle("active");
+            document.getElementById("keyword").removeEventListener("input", loadHtml);
+            document.getElementById("keyword").addEventListener("input", loadHtml_Detail);
+            loadHtml_Detail();
+        }
+
+        function Create_ManagerFee() {
+            var form = new FormData();
+            form.append("FeeName", document.getElementById('FeeName').value);
+            form.append("FeeEnd", document.getElementById('FeeEnd').value);
+            form.append("MF_Pricce", document.getElementById('MF_Pricce').value);
+            form.append("MF_Motor", document.getElementById('MF_Motor').value);
+            form.append("MF_Car", document.getElementById('MF_Car').value);
+            fetch('/ManageFee/Create', {
+                method: 'POST',
+                body: form
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: "管理費新增成功！!",
+                        icon: "success",
+                        draggable: true
+                    });
+                    loadHtml()
+                    document.getElementById('ManagerFee1').reset();
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "管理費新增失敗",
+                        text: "請再試一次!"
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('錯誤:', error);
+                Swal.fire({
+                    icon: "error",
+                    title: "新增失敗",
+                    text: "請稍後再試!"
+                });
+            });
+        }
+
+
+        function editbtn(rowid) {
+            var MF_Detail = document.getElementById(`MF_Detail-${rowid}`);
+            var MF_Edit = document.getElementById(`MF_Edit-${rowid}`);
+            MF_Edit.style.display = "table-row"
+            MF_Detail.style.display = "none"
+
+            var saveBtn = document.getElementById('savebtn-' + rowid);
+            saveBtn.onclick = function () {
+                var MF_Detail = document.getElementById(`MF_Detail-${rowid}`);
+                var MF_Edit = document.getElementById(`MF_Edit-${rowid}`);
+                MF_Edit.style.display = "none"
+                MF_Detail.style.display = "table-row"
+
+                var form = new FormData();
+                form.append("Id", rowid);
+                form.append("PayType", document.getElementById('PayType-' + rowid).value);
+                form.append("PayTime", document.getElementById('PayTime-' + rowid).value);
+                form.append("State", document.getElementById('State-' + rowid).value);
+                fetch('/ManageFee/Edit', {
+                    method: 'POST',
+                    body: form
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: "更新成功！!",
+                            icon: "success",
+                            draggable: true
+                        });
+                        MF_Deyail(select_id);
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "更新失敗",
+                            text: "請再試一次!"
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('錯誤:', error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "更新失敗",
+                        text: "請稍後再試!"
+                    });
+                });
+            }
+        }
+        function enter_val() {
+            document.getElementById('FeeName').value = "114年3月管理費";
+            document.getElementById('FeeEnd').value = "2025-03-31";
+            document.getElementById('MF_Pricce').value = "55";
+            document.getElementById('MF_Motor').value = "100";
+            document.getElementById('MF_Car').value = "200";
+        }
+    </script>
+}

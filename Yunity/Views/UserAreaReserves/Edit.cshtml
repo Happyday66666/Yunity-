@@ -1,0 +1,353 @@
+﻿@model Yunity.ViewModels.EditPublicAreaReservationViewModel
+
+@{
+    ViewData["Title"] = "編輯預約";
+    Layout = "_LayoutUser"; // 使用 _LayoutUser 版面
+}
+
+<!-- 僅在上方加入我們需要的排版樣式 -->
+<style>
+    .btn-primary:disabled {
+    cursor: not-allowed;
+    opacity: 0.6; /* 讓按鈕看起來較淡，表示不可用 */
+}
+
+    .reservation-container {
+        max-width: 500px;
+        margin: 0 auto;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        background-color: #ffffff;
+    }
+
+    .btn-primary {
+        /* 保持原有顏色 */
+    }
+    .reservation-header {
+        background-color: #006d7b;
+        color: #ffffff;
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .reservation-header h3 {
+        margin: 0;
+        font-weight: 600;
+        color: #ffffff;
+    }
+
+    .reservation-body {
+        padding: 1.5rem;
+    }
+
+    .mb-3 {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    .text-danger {
+        font-size: 0.9rem;
+    }
+
+</style>
+
+<div class="container my-5">
+    <a id="top"></a>
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="mb-3">編輯預約資料</h1>
+        </div>
+    </div>
+    <div class="reservation-container">
+        <div class="reservation-header">
+            <h3 class="mb-0">@Model.PublicArea.Name</h3>
+        </div>
+
+        <div class="reservation-body">
+            <input type="hidden" id="ReservationDate" value="@Model.Date.ToString("yyyy-MM-dd")" />
+
+            <form asp-action="Edit" method="post" id="reservationForm">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" id="OriginalReservedPeople" value="@(Model.ReservedPeople ?? 0)" />
+
+                <div class="mb-3">
+                    <label class="form-label">預約日期</label>
+                    <input type="text" class="form-control" value="@Model.Date.ToString("yyyy/MM/dd")" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="TimePeriod" class="form-label">選擇時段</label>
+                    <select asp-for="TimePeriod" asp-items="@Model.TimePeriodOptions" class="form-select" id="TimePeriodSelect">
+                        <option value="">請選擇時段</option>
+                    </select>
+                    <div id="timeSlotErrorMessage" class="text-danger" style="display:none;"></div>
+                </div>
+
+                <!-- 預約人數選項，根據選擇的時段動態更新 -->
+                <div class="mb-3">
+                    <label class="form-label">預約人數</label>
+                    <select asp-for="ReservedPeople" class="form-select" id="ReservedPeopleSelect" required>
+                        <option value="0">請選擇預約人數</option>
+                    </select>
+                    <div id="reservationErrorMessage" class="text-danger" style="display:none;">請選擇預約人數才能送出。</div>
+                </div>              
+
+                <div class="mb-3">
+                    <label class="form-label">每人扣除點數</label>
+                    <input type="text" class="form-control" value="@Model.DeductPoints" readonly id="DeductPoints" />
+                </div>
+
+                <!-- ✅ 點數計算 -->
+                <div class="form-group text-center mt-3">
+                    <!-- ✅ 計算標題 -->
+                    <div class="fw-bold text-secondary fs-6">
+                        目前點數 - 使用點數 = 預估剩餘點數
+                    </div>
+
+                    <!-- ✅ 計算結果 -->
+                    <div class="d-flex justify-content-center align-items-center gap-3 mt-2">
+                        <h3 id="currentPoints" class="fw-bold fs-3 text-primary-emphasis" >@Model.UserPoints</h3>
+                        <span class="fs-4 fw-bold text-dark">點</span>
+
+                        <span class="fs-4 text-dark fw-bold mx-2">-</span>
+
+                        <h3 id="deductedPoints" class="fw-bold fs-3 text-primary">0</h3>
+                        <span class="fs-4 fw-bold text-dark">點</span>
+
+                        <span class="fs-4 text-dark fw-bold mx-2">=</span>
+
+                        <h3 id="remainingPointsDisplay" class="fw-bold text-success fs-3">0</h3>
+                        <span class="fs-4 fw-bold text-dark">點</span>
+                    </div>
+                    <!-- ❌ 點數不足時顯示警告 -->
+                    <span id="pointsWarning" class="text-danger fw-bold mt-2" style="display: none;">
+                        ❌ 點數不足，請減少預約人數！
+                    </span>                  
+               </div>
+                <!-- ✅ 隱藏輸入框，這些欄位會由 JavaScript 更新 -->
+                <input type="hidden" id="UserPoints" value="@Model.UserPoints" />
+                <input type="hidden" id="TotalDeductPoints" value="@Model.TotalDeductPoints" />
+                <input type="hidden" id="RemainingPoints" value="@Model.RemainingPoints" />
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary" id="btnReserve" disabled>儲存</button>
+                </div>
+            </form>
+
+            <hr />
+
+            <div class="mt-3 text-center">
+                <a asp-action="Index" class="btn btn-secondary">返回列表</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+   <script>
+               // 根據選擇的時段更新預約人數選項
+        function updateReservedPeopleOptions() {
+            var selectElem = document.getElementById("TimePeriodSelect");
+            var reservedPeopleSelectElem = document.getElementById("ReservedPeopleSelect");
+            var errorElem = document.getElementById("reservationErrorMessage");
+
+            // 清空原本的預約人數選項
+            reservedPeopleSelectElem.innerHTML = '<option value="0">請選擇預約人數</option>';
+
+            var selectedOption = selectElem.options[selectElem.selectedIndex];
+            var regex = /\(剩餘(\d+)人\)/;
+            var match = regex.exec(selectedOption.text);
+
+            // 如果匹配到剩餘人數
+            if (match && match[1]) {
+                var remainingCapacity = parseInt(match[1]);
+
+                // 更新預約人數選項
+                if (remainingCapacity > 0) {
+                    // 這裡根據剩餘人數生成選項
+                    for (var i = 1; i <= remainingCapacity; i++) {
+                        var option = document.createElement("option");
+                        option.value = i;
+                        option.textContent = i;
+                        reservedPeopleSelectElem.appendChild(option);
+                    }
+
+                    // 預設選項設置為原來的預約人數
+                    var originalReservedPeople = parseInt(document.getElementById("OriginalReservedPeople").value) || 0;
+                    if (originalReservedPeople > 0 && originalReservedPeople <= remainingCapacity) {
+                        reservedPeopleSelectElem.value = originalReservedPeople;  // 設置預設選擇的選項
+                    }
+
+                } else {
+                    // 顯示錯誤訊息並禁用提交按鈕
+                    errorElem.innerHTML = "所選時段剩餘可預約人數不足！";
+                    errorElem.style.display = 'block';
+                    document.getElementById('btnReserve').disabled = true;
+                    return;
+                }
+
+                // 清除錯誤訊息
+                errorElem.innerHTML = "";
+                errorElem.style.display = 'none';
+            }
+        }
+
+        // 當時段下拉選單變動時，更新預約人數選項
+        document.getElementById('TimePeriodSelect').addEventListener('change', function () {
+            updateReservedPeopleOptions();
+            updatePoints();  // 當時段變動後，也需要更新點數
+            disablePastTimeSlots();  // 更新時禁用過去的時段選項
+        });
+
+        // 當預約人數變動時，更新總扣點數和剩餘點數
+        document.getElementById('ReservedPeopleSelect').addEventListener('change', function () {
+            updatePoints();
+            toggleSubmitButton(); // 根據預約人數是否選擇來啟用/禁用提交按鈕
+        });
+      
+                // 控制提交按鈕是否啟用
+        function toggleSubmitButton() {
+            var reservedPeopleSelectElem = document.getElementById("ReservedPeopleSelect");
+            var submitButton = document.getElementById("btnReserve");
+            var errorElem = document.getElementById("reservationErrorMessage");
+            var remainingPoints = parseInt(document.getElementById("remainingPointsDisplay").textContent, 10);
+
+            // 如果預約人數為 0 或者剩餘點數不足，禁用提交按鈕
+            if (reservedPeopleSelectElem.value == "0" || remainingPoints < 0) {
+                errorElem.style.display = 'block';
+                submitButton.disabled = true;  // 禁用提交按鈕
+            } else {
+                errorElem.style.display = 'none';
+                submitButton.disabled = false;  // 啟用提交按鈕
+            }
+        }
+
+        // 根據預約人數更新總扣點數和剩餘點數
+        function updatePoints() {
+            var reservedPeople = parseInt(document.getElementById('ReservedPeopleSelect').value) || 0;
+            var deductPoints = parseInt(document.getElementById('DeductPoints').value) || 0;
+            var originalReservedPeople = parseInt(document.getElementById('OriginalReservedPeople').value) || 0;
+
+            // 計算原來預約人數的扣點數
+            var originalTotalDeductPoints = originalReservedPeople * deductPoints;
+
+            // 計算新預約人數的扣點數
+            var totalDeductPoints = reservedPeople * deductPoints;
+
+            // 總扣點數 = 新預約人數的扣點數 - 原來預約人數的扣點數
+            totalDeductPoints -= originalTotalDeductPoints;
+               
+
+            // 更新總扣點數
+            document.getElementById('TotalDeductPoints').value = totalDeductPoints;
+
+             // 更新畫面上的 "使用點數" (`deductedPoints`)
+        document.getElementById('deductedPoints').textContent = totalDeductPoints;
+
+            // 更新剩餘點數
+            var userPoints = parseInt(document.getElementById('UserPoints').value) || 0;
+            var remainingPoints = userPoints - totalDeductPoints;
+            document.getElementById('RemainingPoints').value = remainingPoints;
+
+                // 更新畫面上的 "預估剩餘點數" (`remainingPointsDisplay`)
+        document.getElementById('remainingPointsDisplay').textContent = remainingPoints;
+
+          
+                // ✅ 點數不足時顯示警告，並變色
+        if (remainingPoints < 0) {
+            document.getElementById('pointsWarning').style.display = "block"; // 顯示警告訊息
+            $("#remainingPointsDisplay")
+                .removeClass("text-success") // 移除綠色
+                .addClass("text-danger"); // 變紅色
+        } else {
+            document.getElementById('pointsWarning').style.display = "none"; // 隱藏警告
+            $("#remainingPointsDisplay")
+                .removeClass("text-danger") // 移除紅色
+                .addClass("text-success"); // 變回綠色
+        }
+        }
+
+                // 根據目前時間，禁用已過去的時段選項
+        function disablePastTimeSlots() {
+            var reservationDate = document.getElementById("ReservationDate").value;
+            var today = new Date().toISOString().split("T")[0]; // 格式為 yyyy-MM-dd
+            var now = new Date();
+
+            var select = document.getElementById("TimePeriodSelect");
+            for (var i = 0; i < select.options.length; i++) {
+                var option = select.options[i];
+                var value = option.value;
+
+                if (!value) continue; // 跳過空值（例如請選擇時段）
+
+                // ⚠️ 根據你的時間格式調整，這裡假設是 "09:00-11:00"
+                var startTimeStr = value.split('~')[0]; // 取出 "09:00"
+                var startDateTime = new Date(reservationDate + "T" + startTimeStr + ":00");
+
+                if (reservationDate === today && startDateTime <= now) {
+                    option.disabled = true;
+                    if (!option.text.includes("（已過期）")) {
+                        
+                    }
+                } else {
+                    option.disabled = false;
+                }
+            }
+        }
+
+
+        // 初始化
+        window.addEventListener('load', function () {
+            var originalTimePeriod = '@Model.TimePeriod';
+            if (originalTimePeriod) {
+                var selectElem = document.getElementById("TimePeriodSelect");
+                for (var i = 0; i < selectElem.options.length; i++) {
+                    if (selectElem.options[i].value === originalTimePeriod) {
+                        selectElem.selectedIndex = i;
+                        break;
+                    }
+                }
+                updateReservedPeopleOptions();
+                updatePoints();
+                disablePastTimeSlots(); // 禁用過去的時段
+            }
+            toggleSubmitButton(); // 頁面加載時禁用提交按鈕
+        });
+
+            // 當表單提交時，觸發 SweetAlert 成功通知
+            $("#reservationForm").on("submit", function (event) {
+                event.preventDefault();
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 1000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: 'success',
+                    title: '您的編輯已成功提交'
+                }).then(() => {
+                    this.submit();
+                });
+            });
+
+
+   </script>
+}

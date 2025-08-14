@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Yunity.ViewModels.ManageFeeViewModel>
+
+<div class="container mt-3 mb-3 ">
+  
+    <!-- 顯示總應繳金額卡片，僅在總應繳金額大於 0 且為當期未繳費時顯示 -->
+    @if (ViewBag.TotalAmountDue > 0 && ViewBag.Type == "current")
+    {
+        <div class="card card-custom">
+            <div class="card-header card-header-customs">
+                總應繳金額
+            </div>
+            <div class="card-body card-body-customs">
+                <h5 class="card-title">請繳納金額</h5>
+                <p class="card-text amount-due">@ViewBag.TotalAmountDue 元</p>
+                <a href="@Url.Action("Index", "ECPayView", new { TotalAmount = ViewBag.TotalAmountDue })" class="btn btn-customs">信用卡繳費</a>
+            </div>
+        </div>
+    }
+
+    <!-- 檢查是否應顯示「無需繳費」訊息 -->
+    @if (ViewBag.TotalAmountDue == 0 && ViewBag.Type == "current" && !Model.Any())
+    {
+        <div class="card card-custom">
+            <div class="card-header card-header-customs">
+                應繳費用
+            </div>
+            <div class="card-body card-body-customs">
+                <h5 class="card-title">無需繳費</h5>
+                <p class="card-text">應繳費用為 0 元，無需繳費。</p>
+            </div>
+        </div>
+    }
+    
+  
+    <!-- 顯示管理費列表 -->
+    @if (Model.Any())
+    {
+        <table class="table mt-3">
+            <thead>
+                <tr>
+                    <th>序</th>
+                    <th>管理費名稱</th>
+                    <th>管理費</th>
+                    <th>機車停車格費用</th>
+                    <th>汽車格費用</th>
+                    <th>繳費截止日期</th>
+                    <th>付款方式</th>
+                    <th>付款時間</th>
+                    <th>付款狀態</th>
+                    <th>應繳費用</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int count = 0;
+                    foreach (var item in Model)
+                    {
+                        count++;
+                        <tr>
+                            <td>@count</td>
+                            <td>@Html.DisplayFor(modelItem => item.FeeName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Price)</td>
+                            <td>@Html.DisplayFor(modelItem => item.MotorPrice)</td>
+                            <td>@Html.DisplayFor(modelItem => item.CarPrice)</td>
+                            <td>@Html.DisplayFor(modelItem => item.FeeEnd)</td>
+                            <td>@Html.DisplayFor(modelItem => item.PayTypeDescription)</td>
+                            <td>@Html.DisplayFor(modelItem => item.PayTimeDescription)</td>
+                            <td>
+                                @if (item.StateDescription == "已繳費")
+                                {
+                                    <span style="color: forestgreen; font-weight: 700;">@Html.DisplayFor(modelItem => item.StateDescription)</span>
+                                }
+                                else if (item.StateDescription == "未繳費")
+                                {
+                                    <span style="color: red; font-weight: 700;">@Html.DisplayFor(modelItem => item.StateDescription)</span>
+                                }
+                            </td>
+
+                            <td>@Html.DisplayFor(modelItem => item.TotalPrice)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+ 

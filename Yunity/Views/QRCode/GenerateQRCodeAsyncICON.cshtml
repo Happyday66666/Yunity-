@@ -1,0 +1,31 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    // <div style="margin-top: 20px;">
+    //     <h5>會員 QR Code</h5>
+    //     <img src="data:image/png;base64,@ViewData["QRCodeBase64"]" alt="會員 QR Code" style="max-width: 200px; max-height: 200px;" />
+
+    // </div>
+}
+@{
+    <div style="margin-top: 20px;">
+        <h5>會員 QR Code</h5>
+        <img src="data:image/png;base64,@ViewData["QRCodeBase64"]" alt="會員 QR Code" style="max-width: 200px; max-height: 200px;" onclick="openQRCodeWindow()" />
+    </div>
+}
+@section Scripts{
+    <script type="text/javascript">
+        function openQRCodeWindow() {
+            // 创建一个新的窗口
+            var qrCodeWindow = window.open("", "QRCodeWindow", "width=400,height=400");
+
+            // 设置窗口内容
+            qrCodeWindow.document.write("<html><head><title>QR Code</title></head><body>");
+            qrCodeWindow.document.write("<h5>會員 QR Code</h5>");
+            qrCodeWindow.document.write('<img src="data:image/png;base64,@ViewData["QRCodeBase64"]" alt="會員 QR Code" style="max-width: 100%; max-height: 100%;" />');
+            qrCodeWindow.document.write("</body></html>");
+        }
+    </script>
+}
+

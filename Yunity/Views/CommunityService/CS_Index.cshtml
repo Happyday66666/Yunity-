@@ -1,0 +1,156 @@
+﻿@{
+    Layout = "_LayoutUser";
+    ViewData["Title"] = "首頁";
+}
+<style>
+    /* 服務圖片CSS */
+    .cs-btn-img {
+        width: 100%;
+        height: auto;
+        margin-right: 0 auto;
+        transition: transform 0.3s ease;
+        display: block;       
+    }
+
+    .cs-btn-link {
+        display: block;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .cs-btn-link:hover .cs-btn-img {
+        transform: scale(1.05);            
+    }
+
+    /* 我的預約樣式 */
+    /* .reserve-btn { */
+    /*     background-color: #abd8f1; */
+    /*     color: #000; */
+    /*     font-size: 1.2rem; */
+    /*     border: none; */
+    /*     padding: 10px 20px; */
+    /*     border-radius: 30px; */
+    /*     cursor: pointer; */
+    /*     transition: background-color 0.3s; */
+    /*     display: flex; */
+    /*     align-items: center; */
+    /*     justify-content: center; */
+    /*     gap: 5px; */
+    /*     height: 50px; /* 設定按鈕的高度 */ 
+    /*     width: 200px; /* 設定按鈕的寬度 */ 
+    /* } */
+
+    /*     .reserve-btn:hover { */
+    /*         background-color: #7abaf9;  */
+    /*         color: #000 !important; */
+    /*     } */
+
+    /* 固定右側 Icon 按鈕 */
+    .reservation-record-btn {
+        position: fixed;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 60px;
+        height: 60px;
+        background-color: #49cdd1;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1050;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .reservation-record-btn:hover {
+            background-color: #7cdee0;
+        }
+
+        .reservation-record-btn i {
+            /* Updated icon color to dark gray */
+            color: #333333;
+        }
+
+        .reservation-record-btn:hover i {
+            color: #333333;
+        }
+    
+</style>
+
+
+<div class="container mt-3 mb-3">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index","UHome")">首頁</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">社區服務</li>
+            </ol>
+        </nav>
+    </div>
+    
+        
+    
+    @* <!-- cs user 選單 --> *@
+    <div class="container mt-4">
+        @* <div class="mb-3"> *@
+        @*     <a href="@Url.Action("CS_List", "CommunityService")" class="reserve-btn"> *@
+        @*         <span class="material-symbols-outlined">menu_book</span> *@
+        @*         <span>我的預約紀錄</span> *@
+        @*     </a> *@
+        @* </div> *@
+        
+        <a asp-controller="CommunityService" asp-action="CS_List"
+           class="reservation-record-btn"
+           title="查看我的預約紀錄">
+            <i class="bi bi-calendar-check" style="font-size: 1.5rem;"></i>
+        </a>
+
+        <div class="col-12" style="display:@ViewBag.NoSever;">
+            <p>您的大樓目前尚無配合的廠商，但仍可查看過去預約紀錄。</p>
+        </div>
+        <div class="row row-cols-2 row-cols-md-4 g-5" style="display: flex; flex-wrap: wrap;">
+            <div class="col" style="display:@ViewBag.PCategory1;">
+                <a href="#" class="cs-btn-link" onclick="setProductId(@ViewBag.ProductId1)">
+                    <img id="pcategory1" src="~/image_CS/CS_btn_01.png?v=2" class="cs-btn-img" >
+                </a>
+            </div>
+            <div class="col" style="display:@ViewBag.PCategory2;">
+                <a href="#" class="cs-btn-link" onclick="setProductId(@ViewBag.ProductId2)">
+                    <img id="pcategory2" src="~/image_CS/CS_btn_02.png?v=2" class="cs-btn-img">
+                </a>
+            </div>
+            <div class="col" style="display:@ViewBag.PCategory3;">
+                <a href="#" class="cs-btn-link" onclick="setProductId(@ViewBag.ProductId3)">
+                    <img id="pcategory3" src="~/image_CS/CS_btn_04.png?v=2" class="cs-btn-img">
+                </a>
+            </div>
+            <div class="col" style="display:@ViewBag.PCategory4;">
+                <a href="#" class="cs-btn-link" onclick="setProductId(@ViewBag.ProductId4)">
+                    <img id="pcategory4" src="~/image_CS/CS_btn_03.png?v=2" class="cs-btn-img">
+                </a>
+            </div>          
+        </div>
+    </div>
+</div>
+
+@*  隱藏的表單，將選擇的 ProductId 提交到後端  *@
+<form id="productForm" action="@Url.Action("ApptForm", "CommunityService")" method="post">
+    <input type="hidden" id="selectedProductId" name="ProductId" value="" />
+</form>
+
+@section Scripts
+{
+    <script>
+        // 當用戶選擇某個圖片時，將選擇的 ProductId 傳遞到 ApptForm 頁面
+        function setProductId(productId) {
+            // 將 ProductId 透過 URL 傳遞到 ApptForm 頁面
+            window.location.href = "@Url.Action("ApptForm", "CommunityService")?ProductId=" + productId;
+        }
+    </script>
+}
+

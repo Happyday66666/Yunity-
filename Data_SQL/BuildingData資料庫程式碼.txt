@@ -1,0 +1,142 @@
+create database BuildingData
+use BuildingData
+create table tSystem_Info (
+fId int primary key identity(1,1),
+fName nvarchar(50) not null default 'none',
+fAccount nvarchar(50) not null default 'none',
+fPassword nvarchar(50) not null default 'none',
+fPhone nvarchar(50) not null default 'none',
+fEmail nvarchar(50) not null default 'none'
+);
+
+create table tusers_Info (
+fId int not null primary key identity(1,1),
+fName nvarchar(50) not null default 'none',
+fAccount nvarchar(20) not null default 'none',
+fPassword nvarchar(50) not null default 'none',
+fPhone nvarchar(15) not null default 'none',
+fBuilding_id int not null default 0,
+fUser_address nvarchar(50) not null default 'none',
+fEmail nvarchar(50) not null default 'none',
+);
+
+create table tManager_Info (
+fId int primary key identity(1,1),
+fName nvarchar(50) not null default 'none',
+fAccount nvarchar(50) not null default 'none',
+fPassword nvarchar(50) not null default 'none',
+fBuilding_id int not null default 0,
+fPhone nvarchar(50) not null default 'none',
+fEmail nvarchar(50) not null default 'none'
+);
+
+create table BD_List (
+id int primary key identity(1,1) not null,
+BD_No nvarchar(50) null,
+BD_Name nvarchar(50) null,
+BD_Addr nvarchar(100) null,
+Contract_Start datetime null,
+Contract_End datetime null,
+First_Contact nvarchar(50) null,
+Fst_Contact_Tel nvarchar(50) null,
+Second_Contact nvarchar(50) null,
+Sec_Contact_Tel nvarchar(50) null,
+House_Count int null,
+BD_State int null);
+
+
+create table BD_Permissions(
+id int primary key identity(1,1) not null,
+BD_ID int null,
+Receive_Package int null,
+Sent_Package int null,
+Manage_Fee int null,
+Bulletin int null,
+Public_Area_Reserve int null,
+Nearby_Store int null,
+Community_Service int null,
+Feedback int null,
+Visitor_Record int null,
+Calendar int null);
+
+create table BD_Member (
+id int primary key identity(1,1) not null,
+BD_ID int null,
+Door_No nvarchar(50) null,
+User_ID int null);
+
+create table BD_Manager (
+id int primary key identity(1,1) not null,
+BD_ID int null,
+Manager_ID int null,
+Permissions int null,
+);
+
+create table Company_Account(
+ID int primary key identity(1,1) not null,
+Com_Name nvarchar(100),
+Com_Account nvarchar(50),
+Com_Password varchar(50),
+Com_Permissions int,
+Com_Status int
+);
+
+create table Company_Profile(
+ID int primary key identity(1,1) not null,
+Com_ID int,
+Com_Address nvarchar(100),
+Com_Person nvarchar(50),
+Com_Phone varchar(50),
+Com_Email varchar(200),
+Com_Server_Item nvarchar(50),
+Com_Registration_Number int,
+Com_Contract_Start_Date date,
+Com_Contract_End_Date date,
+Com_Business_Hours nvarchar(50)
+);
+
+create table Company_Login_History(
+ID int primary key identity(1,1) not null,
+Company_ID int,
+Com_Login_Time datetime,
+Com_Logout_Time datetime,
+Com_IP_Address varchar(50),
+Com_Login_Status nvarchar(20),
+);
+
+create table Server_History(
+ID int primary key identity(1,1) not null,
+Company_ID int,
+Service_Date datetime,
+Service_Type nvarchar(50),
+Service_Who nvarchar(50),
+Service_Status nvarchar(50),
+Service_Feedback nvarchar(200),
+);
+
+create table Company_Service_Area(
+ID int primary key identity(1,1) not null,
+Com_ID INT,
+YilanC INT,
+KeelungCity INT,
+TaipeiCity INT,
+NewTaipeiCity INT,
+TaoyuanCity INT,
+HsinchuCity INT,
+HsinchuC INT,
+MiaoliC INT,
+TaichungCity INT,
+ChanghuaC INT,
+NantouC INT,
+YunlinC INT,
+ChiayiCity INT,
+ChiayiC INT,
+TainanCity INT,
+KaohsiungCity INT,
+PingtungC INT,
+PenghuC INT,
+HualienC INT,
+TaitungC INT,
+KinmenC INT,
+LienchiangC INT
+);

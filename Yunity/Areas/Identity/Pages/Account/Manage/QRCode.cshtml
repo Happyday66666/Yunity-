@@ -1,0 +1,54 @@
+﻿@page
+@model Yunity.Areas.Identity.Pages.Account.Manage.QRCodeModel
+@using Microsoft.AspNetCore.Antiforgery
+@{
+    ViewData["Title"] = "QR Code";
+    ViewData["ParentLayout"] = "_LayoutUser"; // 指定不同的 Layout
+}
+
+<h2>會員 QR Code</h2>
+
+<!-- 直接使用按鈕，不用 form -->
+<button id="generateQrCodeBtn" class="btn btn-primary">產生會員 QR Code</button>
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <!-- 如果已有 QR Code，則顯示；否則預設隱藏 -->
+        <img id="qrCodeImage" src="@(Model.QRCodeBase64 != null ? "data:image/png;base64," + Model.QRCodeBase64 : "")"
+             alt="QR Code" width="200" height="200" style="@(Model.QRCodeBase64 == null ? "display:none;" : "")" />
+    </div>
+</div>
+
+<!-- 載入 jQuery (若 Layout 中未載入的話) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#generateQrCodeBtn").click(function (e) {
+            e.preventDefault(); // 防止預設行為
+
+              // 從頁面取得防偽令牌
+            var token = $('input[name="__RequestVerificationToken"]').val();
+
+            $.ajax({
+                url: '@Url.Page("QRCode", "GenerateQRCodeAsyncICON")',
+                type: 'POST',
+               dataType: 'json', // 明確指定返回資料型態為 JSON
+                  headers: {
+                    // 將防偽令牌加入請求標頭
+                    'RequestVerificationToken': token
+                },
+                success: function (response) {
+                    if (response.qrCodeBase64) {
+                        // 更新圖片的 src 屬性，並顯示圖片
+                        $("#qrCodeImage").attr("src", "data:image/png;base64," + response.qrCodeBase64).show();
+                    } else {
+                        alert("生成 QR Code 失敗");
+                    }
+                },
+                error: function () {
+                    alert("請求失敗，請稍後再試");
+                }
+            });
+        });
+    });
+</script>

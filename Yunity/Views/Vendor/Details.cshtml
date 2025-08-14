@@ -1,0 +1,271 @@
+﻿
+@model Yunity.Models.CCompanyWrap
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index","Home")" class="breadcrumb-item active" aria-current="page">
+                首頁
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("VendorList","Vendor")" class="breadcrumb-item active" aria-current="page">
+                廠商管理
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Details","Vendor", new { id = Model.CAid })" class="breadcrumb-item active" aria-current="page" style="color:#293C56">
+                @Model.ComName
+            </a>
+        </li>
+    </ol>
+</nav>
+    <h4>
+        @Html.DisplayFor(model => model.ComName)
+    </h4>
+    <hr />
+    
+<div class="container">
+    <div class="row">
+        <!-- Left Column (Company Info) -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="container">
+                        <table class="table">
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComAddress)</th>
+                                <td class="fontColor">@Html.DisplayFor(model => model.ComAddress)</td>
+                            </tr>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComPerson)</th>
+                                <td class="fontColor">@Html.DisplayFor(model => model.ComPerson)</td>
+                            </tr>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComPhone)</th>
+                                <td class="fontColor">@Html.DisplayFor(model => model.ComPhone)</td>
+                            </tr>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComEmail)</th>
+                                <td class="fontColor">@Html.DisplayFor(model => model.ComEmail)</td>
+                            </tr>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComServerItem)</th>
+                                <td class="fontColor">@Html.DisplayFor(model => model.ComServerItem)</td>
+                            </tr>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComRegistrationNumber)</th>
+                                <td class="fontColor">@Html.DisplayFor(model => model.ComRegistrationNumber)</td>
+                            </tr>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComBusinessHours)</th>
+                                <td class="fontColor">@Html.DisplayFor(model => model.ComBusinessHours)</td>
+                            </tr>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComContractStartDate)</th>
+                                <td class="fontColor">@Html.DisplayFor(model => model.ComContractStartDate)</td>
+                            </tr>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComContractEndDate)</th>
+                                <td class="fontColor">@Html.DisplayFor(model => model.ComContractEndDate)</td>
+                            </tr>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComAccount)</th>
+                                <td class="fontColor">@Html.DisplayFor(model => model.ComAccount)</td>
+                            </tr>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComPassword)</th>
+                                <td class="fontColor">**********</td>
+                            </tr>
+                            @* <tr> *@
+                            @*     <th>@Html.DisplayNameFor(model => model.ComPermissions)</th> *@
+                            @*     <td class="fontColor">@Html.DisplayFor(model => model.ComPermissions)</td> *@
+                            @* </tr> *@
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComStatus)</th>
+                                <td style="color: @(Model.ComStatus == 1 ? "green" : "red")">
+                                    @(Model.ComStatus == 1 ? "正常" : "關閉")
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>維修紀錄</th>
+                                <td>
+                                    <a href="@Url.Action("FixList","Vendor", new { id = Model.CAid })">
+                                        <i class="bi bi-tools" style="color: #2953FF;"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column (Additional Info) start -->
+        <div class="col-md-4 rightColumn">
+            <div class="card">
+                <div class="card-body">
+                    <div class="container">
+                        <!-- 北部區域 Northern R. -->
+                        <ul class="region-list">
+                            <li class="regionTitle my-2 text-center">北部服務區域</li>
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.YilanC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.YilanC == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.KeelungCity)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.KeelungCity == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.TaipeiCity)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.TaipeiCity == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.NewTaipeiCity)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.NewTaipeiCity == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.TaoyuanCity)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.TaoyuanCity == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.HsinchuCity)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.HsinchuCity == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.HsinchuC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.HsinchuC == 1 ? "checked" : "") />
+                            </li>
+                        </ul>
+
+                        <!-- 中部區域 Central R. -->
+                        <ul class="region-list">
+                            <li class="regionTitle my-2 text-center">中部服務區域</li>
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.MiaoliC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.MiaoliC == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.TaichungCity)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.TaichungCity == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.ChanghuaC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.ChanghuaC == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.NantouC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.NantouC == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.YunlinC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.YunlinC == 1 ? "checked" : "") />
+                            </li>
+                        </ul>
+
+                        <!-- 南部區域 Southern R. -->
+                        <ul class="region-list">
+                            <li class="regionTitle my-2 text-center">南部服務區域</li>
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.ChiayiCity)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.ChiayiCity == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.ChiayiC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.ChiayiC == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.TainanCity)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.TainanCity == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.KaohsiungCity)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.KaohsiungCity == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.PingtungC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.PingtungC == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.PenghuC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.PenghuC == 1 ? "checked" : "") />
+                            </li>
+                        </ul>
+
+                        <!-- 東部區域 Eastern R. -->
+                        <ul class="region-list">
+                            <li class="regionTitle my-2 text-center">東部服務區域</li>
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.HualienC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.HualienC == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.TaitungC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.TaitungC == 1 ? "checked" : "") />
+                            </li>
+                        </ul>
+
+                        <!-- 福建省 Fuchien Prov. -->
+                        <ul class="region-list">
+                            <li class="regionTitle my-2 text-center">福建省服務區域</li>
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.KinmenC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.KinmenC == 1 ? "checked" : "") />
+                            </li>
+
+                            <li class="list-group-item form-switch switchForm">
+                                <span>@Html.DisplayNameFor(model => model.LienchiangC)</span>
+                                <input class="form-check-input customSwitch" type="checkbox" disabled @(Model.LienchiangC == 1 ? "checked" : "") />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Right Column (Additional Info) end -->
+    </div>
+</div>
+
+    <div>
+    <!-- 修改按鈕 -->
+    <a asp-action="Edit" asp-route-id="@Model.CAid" style="position: fixed; bottom: 100px; right: 20px; background-color:#004aad; border-radius: 50%; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; color: white; font-size: 1.5rem; text-decoration: none; z-index: 9999;">
+            <i class="bi bi-pencil"></i>
+        </a>
+    <!-- 返回按鈕(廠商管理) -->
+    <a asp-action="VendorList" style="position: fixed; bottom: 20px; right: 20px; color: #293c56;font-size:3rem; z-index: 9999;">
+            <i class="bi bi-arrow-left-circle-fill"></i>
+        </a>
+    </div>
+
+    
+
+
+
+@section scripts {
+    <style>
+        
+    </style>
+}

@@ -1,0 +1,267 @@
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model Yunity.Models.CSListWrap
+
+@{
+    Layout = "_LayoutUser";
+    ViewData["Title"] = "編輯我的預約";
+}
+
+@functions {
+    public string GetStatusClass(string status)
+    {
+        switch (status)
+        {
+            case "已送單":
+                return "status-已送單";
+            case "進行中":
+                return "status-進行中";
+            case "已取消":
+                return "status-已取消";
+            case "已完成":
+                return "status-已完成";
+            default:
+                return string.Empty;
+        }
+    }
+}
+
+<style>
+    /*表格樣式(thead)*/
+    table {
+        border-collapse: collapse; /* 讓邊框合併 */
+    }
+        /* 隱藏所有格線 */
+        table th, table td {
+            border: none; /* 去掉所有格線 */
+        }
+
+        /* 只保留表頭的底部框線 */
+        table thead th {
+            border-bottom: 2px solid black; /* 保留表頭底部框線 */
+            text-align: center; /* 置中顯示 */
+            font-size: 1.5rem; /* 增加字體大小 */
+            font-weight: bold; /* 字體加粗 */
+        }
+
+    /* 狀態顏色與大小設置 */
+    .status-column {
+        font-size: 1.2rem; /* 設定字體大小 */
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+    /* 狀態顏色對應 */
+    .status-已送單 {
+        color: #83af40 !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .status-進行中 {
+        color: #ff914d !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .status-已取消 {
+        color: #c5401f !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .status-已完成 {
+        color: #3255af !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    /* 按鈕容器樣式 */
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    /* 按鈕樣式 */
+    .action-btn {
+        font-size: 1.2rem;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: background-color 0.3s;
+    }
+        
+    /* 返回按鈕 */
+    .back-btn {
+        background-color: #7cdee0;
+        color: #000;
+    }
+
+        .back-btn:hover {
+            background-color: #49cdd1;
+        }
+
+    /* 儲存按鈕樣式 */
+    .save-btn {
+        background-color: #a7cd6d; /* 綠色 */
+        color: #000;
+        font-size: 1.2rem;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+
+        .save-btn:hover {
+            background-color: #83af40; /* 滑鼠懸停變色 */
+        }
+           
+</style>
+
+
+<div class="container mt-3 mb-3">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index","UHome")">首頁</a>
+                </li>
+                <li class="breadcrumb-item" aria-current="page"><a href="@Url.Action("CS_Index","CommunityService")">社區服務</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><a href="@Url.Action("CS_List","CommunityService")">我的預約紀錄</a></li>
+                <li class="breadcrumb-item active" aria-current="page">編輯預約明細</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="container-fluid">
+        <h2>編輯我的預約</h2>
+        <form id="CS_Edit" method="post" enctype="multipart/form-data" asp-action="CS_Edit" asp-route-id="@Model.Id">
+        <div class="card mb-3">            
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th colspan="4" class="table-header">
+                                廠商資訊
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.ComName)</th>
+                            <td colspan="3">@Html.DisplayFor(model => model.ComName)</td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.ProductName)</th>
+                            <td colspan="3">@Html.DisplayFor(model => model.ProductName)</td>
+                        </tr>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ComPhone)</th>
+                                <td colspan="3">@Html.DisplayFor(model => model.ComPhone)</td>
+                            </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.CreatedDate)</th>
+                            <td colspan="3">@Html.DisplayFor(model => model.CreatedDate)</td>
+                        </tr>
+                        <tr>                                
+                            <th>@Html.DisplayNameFor(model => model.Status)</th>
+                            <td colspan="3" class="status-column @GetStatusClass(Model.Status)">
+                                @Html.DisplayFor(model => model.Status)
+                            </td>
+                        </tr>                        
+                    </tbody>
+                </table>                   
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <table class="table">
+                    <thead><tr><th colspan="4" class="table-header">客戶資訊</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.CustomerName)</th>
+                            <td colspan="3">
+                                @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.Phone)</th>
+                            <td colspan="3">
+                                @Html.TextBoxFor(model => model.Phone, new { @class = "form-control" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.ServiceLocation)</th>
+                            <td colspan="3">
+                                @Html.TextBoxFor(model => model.ServiceLocation, new { @class = "form-control" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.Email)</th>
+                            <td colspan="3">
+                                @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.ArNotes)</th>
+                            <td colspan="3">
+                                @Html.TextAreaFor(model => model.ArNotes, new { @class = "form-control", rows = 4 })
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.Photo1)</th>
+                            <td>
+                                <input type="file" name="Photo1" class="form-control" />
+                                @if (Model.Photo1 != "nophoto" && !string.IsNullOrEmpty(Model.Photo1))
+                                {
+                                    <img src="@Url.Content("~/OrderPhoto/" + Model.Photo1)" alt="Photo1" style="max-width: 200px;width: 100%;" />
+                                }
+                            </td>
+                            <td>
+                                <input type="file" name="Photo2" class="form-control" />
+                                @if (Model.Photo2 != "nophoto" && !string.IsNullOrEmpty(Model.Photo2))
+                                {
+                                    <img src="@Url.Content("~/OrderPhoto/" + Model.Photo2)" alt="Photo2" style="max-width: 200px;width: 100%;" />
+                                }
+                            </td>
+                            <td>
+                                <input type="file" name="Photo3" class="form-control" />
+                                @if (Model.Photo3 != "nophoto" && !string.IsNullOrEmpty(Model.Photo3))
+                                {
+                                    <img src="@Url.Content("~/OrderPhoto/" + Model.Photo3)" alt="Photo3" style="max-width: 200px;width: 100%;" />
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                @*按扭區域 START*@
+                <div class="button-container">
+                    <button id="backBtn" class="action-btn back-btn" onclick="window.location.href='@Url.Action("CS_List", "CommunityService")'">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                        <span>返回</span>
+                    </button>
+                    <button id="saveBtn" class="action-btn save-btn" onclick="document.getElementById('CS_Edit').submit();">
+                        <span class="material-symbols-outlined">save</span>
+                        <span>儲存</span>
+                    </button>
+
+                </div>
+                @*按扭區 END*@
+            </div>
+        </div>
+        </form>
+    </div>
+
+     
+</div>

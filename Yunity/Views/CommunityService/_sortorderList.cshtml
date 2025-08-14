@@ -1,0 +1,48 @@
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model List<Yunity.Models.CSListWrap>
+@functions {
+    public string GetStatusClass(string status)
+    {
+        switch (status)
+        {
+            case "已送單":
+                return "status-已送單";
+            case "進行中":
+                return "status-進行中";
+            case "已取消":
+                return "status-已取消";
+            case "已完成":
+                return "status-已完成";
+            default:
+                return string.Empty;
+        }
+    }
+}
+
+
+@{
+    int count = 0;
+    if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            count++;
+            <tr style="cursor: pointer;" 
+                onclick="location.href='@Url.Action("CS_Detail", "CommunityService", new { id = item.Id })'">
+                <td>@count</td>
+                <td>@Html.DisplayFor(modelItem => item.ComName)</td>
+                <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
+                <td>
+                    @if (item.CreatedDate != null)
+                    {
+                        @Html.Raw(item.CreatedDate.Value.ToString("yyyy-MM-dd"))
+                    }
+                </td>
+                <td class="status-column @GetStatusClass(item.Status)">
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+            </tr>
+        }
+    }
+}
+

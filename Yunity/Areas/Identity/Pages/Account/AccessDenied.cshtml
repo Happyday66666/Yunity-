@@ -1,0 +1,11 @@
+﻿@page
+@model AccessDeniedModel
+@{
+    ViewData["Title"] = "存取被拒絕";
+    ViewData["ParentLayout"] = "_LayoutUser"; // 指定不同的 Layout
+}
+
+<header>
+    <h1 class="text-danger">@ViewData["Title"]</h1>
+    <p class="text-danger">您無權存取此資源。</p>
+</header>

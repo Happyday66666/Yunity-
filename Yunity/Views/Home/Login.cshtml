@@ -1,0 +1,86 @@
+﻿@using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage
+@{
+
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome!</title>
+    
+     
+    <link rel="stylesheet" href="~/css/styles.min.css" />
+</head>
+
+<body>
+    <!--  Body Wrapper -->
+    <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+         data-sidebar-position="fixed" data-header-position="fixed">
+        <div class="position-relative overflow-hidden radial-gradient min-vh-100 d-flex align-items-center justify-content-center">
+            <div class="d-flex align-items-center justify-content-center w-100">
+                <div class="row justify-content-center w-100">
+                    <div class="col-md-8 col-lg-6 col-xxl-3">
+                        <div class="card mb-0">
+                            <div class="card-body">
+                                <div style="display: flex; justify-content: center; align-items: center;" class="mb-4">
+                                    <img id="yunityImage" src="~/images/logos/yunity_icon_white-2.png" style="filter: grayscale(100%) brightness(30%); width:150px" onclick="System_Manger()" />
+                                </div>
+                                @using (Html.BeginForm())
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <div class="form-horizontal">
+                                        <h4 style="">請輸入帳號與密碼</h4>
+                                        <hr />
+                                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                        
+                                        
+                                        <div class="mb-3">
+                                            <label for="txtAccount" class="form-label">帳號</label>
+                                            @Html.TextBox("txtAccount", null, new { @class = "form-control", id = "txtAccount" })
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="txtPassword" class="form-label">密碼</label>
+                                            @Html.Password("txtPassword", null, new { @class = "form-control", id = "txtPassword" })
+                                        </div>
+                                        <div class="d-flex align-items-center justify-content-between mb-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input primary" type="checkbox" value="" id="flexCheckChecked" checked>
+                                                <label class="form-check-label text-dark" for="flexCheckChecked">
+                                                    Remeber this Device
+                                                </label>
+                                            </div>
+                                            <a class="text-primary fw-bold">忘記密碼</a>
+                                        </div>
+                                        <div class="col-md-10 mx-auto text-center">
+                                                <input type="submit" value="登入" class="btn btn-primary w-100 py-8 fs-4 mb-4" />
+                                            </div>
+                                        </div>
+                                    <a href="~/HomePage/Index" style="color:dimgray; font-weight: bold">返回首頁</a>
+                                }
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+</body>
+</html>
+<script>
+    function System_Manger() {
+        document.getElementById('txtPassword').value = '123';
+        document.getElementById('txtAccount').value = 'admin';
+    }
+
+    document.getElementById('yunityImage').addEventListener('click', System_Manger);
+</script>

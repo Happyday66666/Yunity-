@@ -1,0 +1,139 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutVendorSide.cshtml";
+}
+
+<main>
+
+    <!-- 按鈕 -->
+    <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#exampleModal">
+        新增產品
+    </button>
+
+    <!-- 模態框 -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">新增產品</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="productForm">
+                        <div class="form-group">
+                            <label for="cSItem">服務項目:</label>
+                            <span id="cSItem">@ViewBag.userProfile.ComServerItem</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="pName">產品名稱</label>
+                            <input type="text" class="form-control" id="pName" placeholder="ex.窗型冷氣">
+                        </div>
+                        <div class="form-group">
+                            <label for="pDescription">產品說明</label>
+                            <input type="text" class="form-control" id="pDescription" placeholder="ex.專業維修窗型冷氣">
+                        </div>
+                        <div class="form-group">
+                            <label for="pPrice">產品售價</label>
+                            <input type="number" class="form-control" id="pPrice">
+                        </div>
+                        <div class="form-group">
+                            <label for="pStock">產品庫存</label>
+                            <input type="number" class="form-control" id="pStock">
+                        </div>
+                        <div class="form-group">
+                            <label for="pStatus">狀態</label>
+                            <select class="form-control" id="pStatus">
+                                <option value="上架">上架</option>
+                                <option value="下架">下架</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pImage">產品圖片</label>
+                            <input type="file" class="form-control-file" id="pImage" accept="image/*" onchange="previewImage(event)">
+                            <img id="imagePreview" src="~/assets_VendorSide/images/no Image.png" alt="Image Preview" style="max-width: 100%; margin-top: 10px;">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">關閉</button>
+                            <button type="submit" class="btn btn-outline-success">儲存</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <!-- 引入 Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- 引入完整的 jQuery (需要 AJAX 功能) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <!-- 引入 Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // 預覽圖片
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('imagePreview');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // 新增產品
+        $(document).ready(function () {
+            // 當提交表單時
+            $('#productForm').submit(function (event) {
+                event.preventDefault(); // 防止表單的預設提交行為
+
+                // 收集表單數據
+                var formData = new FormData();
+                formData.append("pName", $('#pName').val());
+                formData.append("pDescription", $('#pDescription').val());
+                formData.append("pPrice", $('#pPrice').val());
+                formData.append("pStock", $('#pStock').val());
+                formData.append("pStatus", $('#pStatus').val());
+
+                // 附加圖片
+                var imageFile = $('#pImage')[0].files[0];
+                if (imageFile) {
+                    formData.append("pImage", imageFile);
+                }
+
+                // 發送 AJAX 請求
+                $.ajax({
+                    url: '/VendorSide/SaveProduct', // 這是你處理保存產品的URL
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (response) {
+                        if (response.success) {
+                           
+                        }
+                       // 顯示成功訊息
+                       alert("產品新增成功!");
+
+                       // 關閉模態框
+                       $('#exampleModal').modal('hide');
+
+                       // 重置表單
+                       $('#productForm')[0].reset();
+
+                       // 重設圖片預覽
+                       $('#imagePreview').attr('src', '/assets_VendorSide/images/no Image.png');
+                        
+                    },
+                    error: function (error) {
+                        alert("發生錯誤：" + error.statusText); // 處理錯誤
+                    }
+                });
+            });
+        });
+    </script>
+}

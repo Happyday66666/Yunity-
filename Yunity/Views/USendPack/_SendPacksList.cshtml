@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Yunity.Models.SendPacksWrap>
+<div class="row me-5" >
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <a href="@Url.Action("Details", new { id = item.Id })" class="card-link" style="text-decoration: none; color: inherit;">
+                <div class="card d-flex me-1">
+                    <img src="@item.PackPhoto" class="card-img-top" alt="包裹照片" style="height: 300px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title" style="color:#3255af;">
+                            <!-- 修正了 style 屬性 -->
+                            @if (item.State == "已寄送")  // 根據已寄出狀態顯示圖標
+                            {
+                                <i class="bi bi-send-check-fill"></i>
+                            }
+                            else if (item.State == "待處理")  // 根據未寄出狀態顯示圖標
+                            {
+                                <i class="bi bi-send-dash-fill"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-box"></i>  <!-- 默認圖標 -->
+                            }
+                            包裹編號: @item.Id
+                        </h5>
+
+                        <p class="card-text">
+                            <strong>包裹類型:</strong> @item.Type<br>
+                            <strong>狀態:</strong>
+                            @if (item.State == "已寄送")  // 根據已寄出狀態顯示圖標
+                            {
+                                <span style="color: forestgreen;font-weight:600;">@item.State</span>
+                            }
+                            else if (item.State == "待處理")  // 根據未寄出狀態顯示圖標
+                            {
+                                <span style="color: red;font-weight:600;">@item.State</span>
+                            }
+                        </p>
+                        <i class="bi bi-arrow-right-circle " style="position: absolute; bottom: 10px; right: 10px; font-size: 30px; transition: color 0.3s; color:#3255af;"></i>
+                    </div>
+                </div>
+
+            </a>
+        </div>
+    }
+
+</div>
+

@@ -1,0 +1,90 @@
+﻿ @model Yunity.Models.SendPacksWrap
+
+@{
+    Layout = "_LayoutUser";
+    ViewData["Title"] = "Details";
+}
+ 
+     
+
+<div class="container mt-4 mb-4">
+    <div class="card-container">
+
+    
+        <div class="card shadow-sm mb-4" style="border-radius: 10px; overflow: hidden; background-color: #fff;">
+            <div class="card-header" style="font-size: 24px; color: #3255af; font-weight: 600; background-color: #ffffff;">
+                <strong>@Model.Id 號包裹詳細資料</strong>
+            </div>
+            <div class="card-body" style="padding: 20px;">
+                <p class="text mb-2" style="font-size: 16px;">包裹類型: <span class="font-weight-bold">@Model.Type</span></p>
+                <p class="text mb-2" style="font-size: 16px;">收件人: <span class="font-weight-bold">@Model.GetUser</span></p>
+                <p class="text mb-2" style="font-size: 16px;">收件電話: <span class="font-weight-bold">@Model.GetTel</span></p>
+                <p class="text mb-2" style="font-size: 16px;">寄送地址: <span class="font-weight-bold">@Model.SendAddr</span></p>
+                <p class="text mb-2" style="font-size: 16px;">物流公司: <span class="font-weight-bold">@Model.Logistic</span></p>
+
+                <div class="line" style="height: 1px; background-color: #fff; margin: 20px 0;"></div>
+
+                <p class="text mb-2" style="font-size: 16px;">領取人: <span class="font-weight-bold">@Model.PickUser</span></p>
+                <p class="text mb-2" style="font-size: 16px;">領取時間: <span class="font-weight-bold">@Model.PickTime</span></p>
+                <p class="text mb-2" style="font-size: 16px;">領取物流時間: <span class="font-weight-bold">@Model.PickLogisticTime</span></p>
+                <p class="text mb-0" style="font-size: 16px; color: red;">狀態: <span class="font-weight-bold">@Model.State</span></p>
+            </div>
+        </div>
+
+        <!-- Card for package image -->
+        <div class="card shadow-sm" style="display: flex; flex-direction: row; align-items: center; justify-content: space-between; border-radius: 10px; background-color: #ffffff; overflow: hidden;">
+            <img src="@Model.PackPhoto" alt="包裹照片" style="max-width: 50%; border-radius: 10px; height: auto;" />
+            <a asp-action="List" style="text-decoration: none; margin-top:90px;margin-right:30px; margin-bottom:30px; ">
+                <i class="bi bi-arrow-left-circle back-button" style="font-size: 50px; color: #3255af;"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 800px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+    }
+
+    .line {
+        margin-top: 20px;
+    }
+
+    .back-button {
+        cursor: pointer;
+        margin-top:200px;
+        font-size:25px;
+    }
+
+        .back-button:hover {
+            color: #007bff;
+        }
+
+    .bi::before, [class^="bi-"]::before, [class*=" bi-"]::before {
+        display: inline-block;
+        font-family: bootstrap-icons !important;
+        font-style: normal;
+        font-weight: normal !important;
+        font-variant: normal;
+        text-transform: none;
+        line-height: 1;
+        vertical-align: -.125em;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        margin-top: 200px;
+        font-size: 25px;
+    }
+
+</style>
+

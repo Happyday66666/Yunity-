@@ -1,0 +1,602 @@
+/*profile*/
+/*UHome/board*/
+#scroll-down-arrow {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    cursor: pointer;
+    animation: bounce 1.5s infinite;
+    z-index: 1000; /* 确保箭?位于?面的?部 */
+}
+
+/* ??效果：上下?? */
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+
+/*UHome/nav*/
+ 
+.navbar {
+    padding: 0.8rem 1.5rem;
+}
+
+.navbar-nav {
+    margin-left: auto;  
+}
+
+.btn-primary {
+    padding: 8px 16px; 
+}
+
+.bi-qr-code {
+    font-size: 20px;
+    margin-right: 8px;  
+}
+
+ 
+.modal-body {
+    text-align: center;
+    padding: 20px;
+}
+
+.modal-title {
+    font-size: 18px;
+}
+ 
+.nav-item {
+
+margin-left:0;
+
+}
+.circle-wrapper {
+    margin-left: 5px;
+}
+
+#generateQrCodeBtn {
+    color: white;
+    font-size: 23px;
+    padding: 0px 0px 2px 2px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+
+.btn-close {
+    background-color: #49cdd1;
+    border: none;
+}
+
+
+.rounded-image {
+    border-radius: 15px;
+    object-fit: cover;
+}
+
+ 
+
+.marquee:hover .marquee-item {
+    animation-play-state: paused;
+}
+
+#Logouticon {
+    color: white;
+    font-size: 25px;
+    padding: 2.5px 2.5px 2px 1px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/*GetPack*/
+.alert {
+    background-color: #fff3cd; /* 淺黃色背景 */
+    color: #856404; /* 字體顏色 */
+    border: 1px solid #ffeeba; /* 邊框顏色 */
+    border-radius: 10px; /* 邊框圓角 */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* 添加陰影效果 */
+    font-size: 0.8rem; /* 字體大小 */
+    padding: 20px; /* 填充 */
+    display: flex;
+    justify-content: space-between; /* 使按鈕和文字分開 */
+    align-items: center; /* 垂直居中 */
+}
+
+    .alert .btn-close {
+        background-color: transparent;
+        border: none;
+        color: #856404;
+        font-size: 1.2rem;
+    }
+
+        .alert .btn-close:hover {
+            color: #ff9800;
+        }
+ 
+
+/*UBoard/Details*/
+.text {
+    font-size: 20px;
+    font-weight: bold;
+}
+/*UBoard/List*/
+/* 為所有按鈕加上底線，並設置初始顏色為灰色 */
+.btn-custom {
+    border: none;
+    text-decoration: none;
+    position: relative;
+}
+
+    .btn-custom::after {
+        content: '';
+        display: block;
+        position: absolute;
+        width: 100%;
+        height: 2px; /* 底線的粗細 */
+        background-color: #D0D0D0; /* 底線顏色 */
+        bottom: 0; /* 放到底部 */
+        left: 0;
+        transition: background-color 0.3s ease; /* 設置過渡效果 */
+    }
+
+    /* 當鼠標懸停時，底線變為深藍色 */
+    .btn-custom:hover::after {
+        background-color: #3255af; /* 深藍色 */
+    }
+
+    /* 當按鈕被點擊或在焦點時，底線顏色也變為深藍色 */
+    .btn-custom:focus::after, .btn-custom:active::after {
+        background-color: #3255af; /* 深藍色 */
+    }
+
+/* 設定滾動動畫效果 */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(50px); /* 初始位置 */
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0); /* 最終位置 */
+    }
+}
+
+/* 卡片初始狀態 */
+.card, #filter-section {
+    opacity: 0; /* 預設隱藏 */
+    animation: fadeInUp 0.8s ease-out forwards; /* 進入視窗時顯示 */
+}
+ 
+    /* 顯示卡片 */
+    .card.visible, #filter-section.visible .filter {
+        opacity: 1;
+    }
+
+
+/*PublicAreaReservesController/Index*/
+.wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.section {
+    display: flex;
+    justify-content: space-between;
+}
+
+.block-wrap {
+    display: flex;
+    width: 100%;
+}
+
+.block-l, .block-r {
+    flex: 1;
+    padding: 20px;
+}
+
+.photo {
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+}
+
+.block-text {
+    padding: 10px;
+}
+
+.title {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.en {
+    font-size: 1.2em;
+}
+
+.ch {
+    font-size: 1em;
+    color: gray;
+}
+
+.more-btn {
+    margin-top: 15px;
+    text-decoration: none;
+    padding: 8px 12px;
+    background-color: #ff7f7f;
+    color: white;
+    border-radius: 4px;
+}
+
+/* 交替顯示圖片和文字 */
+.section:nth-child(odd) .block-l {
+    order: 1; /* 奇數區塊，圖片在左邊 */
+}
+
+.section:nth-child(odd) .block-r {
+    order: 2; /* 奇數區塊，文字在右邊 */
+}
+
+.section:nth-child(even) .block-l {
+    order: 2; /* 偶數區塊，文字在左邊 */
+}
+
+.section:nth-child(even) .block-r {
+    order: 1; /* 偶數區塊，圖片在右邊 */
+}
+
+.custom-btn {
+    background-color: #49cdd1;
+    color: white;
+    font-weight:600;
+}
+
+
+/*UManagementFee/List*/
+/* 按鈕正常狀態 */
+.custom-btn {
+    background-color: #7abaf9;
+    color: #fff;
+    border: none;
+}
+
+    /* 按鈕 hover 狀態 */
+    .custom-btn:hover {
+        background-color: #0c9197;
+    }
+
+/* 按鈕選中狀態 */
+.btn-primary {
+    background-color: #0c9197 !important;
+    color: #fff !important;
+}
+
+.btn-secondary {
+    background-color: #e0e0e0 !important;
+    color: #45505b !important;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.custom-btn:focus, .btn:focus {
+    outline: none; /* 去除外圍的藍框 */
+    box-shadow: none; /* 去除焦點狀態下的陰影 */
+}
+
+.btn-primary {
+    --bs-btn-color: #45505b;
+    --bs-btn-bg: #0c9197;
+    --bs-btn-border-color: #0c9197;
+    --bs-btn-hover-color: #45505b;
+    --bs-btn-hover-bg: #0c9197;
+    --bs-btn-hover-border-color: #0c9197;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #45505b;
+    --bs-btn-active-bg: #0c9197;
+    --bs-btn-active-border-color: #0c9197;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #45505b;
+    --bs-btn-disabled-bg: #0c9197;
+    --bs-btn-disabled-border-color: #0c9197;
+    font-weight: 900;
+}
+/* 美化表格 */
+.table {
+    border-collapse: collapse; /* 合併邊框 */
+    width: 100%; /* 滿寬 */
+}
+
+/* 表格的標題樣式 */
+.thead-custom th {
+    background-color: #7cdee0; /* 設置欄位名稱背景色 */
+    color: black; /* 文字顏色 */
+    text-align: center; /* 置中對齊 */
+    border-top-left-radius: 8px; /* 圓角邊框左上 */
+    border-top-right-radius: 8px; /* 圓角邊框右上 */
+    padding: 12px; /* 欄位內邊距 */
+    border-radius: 12px; /* 四個角都設置圓角 */
+    background-color: #ffdf70; /* 設置背景顏色為圓角顏色 */
+    border: none; /* 取消邊框 */
+}
+
+/* 表格內容的行樣式 */
+.table td {
+    text-align: center; /* 置中對齊 */
+    padding: 12px; /* 增加單元格內邊距 */
+    border-bottom: 1px solid #dee2e6; /* 添加橫向分隔線 */
+}
+
+/* 表格行的條紋效果 */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f9f9f9; /* 單數行背景顏色 */
+}
+
+/* 滑鼠懸停時行的顏色變化 */
+.table-hover tbody tr:hover {
+    background-color: #f0f0f0; /* 鼠標懸停顯示顏色 */
+}
+.table th {
+    background-color: #f0f0f0; /* 自定義顏色 */
+    color:black; /* 白色文字 */
+    text-align: center;
+}
+/* 為表格添加圓角 */
+.table {
+    border-radius: 15px; /* 設置圓角大小，根據需要調整 */
+    overflow: hidden; /* 隱藏超出邊界的部分 */
+    text-align: center;
+}
+  
+
+    /* 為表格的每一行增加一些陰影效果（可選）*/
+    .table tbody tr {
+        transition: background-color 0.3s;
+    }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1; /* 鼠標懸停效果 */
+        }
+
+/*UManagementFee/_UManagementFeeList*/
+
+
+/*EcpayView*/
+<style >
+/* 整體容器樣式 */
+.container {
+    max-width: 500px; /* 最大寬度 */
+    margin-top: 30px; /* 上邊距 */
+}
+@media (min-width: 1200px) {
+    .container, .container-lg, .container-md, .container-sm, .container-xl {
+        max-width: 1100px;
+    }
+}
+/* 表單標題樣式 */
+h3 {
+    text-align: center;
+    color: #3255af; /* 自定義顏色 */
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* 輸入框和按鈕的樣式 */
+.form-control {
+    border-radius: 8px; /* 輸入框圓角 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
+    border: 1px solid #ced4da; /* 邊框顏色 */
+    padding: 10px; /* 內邊距 */
+}
+
+/* 表單內每個欄位的間距 */
+.mb-3 {
+    margin-bottom: 20px;
+}
+
+/* 顯示欄位標籤樣式 */
+label {
+    font-size: 1rem; /* 字體大小 */
+    font-weight: 600; /* 加粗字體 */
+    display: block;
+    margin-bottom: 5px; /* 標籤和輸入框之間的間距 */
+    color: #555; /* 標籤顏色 */
+}
+ 
+ 
+
+/* 隱藏欄位 */
+.hidden-input {
+    display: none;
+}
+
+/* 在移動端響應的設置 */
+@media (max-width: 767px) {
+    .container {
+        padding: 15px; /* 手機端內邊距 */
+    }
+}
+ 
+
+
+
+/*這裡開始*/
+/* 自定義按鈕樣式 */
+.current, .previous {
+    font-weight: 600;
+    border-radius: 20px; /* 讓按鈕邊緣圓潤 */
+    padding: 10px 20px; /* 增加內邊距讓按鈕更大一些 */
+    transition: all 0.3s ease; /* 添加過渡效果 */
+}
+
+    .current:hover, .previous:hover {
+        transform: scale(1.1); /* 鼠標懸停時稍微放大按鈕 */
+    }
+
+/* 按鈕組中按鈕的間距 */
+.button-group .btn {
+    margin-right: 10px; /* 增加按鈕之間的距離 */
+}
+
+/* 加載動畫樣式 */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* 顯示 loading 時的效果 */
+#loading {
+    margin-top: 20px;
+}
+
+
+
+
+
+/*calander*/
+/* 自訂樣式 */
+/* 行事曆外層容器，確保佔頁面高度的 1/3 */
+#calendar-container {
+    width: 100%; /* 行事曆寬度佔滿 */
+    height: 75vh; /* 高度設置為 1/3 頁面高度 (33% of viewport height) */
+    display: flex;
+    justify-content: center; /* 水平置中 */
+    align-items: center; /* 垂直置中 */
+    color: black !important;
+}
+
+#calendar {
+    width: 100%; /* 行事曆寬度，視需求調整 */
+    height: 100%; /* 確保高度充滿父容器 */
+    background-color: white;
+}
+/* 日期文字顏色加深 */
+.fc-daygrid-day-number {
+    color: #222; /* 深色文字 */
+    font-weight: bold; /* 加粗顯示 */
+}
+/* 星期文字顏色加深 */
+.fc-col-header-cell {
+    color: #222; /* 星期文字顏色 */
+    font-weight: bold; /* 加粗顯示 */
+}
+
+/* 控制事件文字顯示樣式 */
+.fc-event-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+    position: relative; /* 確保工具提示能顯示 */
+}
+
+/* 工具提示樣式 */
+.fc-tooltip {
+    font-size: 14px;
+    line-height: 1.5;
+    border-radius: 4px;
+}
+
+a {
+    color: black;
+}
+
+/*board*/
+.input_no_border {
+border: none;
+outline: none;
+width: 100%;
+padding: 8px 0;
+background-color: transparent;
+}
+
+.input_container {
+border-bottom: 1px solid #ccc;
+padding-bottom: 10px;
+}
+
+textarea.input_no_border {
+resize: none;
+}
+
+.FB_Style {
+border-radius: 10px;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+padding: 50px;
+}
+
+.fb_btn {
+display: inline-block;
+position: relative;
+z-index: 1;
+min-width: 200px;
+background: #FFFFFF;
+border: 2px solid goldenrod;
+border-radius: 10px;
+color: goldenrod;
+font-size: 1.5rem;
+text-transform: uppercase;
+font-weight: bold;
+text-align: center;
+text-decoration: none;
+overflow: hidden;
+transition: 0.5s;
+padding: 10px 20px;
+}
+
+.fb_btn span {
+    position: absolute;
+    width: 25%;
+    height: 100%;
+    background-color: goldenrod;
+    transform: translateY(150%);
+    border-radius: 50%;
+    left: calc((var(--n) - 1) * 25%);
+    transition: 0.5s;
+    transition-delay: calc((var(--n) - 1) * 0.1s);
+    z-index: -1;
+}
+
+.fb_btn:hover,
+.fb_btn:focus {
+    color: white;
+}
+
+    .fb_btn:hover span {
+        transform: translateY(0) scale(2);
+    }
+
+.fb_btn span:nth-child(1) {
+    --n: 1;
+}
+
+.fb_btn span:nth-child(2) {
+    --n: 2;
+}
+
+.fb_btn span:nth-child(3) {
+    --n: 3;
+}
+
+.fb_btn span:nth-child(4) {
+    --n: 4;
+}
+
+ 

@@ -1,0 +1,473 @@
+﻿@{
+    Layout = "_LayoutUser";
+    ViewData["Title"] = "Index";
+
+}
+@model List<Yunity.Models.CBoardwarp>
+@{
+    var weather = ViewBag.Weather as Yunity.Models.Station;
+}
+
+<style>
+
+
+    /* 🟢 天氣資訊區塊 */
+    #weather-container {
+        position: fixed;
+        top: 60px; /* ✅ 減少與底部的距離 */
+        right: 5px; /* ✅ 減少與右側的距離 */
+        background: rgba(240, 248, 255, 0.50); /* ✅ 半透明淡藍色 */
+        border-radius: 8px;
+        text-align: left;
+        padding: 0px; /* ✅ 減少內邊距 */
+        max-width: 210px; /* ✅ 減少最大寬度 */
+        display: flex;
+        align-items: center;
+        z-index: 999; /* ✅ 確保不會被其他元素遮擋 */
+        backdrop-filter: blur(4px); /* ✅ 背景模糊效果 */
+        box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1); /* ✅ 輕微陰影 */
+    }
+
+    .weather-icon {
+        width: 30px; /* ✅ 減小圖示尺寸 */
+        height: 30px;
+    }
+
+    #weather-container h3 {
+        font-size: 12px; /* ✅ 只影響天氣資訊內的溫度字體 */
+        margin: 0;
+        text-align: right;
+    }
+
+    #weather-container h4 {
+        font-size: 12px; /* ✅ 只影響天氣資訊內的城市名稱 */
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    #weather-container p {
+        margin: 0;
+        font-size: 10px; /* ✅ 只影響天氣資訊內的 `p` 文字 */
+        text-align: left;
+    }
+
+    .vr {
+        width: 1px;
+        background-color: #ccc;
+        height: 50px; /* ✅ 減少分隔線高度 */
+        margin: 0 5px; /* ✅ 減少與內容的間距 */
+    }
+
+    /* 為所有按鈕加上底線，並設置初始顏色為灰色 */
+    .btn-custom {
+    border: none;
+    text-decoration: none;
+    position: relative;
+    }
+
+    .btn-custom::after {
+    content: '';
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 2px; /* 底線的粗細 */
+    background-color: #D0D0D0; /* 底線顏色 */
+    bottom: 0; /* 放到底部 */
+    left: 0;
+    transition: background-color 0.3s ease; /* 設置過渡效果 */
+    }
+
+    /* 當鼠標懸停時，底線變為深藍色 */
+    .btn-custom:hover::after {
+    background-color: #3255af; /* 深藍色 */
+    }
+
+    /* 當按鈕被點擊或在焦點時，底線顏色也變為深藍色 */
+    .btn-custom:focus::after, .btn-custom:active::after {
+    background-color: #3255af; /* 深藍色 */
+    }
+
+
+
+
+    .card {
+    width: 80%; /* 寬度與容器相同 */
+    height: 200px; /* 固定高度 */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 10px rgba(50, 85, 175, 0.2); /* 默認陰影 */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* 使變化過渡平滑 */
+    }
+
+    .card:hover {
+    box-shadow: 0 8px 20px rgba(50, 85, 175, 0.2); /* 滑鼠懸停時增加陰影 */
+    transform: translateY(-5px); /* 使卡片向上漂浮 */
+    }
+
+    .card:active {
+    transform: translateY(2px); /* 按下時使卡片稍微向下移動，模擬點擊效果 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 按下時的陰影效果 */
+    }
+
+
+
+
+    .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    }
+
+    /* 初始狀態，隱藏元素並設置透明 */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(20px); /* 初始位置稍微下方 */
+        transition: opacity 1s ease-out, transform 1s ease-out;
+    }
+
+        /* 當元素進入視窗時，顯示並返回原來位置 */
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0); /* 回到原來位置 */
+        }
+
+    #mm {
+        font-size: 18px; 
+        color: #3255af; 
+        white-space: nowrap;  
+        padding: 10px 0; 
+        background-color: #f0f8ff; 
+        border: 1px solid #d1e7fd; 
+        border-radius: 20px;  
+        font-weight:600;
+    }
+
+  
+    .marquee-item {
+        margin-right: 30px; /* 每個項目之間的間隔 */
+        display: inline-block; /* 使項目並排顯示 */
+        font-weight:400px;
+        cursor:pointer;
+    }
+
+</style>
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<!-- 🟢 更緊湊的天氣資訊區塊 -->
+@* <div data-aos="zoom-out-down" id="weather-container" class="weather-card p-2 shadow-sm d-flex align-items-center justify-content-between">
+    <!-- 左側：城市名稱 + 天氣圖示 -->
+    <div class="d-flex flex-column align-items-center me-2">
+        <h4 id="location-name" class="fw-bold text-dark mb-1">高雄市</h4>
+        <img id="weather-icon" src="https://openweathermap.org/img/wn/01d@2x.png" class="weather-icon mb-1" />
+    </div>
+
+    <!-- 分隔線 -->
+    <div class="vr"></div>
+
+    <!-- 中間：天氣描述、降雨機率、濕度 -->
+    <div class="d-flex flex-column ms-2 text-start">
+        <p id="wx-description" class="text-dark fw-bold mb-1">🌥️ --</p>
+        <p id="rain-probability" class="text-dark fw-bold mb-1">🌧️ 降雨機率 --%</p>
+        <p id="humidity" class="text-dark fw-bold mb-1">💧 濕度 --%</p>
+    </div>
+
+    <!-- 右側：溫度 -->
+    <h3 id="weather-temp" class="fw-bold text-primary mb-0 ms-2 text-end">--°C</h3>
+</div> *@
+
+
+
+<div class="container mt-3 mb-5  px-12">
+
+    <marquee id="mm" behavior="scroll" direction="left" scrollamount="5">
+        @foreach (var item in Model)
+        {
+          
+            <span class="marquee-item @BoardType(item.Type)" data-id="@item.Id"> 
+                <i class="bi @GetIconClass(item.Type) mx-2"></i>@item.Name
+            </span>
+        }
+    </marquee>
+
+ 
+    </div>
+
+<div class="container mt-3 mb-5  px-12">
+    <div id="carouselExampleInterval" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active" data-bs-interval="1000">
+                <img src="~/home/1.png" class="d-block w-100" />
+            </div>
+            <div class="carousel-item" data-bs-interval="2000">
+                <img src="~/home/2.png" class="d-block w-100" />
+            </div>
+            <div class="carousel-item">
+                <img src="~/home/3.png" class="d-block w-100" />
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+<div class="container mt-3 mb-3">
+    <!-- 篩選選項 -->
+    <h2 class="d-flex justify-content-center" style="color:#3255af;">最新公告</h2>
+    <div class="container mt-3 mb-3 d-flex justify-content-center">
+        <div class="d-flex my-5" style="gap: 15px; ">
+            <button id="btnAll" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-calendar3" style="margin-right:5px; font-size: 30px;"></i>全部</button>
+            <button id="btnActivity" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-megaphone-fill" style="margin-right:5px; font-size: 30px;"></i>活動通知</button>
+            <button id="btnEmergency" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-exclamation-triangle-fill" style="margin-right:5px; font-size: 30px;"></i>緊急通知</button>
+            <button id="btnMaintenance" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-tools" style="margin-right:5px; font-size: 30px;"></i>維修公告</button>
+            <button id="btnOthers" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-motherboard-fill" style="margin-right:5px; font-size: 30px;"></i>其他</button>
+        </div>
+    </div>
+
+    <!-- 公告內容 -->
+
+    <div class="row  d-flex justify-content-center">
+
+        @foreach (var item in Model)
+        {
+            <div class="col-12 mb-4 card d-flex justify-content-center" id="item-@item.Id">
+                
+                <!-- 更改為 col-12 讓卡片寬度匹配容器 -->
+                <a href="@Url.Action("Details", new { id = item.Id })" class="card-link" style="text-decoration: none; color: inherit;">
+                    <div style="height: 200px; width:1000px; display: flex; flex-direction: column;">
+                        <!-- 設定固定高度為200px -->
+                        <div class="p-3">
+                            <p style="color:#0000C6;">
+                                <strong>
+                                    <i class="bi @GetIconClass(item.Type)" style="margin-right:8px; font-size: 20px;"></i>
+                                    @BoardType(item.Type)
+                                </strong>
+                            </p>
+
+                            <h5 class="card-title">@item.Name</h5>
+                            <p class="card-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 20ch;">@item.Info</p>
+                            <p class="card-text"><small class="text-muted">發布時間: @item.OpenTime</small></p>
+
+                            <i class="bi bi-arrow-right-circle" style="position: absolute; bottom: 10px; right: 10px; font-size: 30px; transition: color 0.3s;color:#3255af;"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+
+    @functions {
+        public static string BoardType(int? type)
+        {
+            if (type == null)
+            {
+                return "未知類型";
+            }
+
+            switch (type)
+            {
+
+                case 1:
+                    return "活動通知";
+                case 2:
+                    return "緊急通知";
+                case 3:
+                    return "維修公告";
+                case 4:
+                    return "其他";
+                default:
+                    return "無類型";
+            }
+        }
+        public static string GetIconClass(int? type)
+        {
+            switch (type)
+            {
+                case 1:
+                    return "bi-megaphone-fill";
+                case 2:
+                    return "bi-exclamation-triangle-fill";
+                case 3:
+                    return "bi-tools";
+                case 4:
+                    return "bi-motherboard-fill";
+                default:
+                    return "bi-question-circle";
+            }
+        }
+        public static string GetIconText(int? type)
+        {
+            switch (type)
+            {
+                case 1:
+                    return "活動通知";
+                case 2:
+                    return "緊急通知";
+                case 3:
+                    return "維修公告";
+                case 4:
+                    return "其他";
+                default:
+                    return "無類型";
+            }
+        }
+    }
+ @section Scripts
+{
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+         
+         $(document).ready(function(){
+                    console.log('Document is ready');
+
+                 $('#btnAll').click(function(){
+
+                       filterPackages("全部");
+                 });
+
+                  $('#btnActivity').click(function(){
+
+                    filterPackages("活動通知");
+                });
+
+                $('#btnEmergency').click(function(){
+
+                    filterPackages("緊急通知");
+                });
+
+                  $('#btnMaintenance').click(function(){
+
+                    filterPackages("維修公告");
+                });
+
+                  $('#btnOthers').click(function(){
+
+                    filterPackages("其他");
+                });
+
+
+                function filterPackages(state){
+                         console.log('Filtering packages with state: ' + state);
+                             var stateValue;
+                        if (state === "全部") {
+                            stateValue = -1;
+                        }else if (state === "活動通知") {
+                            stateValue = 1;
+                        }else if (state === "緊急通知") {
+                            stateValue = 2;
+                        }else if (state === "維修公告") {
+                            stateValue = 3;
+                        }else if (state === "其他") {
+                            stateValue = 4;
+                        }
+                    $.ajax({
+                        url:'@Url.Action("FilterAjax", "UBoard")',
+                        type:'GET',
+                            data:{ state:stateValue },
+                        success:function(data){
+                                console.log('Data received: ', data);
+                            $('.row').html(data);
+                        },
+                        error:function(){
+                            alert('錯誤:無法加載資料')
+                        }
+
+                    });
+                }
+                 $('.marquee-item').click(function(){
+                var itemId = $(this).data('id'); // 獲取被點擊項目的 ID
+                console.log('Clicked on item with ID: ' + itemId);
+
+                // 使用 scrollIntoView() 方法將對應的公告項目捲動到視窗內
+                var targetElement = document.getElementById('item-' + itemId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth', // 滾動效果
+                        block: 'start' // 使元素對齊到視窗頂部
+                    });
+                }
+            });
+        });
+           
+
+
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var lat = position.coords.latitude;
+                    var lon = position.coords.longitude;
+                    console.log("📍 位置獲取成功:", lat, lon);
+
+                    fetch(`/UHome/GetWeatherData?lat=${lat}&lon=${lon}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("收到的天氣資料 JSON:", data);
+                            if (data.success) {
+                                console.log("🌍 天氣資訊獲取成功:", data);
+                                document.getElementById("location-name").innerText = data.countyName;
+                                document.getElementById("weather-temp").innerText = `${data.temperature}°C`;
+                                document.getElementById("wx-description").innerText = `🌥️ ${data.weatherDescription}`;
+                                document.getElementById("rain-probability").innerText = `🌧️ 降雨機率 ${data.rainProbability}%`;
+                                document.getElementById("humidity").innerText = `💧 濕度 ${data.humidity}%`;
+
+                                // ✅ 轉換 CWB 天氣描述為 OpenWeather 圖示
+                                let iconCode = getOpenWeatherIcon(data.weatherDescription);
+                                let iconUrl = `https://openweathermap.org/img/wn/${iconCode}d@2x.png`;
+
+                                console.log("🎨 天氣描述:", data.weatherDescription);
+                                console.log("🖼️ OpenWeather 圖示代碼:", iconCode);
+                                console.log("🌐 圖示 URL:", iconUrl);
+
+                                // ✅ 設定天氣圖示
+                                document.getElementById("weather-icon").src = iconUrl;
+                                document.getElementById("weather-icon").alt = data.weatherDescription;
+                            } else {
+                                console.warn("⚠️ 天氣資訊獲取失敗:", data.message);
+                            }
+                        })
+                        .catch(error => console.error("❌ 天氣資訊獲取失敗:", error));
+                }, function (error) {
+                    console.warn("⚠️ 無法獲取位置：" + error.message);
+                });
+            } else {
+                console.warn("⚠️ 瀏覽器不支援地理定位。");
+            }
+        });
+
+        // ✅ CWB 天氣描述 → OpenWeather Icon 對應表
+        function getOpenWeatherIcon(weatherDescription) {
+            const iconMapping = {
+                "晴天": "01", "晴時多雲": "02", "多雲時晴": "02",
+                "多雲": "03", "陰天": "04", "多雲短暫雨": "09",
+                "陰短暫雨": "09", "局部陣雨": "09", "短暫陣雨": "09",
+                "雷陣雨": "11", "雷雨": "11", "午後雷陣雨": "11",
+                "小雨": "09", "大雨": "10", "暴雨": "10",
+                "陰有雨": "10", "陰雨綿綿": "10", "陰大雨": "10",
+                "陰雷陣雨": "11", "多雲雷陣雨": "11",
+                "陰雷雨": "11", "多雲雷雨": "11","陰陣雨或雷雨":"11",
+                "雨": "09", "陣雨": "09", "強陣雨": "09",
+                "小雪": "13", "中雪": "13", "大雪": "13",
+                "霧": "50", "沙塵暴": "50",
+                "晴時多雲偶陣雨": "09", "晴時多雲午後雷陣雨": "11",
+                "多雲午後雷陣雨": "11", "陰時多雲偶陣雨": "09","陰時多雲短暫陣雨或雷雨":"11",
+                "陰時多雲偶雷陣雨": "11", "陰時多雲偶雷雨": "11",
+                "陰時多雲": "04"
+            };
+
+            return iconMapping[weatherDescription] || "01"; // 預設為晴天 "01"
+        }
+    </script>
+}
+
+

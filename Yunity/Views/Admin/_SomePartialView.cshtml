@@ -1,0 +1,45 @@
+﻿@* _SomePartialView.cshtml *@
+<div>
+    <h3>後台管理</h3>
+
+    @if (ViewBag.Email != null && ViewBag.Role != null)
+    {
+        <div class="alert alert-info">
+            Email：@ViewBag.Email<br />
+            Role：@ViewBag.Role
+        </div>
+    
+            var selectedManager = (ViewBag.Role as string) == "Manager" ? "selected" : "";
+            var selectedCompany = (ViewBag.Role as string) == "Company" ? "selected" : "";
+            var selectedUser = (ViewBag.Role as string) == "User" ? "selected" : "";
+        
+    }
+
+    <form method="post" asp-action="CreateUserManually">
+        <div class="mb-3">
+            <label for="Email" class="form-label">Email：</label>
+            <input type="email" name="Email" id="Email" class="form-control" required value="@(ViewBag.Email ?? "")" />
+        </div>
+
+        <div class="mb-3">
+            <label for="role" class="form-label">選擇角色：</label>
+            @Html.DropDownList("role",
+                     new SelectList(
+                     new List<SelectListItem>
+            {
+            new SelectListItem { Text = "Manager", Value = "Manager" },
+            new SelectListItem { Text = "Company", Value = "Company" },
+            new SelectListItem { Text = "User", Value = "User" }
+            },
+                     "Value", "Text", ViewBag.Role),
+                     new { @class = "form-select", id = "role" })
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-2">建立使用者</button>
+    </form>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info mt-3">@TempData["Message"]</div>
+    }
+</div>

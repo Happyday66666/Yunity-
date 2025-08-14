@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Yunity.Models.ManageFeeWrap>
+
+@{
+    ViewData["Title"] = "ManageFee_Detail";
+}
+
+
+<table class="table align-middle MF_table table-hover">
+    <tr>
+        <th class="ps-4">序號</th>
+        <th>戶別</th>
+        <th>應繳金額</th>
+        <th>繳費方式</th>
+        <th>繳費日期</th>
+        <th>狀態</th>
+        <th></th>
+    </tr>
+    <tbody>
+        @{
+            int count = 0;
+            @foreach (var item in Model)
+            {
+                count++;
+                
+                <tr id="MF_Detail-@Html.DisplayFor(modelItem => item.Id)">
+                    <td style="padding-left:40px">
+                        @count
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.DoorName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.TotalPrice)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Pay_Type)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Pay_Time)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Pay_State)</td>
+                    <td style="cursor:pointer">
+                        <div onclick="editbtn(@Html.DisplayFor(modelItem => item.Id));" class="MF_btn">
+                            <span class="material-symbols-outlined">edit</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr id="MF_Edit-@Html.DisplayFor(modelItem => item.Id)" style="display: none;">
+                    <td style="padding-left:40px">@count</td>
+                    <td>@Html.DisplayFor(modelItem => item.DoorName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.TotalPrice)</td>
+                    <td>
+                        <div class="input-group" style="width:150px">
+                            <select class="form-select" id="PayType-@Html.DisplayFor(modelItem => item.Id)">
+                                <option value="0">現金</option>
+                                <option value="1">信用卡</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td >
+                        <input type="datetime-local" class="form-control" id="PayTime-@Html.DisplayFor(modelItem => item.Id)" />
+                    </td>
+                    <td>
+                        <div class="input-group" style="width:150px" >
+                            <select class="form-select" id="State-@Html.DisplayFor(modelItem => item.Id)">
+                                <option value="0">未繳費</option>
+                                <option value="1">已繳費</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td style="cursor:pointer">
+                        <span id="savebtn-@Html.DisplayFor(modelItem => item.Id)" class="material-symbols-outlined" onclick="savebtn(@Html.DisplayFor(modelItem => item.Id));">save</span>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+ 

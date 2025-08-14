@@ -1,0 +1,78 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "登入";
+    Layout = "_LayoutHomePage"; // 讓登入畫面也使用 _LayoutHomePage
+}
+
+<div class="container d-flex align-items-center justify-content-center min-vh-100">
+    <div class="row justify-content-center w-100">
+        <div class="col-md-6">
+            <div class="card card-log position-relative">
+                <!-- 四個角落的圓形陰影 -->
+                <div id="Manager" class="shadow-sm Log_corner Log_top_left"></div>
+                <div id="User" class="shadow-sm Log_corner Log_top_right"></div>
+                <div id="Conpany" class="shadow-sm Log_corner Log_bottom_left"></div>
+                <div class="shadow-sm Log_corner Log_bottom_right"></div>
+
+                <div class="card-body p-3">
+                    <h2 class="text-center mb-3 log-text">Login</h2>
+                    <hr />
+                    <form id="account" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                        <div class="form-floating mb-3">
+                            <input id="emailInput" asp-for="Input.Email" class="form-control log-input rounded-pill" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                            <label asp-for="Input.Email" class="form-label">電子郵件</label>
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input id="passwordInput" asp-for="Input.Password" class="form-control rounded-pill" type="password" autocomplete="current-password" aria-required="true" placeholder="password" />
+                            <label asp-for="Input.Password" class="form-label">密碼</label>
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3 d-flex justify-content-end">
+                            <input class="form-check-input" type="checkbox" asp-for="Input.RememberMe" id="rememberMeCheck" />
+                            <label class="form-check-label" for="rememberMeCheck">
+                                @Html.DisplayNameFor(m => m.Input.RememberMe)
+                            </label>
+                        </div>
+                        <div class="d-flex justify-content-center w-100">
+                            <button id="login-submit" type="submit" class="btn-log mx-auto">登入</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-5">
+                        <p><a id="forgot-password" asp-page="./ForgotPassword">忘記密碼？</a></p>
+                        <p><a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">註冊帳戶</a></p>
+                        <p><a id="resend-confirmation" asp-page="./ResendEmailConfirmation">重新發送電子郵件確認信</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.getElementById('Manager').addEventListener('click', function () {
+            document.getElementById('emailInput').value = 'Qwe123@GMAIL.COM';
+            document.getElementById('passwordInput').value = "Qwe123@@";
+        });
+
+        document.getElementById('User').addEventListener('click', function () {
+            document.getElementById('emailInput').value = 'sclekh07@gmail.com';
+            document.getElementById('passwordInput').value = "Sclekh07@gmail";
+        });
+
+        document.getElementById('Conpany').addEventListener('click', function () {
+            document.getElementById('emailInput').value = 'Yy0123@gmail.com';
+            document.getElementById('passwordInput').value = "r1qhT$7uIjuN";
+        });
+    </script>
+}

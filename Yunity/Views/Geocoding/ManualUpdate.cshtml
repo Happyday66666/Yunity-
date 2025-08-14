@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "管理後台";
+}
+
+<h2>手動更新經緯度</h2>
+
+<!-- 顯示更新狀態 -->
+
+@if (TempData["StatusMessage"] != null)
+{
+    <div class="alert alert-info">@TempData["StatusMessage"]</div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>更新廠商經緯度</h3>
+        <form asp-action="UpdateVendorCoordinatesManually" method="post">
+            <div class="form-group">
+                <label for="startDateVendor">開始日期</label>
+                <input type="date" id="startDateVendor" name="startDate" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="endDateVendor">結束日期</label>
+                <input type="date" id="endDateVendor" name="endDate" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">手動更新廠商經緯度</button>
+        </form>
+    </div>
+
+    <div class="col-md-6">
+        <h3>更新周邊商家經緯度</h3>
+        <form asp-action="UpdateNearStoreCoordinatesManually" method="post">
+            <div class="form-group">
+                <label for="startDateNearStore">開始日期</label>
+                <input type="date" id="startDateNearStore" name="startDate" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label for="endDateNearStore">結束日期</label>
+                <input type="date" id="endDateNearStore" name="endDate" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-success">手動更新周邊商家經緯度</button>
+        </form>
+    </div>
+</div>
+

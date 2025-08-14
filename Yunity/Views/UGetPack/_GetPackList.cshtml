@@ -1,0 +1,67 @@
+﻿ @model IEnumerable<Yunity.Models.GetPacksWrap>
+
+<div class="row  d-flex justify-content-center ">
+    <div class="container">
+        <div class="row">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-6 mb-4">
+                    <div class="card d-flex">
+                        <div class="row no-gutters">
+                            <!-- 文字部分在左边 -->
+                            <div class="col-md-6 d-flex align-items-center">
+                                <div class="card-body">
+                                    <h5 class="card-title " style="color:#3255af;">
+                                        @if (item.State == "已領取")  // 根據已領取狀態顯示圖標
+                                        {
+                                            <i class="bi bi-bag-check-fill"></i>
+                                        }
+                                        else if (item.State == "未領取")  // 根據未領取狀態顯示圖標
+                                        {
+                                            <i class="bi bi-bag-x-fill"></i>
+                                        }
+                                        else
+                                        {
+                                            <i class="bi bi-box"></i>
+                                            // 默認圖標
+                                        }
+
+                                        包裹編號:
+                                    </h5>
+                                    <h5 class="card-title " style="color:#3255af;">
+                                        @item.PackNo
+                                    </h5>
+                                    <p class="card-text">
+                                        <strong>包裹類型:</strong> @item.Type<br>
+                                        <strong>領取人:</strong> @item.PickUser<br>
+                                        <strong>狀態:</strong>
+                                        @if (@item.State == "已領取")
+                                        {
+                                            <span style="color: forestgreen; font-weight:600;">@item.State</span>
+                                        }
+                                        else if (@item.State == "未領取")
+                                        {
+                                            <span style="color: red; font-weight:600;">@item.State</span>  <!-- 未領取文字變紅 -->
+                                        }
+                                        else
+                                        {
+                                            @item.State
+                                        }
+                                    </p>
+
+                                </div>
+                            </div>
+
+                            <!-- 图片部分在右边 -->
+                            <div class="col-md-6" style="height: 200px; overflow: hidden;">
+                                <img src="@item.PackPhoto" class="card-img-top img-fluid" alt="包裹照片" style="height: 200px; object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>
+</div>

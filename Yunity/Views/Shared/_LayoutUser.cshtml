@@ -1,0 +1,371 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Yunity.Areas.Identity.Data
+@using Microsoft.EntityFrameworkCore;
+@inject SignInManager<YunityUser> SignInManager
+@inject UserManager<YunityUser> UserManager
+@inject BuildingDataContext _buildingDataContext
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Yunity</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap" rel="stylesheet" />
+
+    <!-- Google Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+
+    <!-- Vendor CSS Files -->
+    <link href="~/assets_manage/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets_manage/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />
+    <link href="~/assets_manage/vendor/aos/aos.css" rel="stylesheet" />
+    <link href="~/assets_manage/vendor/glightbox/css/glightbox.min.css" rel="stylesheet" />
+    <link href="~/assets_manage/vendor/swiper/swiper-bundle.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+    @* <link href="~/css/prjtestModel.styles.css" rel="stylesheet"> *@
+    @* <link href="~/css/simplebar.css" rel="stylesheet"> *@
+
+
+    <!-- Main CSS File -->
+    <link href="~/assets_user/css/style.css" rel="stylesheet" />
+    <link href="~/assets_User/css/main copy.css" rel="stylesheet">
+    <link href="~/assets_User/css/User.css" rel="stylesheet">
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<style>
+
+</style>
+<body>
+
+    <nav class="navbar navbar-expand-lg" style="background-color:#49cdd1; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height:60px;">
+        <i class="header-toggle d-xl-none bi bi-list"></i>
+
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-controller="UHome" asp-action="Index">
+                <img src="@Url.Content("~/images/logos/yunity_icon_white-2.png")" style="height:30px;width:auto;" />
+            </a>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+                    {
+                        <li class="nav-item">
+                            <div class="form-inline circle-wrapper" style="">
+                                <button type="submit" class="nav-link btn btn-link text-dark">
+                                    <i class="bi bi-qr-code" id="generateQrCodeBtn" data-bs-toggle="modal" data-bs-target="#qrCodeModal" style=""></i>
+                                </button>
+                            </div>
+                        </li>
+
+                    }
+                    <li class="nav-item">
+                        <partial name="_LoginPartial" />
+                    </li>
+
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+
+
+    <header id="header-User" class="header-User d-flex flex-column justify-content-center">
+        <nav id="navmenu-User" class="navmenu">
+            <ul>
+                <li><a asp-controller="UGetPack" asp-action="List" aria-expanded="false"><i class="material-symbols-outlined">box</i><span>收包裹</span></a></li>
+                <li><a asp-controller="USendPack" asp-action="List" aria-expanded="false"><i class="material-symbols-outlined">local_shipping</i><span>寄包裹</span></a></li>
+
+                <li><a asp-controller="UManagementFee" asp-action="List" aria-expanded="false"><i class="material-symbols-outlined">real_estate_agent</i><span>管理費</span></a></li>
+                <li><a href="~/PublicAreaReserves/Index"><i class="material-symbols-outlined">location_away</i><span>公社預約</span></a></li>
+                <li><a href="@Url.Action("Index","Map")"><i class="material-symbols-outlined">location_on</i><span>附近商店</span></a></li>
+                <li><a asp-controller="UuserFeedback" asp-action="Index" aria-expanded="false"><i class="material-symbols-outlined">tooltip_2</i><span>意見反饋</span></a></li>
+                <li><a asp-controller="UVisitorRecord" asp-action="Index" aria-expanded="false"><i class="material-symbols-outlined">clinical_notes</i><span>訪客紀錄</span></a></li>
+                <li><a asp-controller="RECalendar" asp-action="Index" aria-expanded="false"><i class="material-symbols-outlined">calendar_month</i><span>行事曆</span></a></li>
+                <li><a href="@Url.Action("CS_Index","CommunityService")"><i class="material-symbols-outlined">storefront</i><span>社區服務</span></a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- </div> -->
+    <!-- Google Material Icon Test -->
+    <!-- <span class="material-symbols-outlined">home</span> -->
+    <!-- Scroll Top -->
+    @if (SignInManager.IsSignedIn(User))
+    {
+        var user = await UserManager.GetUserAsync(User);
+        <input type="hidden" id="userData" data-user-id="@user.Id" data-user-name="@user.UserName" />
+        <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center">
+            <i class="bi bi-chevron-bar-up"></i>
+        </a>
+    }
+
+    <!-- Preloader -->
+    <div id="preloader"></div>
+
+    <div class="" style="margin-top:100px;">
+        <main role="main" class="pb-3 flex-shrink-0">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Modal 定義：僅針對已登入且屬於 "User" 的使用者 -->
+    @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+    {
+        <div class="modal fade" id="qrCodeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="qrCodeModalLabel">會員 QR Code</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <!-- 顯示 QR Code 的圖片 -->
+                        <img id="qrCodeImage" style="display:none; max-width:100%;" alt="QR Code" />
+                        <!-- 等待或錯誤訊息 -->
+                        <div id="qrcodeMessage">
+                            <p>正在生成 QR Code，請稍候...</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    <a class="Send_Button" onclick="Msgbtn()">
+        <i class="bi bi-chat-dots btn_send"></i>
+    </a>
+    <div id="Msg" style="width: 25%;  position: fixed; bottom: 20px; right: 50px; height:500px; display:none; z-index:1000">
+    </div>
+    <!-- Vendor JS Files -->
+    <script src="~/assets_manage/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets_manage/vendor/php-email-form/validate.js"></script>
+    <script src="~/assets_manage/vendor/aos/aos.js"></script>
+    <script src="~/assets_manage/vendor/typed.js/typed.umd.js"></script>
+    <script src="~/assets_manage/vendor/purecounter/purecounter_vanilla.js"></script>
+    <script src="~/assets_manage/vendor/waypoints/noframework.waypoints.js"></script>
+    <script src="~/assets_manage/vendor/glightbox/js/glightbox.min.js"></script>
+    <script src="~/assets_manage/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
+    <script src="~/assets_manage/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+    <script src="~/assets_manage/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <!-- 請確保只引用一次 jQuery 與 Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script src="~/assets_manage/js/main copy.js"></script>
+
+    <!-- AJAX 呼叫生成 QR Code、移除 aria-hidden、設定背景 inert 並在 Modal 關閉時清空內容 -->
+    <script>
+        $(document).ready(function () {
+            // 綁定 Modal 開啟事件，確保只綁定一次
+            $('#qrCodeModal').off('shown.bs.modal').on('shown.bs.modal', function () {
+                $(this).removeAttr('aria-hidden');
+                // 將背景內容設為 inert
+                $("#backgroundContent").attr("inert", "true");
+                // 清空之前的圖片與訊息
+                $("#qrCodeImage").attr("src", "").hide();
+                $("#qrcodeMessage").html("<p>正在生成 QR Code，請稍候...</p>");
+
+                // 取得防偽令牌
+                var token = $('input[name="__RequestVerificationToken"]').val();
+
+                $.ajax({
+                    url: '@Url.Page("/Account/Manage/QRCode", new { area = "Identity", handler = "GenerateQRCodeAsyncICON" })',
+                    type: 'POST',
+                    dataType: 'json',
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    success: function (response) {
+                        if (response.qrCodeBase64) {
+                            // 延遲 1 秒後更新圖片與訊息
+                            setTimeout(function () {
+                                $("#qrCodeImage")
+                                    .attr("src", "data:image/png;base64," + response.qrCodeBase64)
+                                    .show();
+                                $("#qrcodeMessage").empty();
+                            }, 1000);
+                        } else {
+                            $("#qrcodeMessage").html("<p>生成 QR Code 失敗</p>");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("錯誤：", error);
+                        console.log("Response Text:", xhr.responseText);
+                        $("#qrcodeMessage").html("<p>請求失敗，請稍後再試</p>");
+                    }
+                });
+            });
+
+            // 當 Modal 關閉時，移除背景 inert 屬性並清空 Modal 內容
+            $('#qrCodeModal').off('hidden.bs.modal').on('hidden.bs.modal', function () {
+                $("#backgroundContent").removeAttr("inert");
+                // 清空 Modal 內容
+                $("#qrCodeImage").attr("src", "").hide();
+                $("#qrcodeMessage").html("<p>正在生成 QR Code，請稍候...</p>");
+            });
+        });
+
+        const userData = document.getElementById('userData');
+        const userId = userData.getAttribute('data-user-id');
+        const txtUser = userData.getAttribute('data-user-name');
+        function Msgbtn() {
+
+            var User_json = new FormData();
+            User_json.append("RoomId", userId);
+            console.log(txtUser);
+            console.log(userId);
+            console.log(User_json);
+            fetch("/UChat/Index", {
+                method: "POST",
+                body: User_json
+            })
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("Msg").innerHTML = html;
+                    document.getElementById("Msg").style.display = "block";
+                    const myFile = document.querySelector("#myFile");
+                    const form = document.querySelector('.needs-validation');
+                    const chatRoom = document.querySelector('#chatRoom');
+                    const txtMsg = document.querySelector('#txtMsg');
+                    const liveToast = document.querySelector('#liveToast');
+                    const room = document.querySelector('#room');
+                    const send = document.querySelector('#send');
+                    room.scrollTop = room.scrollHeight;
+
+
+
+                    const socket = new WebSocket("ws://localhost:8080?roomid=" + userId);
+                    const closebtn = document.querySelector('#closebtn');
+
+                    //連線建立成功
+                    socket.onopen = (event) => {
+
+                        //顯示chatRoom
+                        chatRoom.style.display = "flex";
+
+                        //隱藏form
+                        //form.style.display = "none";
+
+                        const data = {
+                            Type: "newUser",
+                            User: txtUser
+                        }
+                        console.log(data);
+                        socket.send(JSON.stringify(data));
+                    };
+
+                    //接收WebSocket傳送過來的資料
+                    socket.onmessage = (event) => {
+                        var data = JSON.parse(event.data);
+                        console.log(data);
+                        if (data.Type === "newUser") {
+                            room.innerHTML += `<div class="alert alert-info my-2 py-2">${data.User} 已加入聊天室</div>`;
+                            myAudio.src = "music/msn.mp3";
+                            myAudio.play();
+                        } else if (data.Type === "message") {
+                            showMessage(data);
+                        }
+                    };
+
+                    //關閉WebSocket連線
+                    socket.onclose = (event) => {
+                        console.log(event);
+                    };
+
+                    //WebSocket連線發生錯誤
+                    socket.onerror = (error) => {
+                        console.error(error);
+                    };
+
+                    //按下enter送出訊息
+                    txtMsg.addEventListener("keyup", function (event) {
+                        if (event.keyCode === 13) {
+                            event.preventDefault();
+                            sendMessage();
+                        }
+                    });
+
+                    //按下send送出訊息
+                    send.addEventListener("click", function (event) {
+                        sendMessage();
+                    });
+
+                    closebtn.addEventListener("click", function (event) {
+                        document.getElementById("Msg").style.display = "none";
+                    });
+                    //傳送訊息
+                    function sendMessage() {
+                        const nowTime = moment().format('HH:mm');
+                        const data = {
+                            Type: "message",
+                            User: txtUser.value,
+                            Message: txtMsg.value,
+                            TargetRoomId: userId,
+                            MsgTime: nowTime
+                        }
+                        console.log(data);
+                        socket.send(JSON.stringify(data));
+                        const txtMsg_val = txtMsg.value;
+                        txtMsg.value = "";
+
+                        const bubble = `
+                                    <div class="message message-right mine">
+                                        <div class="time">${data.MsgTime}</div>
+                                        <div class="message last">${data.Message}</div>
+                                    </div>
+                                `;
+                        room.innerHTML += bubble;
+                        room.scrollTop = room.scrollHeight;
+                        var form = new FormData();
+                        form.append("RoomId", userId);
+                        form.append("UserId", userId);
+                        form.append("MsgText", txtMsg_val);
+                        fetch('/UChat/Save_Msg', {
+                            method: 'POST',
+                            body: form
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                            })
+                            .catch(error => {
+                                console.error('錯誤:', error);
+                            });
+                    }
+
+                    //顯示訊息
+                    function showMessage(msg) {
+                        const bubble = `
+                                    <div class="message message-left">
+                                        <div class="bubble-left">${msg.Message}</div>
+                                        <div class="time">${msg.MsgTime}</div>
+                                    </div>
+                                `;
+                        room.innerHTML += bubble;
+                        room.scrollTop = room.scrollHeight;
+                    }
+                })
+                .catch(error => console.error("載入失敗", error));
+        }
+    </script>
+
+    <!-- Main JS File -->
+    <script src="~/assets_User/js/main copy.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

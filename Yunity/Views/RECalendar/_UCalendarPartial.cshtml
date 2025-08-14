@@ -1,0 +1,83 @@
+﻿@page
+@model Yunity.Views.RECalendar._UCalendarPartialModel
+@{
+}
+<div class="container">
+    <div id="calendar"></div>
+</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                events: function (fetchInfo, success, failure) {
+                    fetch(`/RECalendar/GetEvents?start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`)
+                        .then(response => response.json())
+                        .then(data => success(data))
+                        .catch(error => failure(error));
+                },
+                eventMouseEnter: function (info) {
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'fc-tooltip';
+                    tooltip.style.position = 'absolute';
+                    tooltip.style.background = '#fff';
+                    tooltip.style.border = '1px solid #ccc';
+                    tooltip.style.padding = '5px';
+                    tooltip.style.boxShadow = '0px 4px 6px rgba(0, 0, 0, 0.1)';
+                    tooltip.style.zIndex = 1000;
+                    tooltip.style.pointerEvents = 'none';
+                    tooltip.innerText = info.event.title;
+
+                    document.body.appendChild(tooltip);
+
+                    function positionTooltip(e) {
+                        tooltip.style.left = `${e.pageX + 10}px`;
+                        tooltip.style.top = `${e.pageY + 10}px`;
+                    }
+                    positionTooltip(info.jsEvent);
+
+                    info.el.addEventListener('mousemove', positionTooltip);
+
+                    info.el.tooltip = tooltip;
+                },
+                eventMouseLeave: function (info) {
+                    if (info.el.tooltip) {
+                        info.el.tooltip.remove();
+                        delete info.el.tooltip;
+                    }
+                }
+            });
+            calendar.render();
+        });
+        function refreshCalendar() {
+            const calendarContainer = document.getElementById('calendar-container');
+            calendarContainer.classList.add('loading');
+
+            fetch('/Calendar/LoadCalendarPartial')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('無法加載日曆頁面：' + response.statusText);
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    calendarContainer.innerHTML = html;
+                    calendarContainer.classList.remove('loading');
+
+                    const calendarEl = document.getElementById('calendar');
+                    initializeCalendar(calendarEl);
+                })
+                .catch(error => {
+                    calendarContainer.classList.remove('loading');
+                    console.error('刷新行事曆失敗:', error);
+                });
+        }
+        </script>
+}

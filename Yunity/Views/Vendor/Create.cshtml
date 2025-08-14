@@ -1,0 +1,263 @@
+﻿@model Yunity.Models.CCompanyWrap
+
+@{
+    ViewData["Title"] = "Create";
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+<h4>新增廠商資料</h4>
+<hr />
+<form asp-action="Create" id="createForm">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="ComName" class="control-label"></label>
+                    <input asp-for="ComName" class="form-control" />
+                    <span asp-validation-for="ComName" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ComAddress" class="control-label"></label>
+                    <input asp-for="ComAddress" class="form-control" />
+                    <span asp-validation-for="ComAddress" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ComPerson" class="control-label"></label>
+                    <input asp-for="ComPerson" class="form-control" />
+                    <span asp-validation-for="ComPerson" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ComPhone" class="control-label"></label>
+                    <input asp-for="ComPhone" class="form-control" />
+                    <span asp-validation-for="ComPhone" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ComEmail" class="control-label"></label>
+                    <input asp-for="ComEmail" class="form-control" />
+                    <span asp-validation-for="ComEmail" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ComServerItem" class="control-label"></label>
+                    <select asp-for="ComServerItem" class="form-control">
+                        <option value="冷氣健檢">冷氣健檢</option>
+                        <option value="清潔服務">清潔服務</option>
+                        <option value="送洗服務">送洗服務</option>
+                        <option value="電器維修">電器維修</option>
+                    </select>
+                    <span asp-validation-for="ComServerItem" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ComRegistrationNumber" class="control-label"></label>
+                    <input asp-for="ComRegistrationNumber" class="form-control" />
+                    <span asp-validation-for="ComRegistrationNumber" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ComBusinessHours" class="control-label"></label>
+                    <input asp-for="ComBusinessHours" class="form-control" />
+                    <span asp-validation-for="ComBusinessHours" class="text-danger"></span>
+                </div>
+                <!-- 隱藏 ComAccount 欄位 -->
+                @Html.HiddenFor(model => model.ComAccount)
+
+                
+               
+                <div class="form-group">
+                    <label asp-for="ComContractStartDate" class="control-label"></label>
+                    <input asp-for="ComContractStartDate" class="form-control" type="date" />
+                    <span asp-validation-for="ComContractStartDate" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="ComContractEndDate" class="control-label"></label>
+                    <input asp-for="ComContractEndDate" class="form-control" type="date" />
+                    <span asp-validation-for="ComContractEndDate" class="text-danger"></span>
+                </div>
+                <!-- 隱藏 ComStatus 欄位，並設置預設值為 0 -->
+                @Html.HiddenFor(model => model.ComStatus, new { value = 0 })
+            </div>
+            <div class="col-md-6">
+                <h5 style="color:dimgrey">服務區域</h5>
+                <div class="container">
+                    <!-- 北部區域 -->
+                    <div class="form-check form-switch mt-3">
+                        <label asp-for="YilanC" class="form-check-label" for="YilanC"></label>
+                        <input class="form-check-input" type="checkbox" id="YilanC-switch" onchange="AreaIsOpen( 'YilanC')" />
+                        <input type="hidden" id="YilanC" value="0" name="YilanC" />
+                    </div>
+                    <div class="form-check form-switch mt-3">
+                        <label asp-for="KeelungCity" class="form-check-label" for="KeelungCity"></label>
+                        <input class="form-check-input" type="checkbox" id="KeelungCity-switch" onchange="AreaIsOpen( 'KeelungCity')" />
+                        <input type="hidden" id="KeelungCity" value="0" name="KeelungCity" />
+                    </div>
+                    <div class="form-check form-switch mt-3">
+                        <label asp-for="TaipeiCity" class="form-check-label" for="TaipeiCity"></label>
+                        <input class="form-check-input" type="checkbox" id="YilanC-switch" onchange="AreaIsOpen( 'TaipeiCity')" />
+                        <input type="hidden" id="TaipeiCity" value="0" name="TaipeiCity" />
+                    </div>
+                    <div class="form-check form-switch mt-3">
+                        <label asp-for="NewTaipeiCity" class="form-check-label" for="NewTaipeiCity"></label>
+                        <input class="form-check-input" type="checkbox" id="NewTaipeiCity-switch" onchange="AreaIsOpen( 'NewTaipeiCity')" />
+                        <input type="hidden" id="NewTaipeiCity" value="0" name="NewTaipeiCity" />
+                    </div>
+                    <div class="form-check form-switch mt-3">
+                        <label asp-for="TaoyuanCity" class="form-check-label" for="TaoyuanCity"></label>
+                        <input class="form-check-input" type="checkbox" id="TaoyuanCity-switch" onchange="AreaIsOpen( 'TaoyuanCity')" />
+                        <input type="hidden" id="TaoyuanCity" value="0" name="TaoyuanCity" />
+                    </div>
+                    <div class="form-check form-switch mt-3">
+                        <label asp-for="HsinchuCity" class="form-check-label" for="HsinchuCity"></label>
+                        <input class="form-check-input" type="checkbox" id="HsinchuCity-switch" onchange="AreaIsOpen( 'HsinchuCity')" />
+                        <input type="hidden" id="HsinchuCity" value="0" name="HsinchuCity" />
+                    </div>
+                    <div class="form-check form-switch mt-3">
+                        <label asp-for="HsinchuC" class="form-check-label" for="HsinchuC"></label>
+                        <input class="form-check-input" type="checkbox" id="HsinchuC-switch" onchange="AreaIsOpen( 'HsinchuC')" />
+                        <input type="hidden" id="HsinchuC" value="0" name="HsinchuC" />
+                    </div>
+                </div>
+                <!-- 中部區域 -->
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="MiaoliC" class="form-check-label" for="MiaoliC"></label>
+                    <input class="form-check-input" type="checkbox" id="MiaoliC-switch" onchange="AreaIsOpen( 'MiaoliC')" />
+                    <input type="hidden" id="MiaoliC" value="0" name="MiaoliC" />
+                </div>
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="TaichungCity" class="form-check-label" for="TaichungCity"></label>
+                    <input class="form-check-input" type="checkbox" id="TaichungCity-switch" onchange="AreaIsOpen( 'TaichungCity')" />
+                    <input type="hidden" id="TaichungCity" value="0" name="TaichungCity" />
+                </div>
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="ChanghuaC" class="form-check-label" for="ChanghuaC"></label>
+                    <input class="form-check-input" type="checkbox" id="ChanghuaC-switch" onchange="AreaIsOpen( 'ChanghuaC')" />
+                    <input type="hidden" id="ChanghuaC" value="0" name="ChanghuaC" />
+                </div>
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="NantouC" class="form-check-label" for="NantouC"></label>
+                    <input class="form-check-input" type="checkbox" id="NantouC-switch" onchange="AreaIsOpen( 'NantouC')" />
+                    <input type="hidden" id="NantouC" value="0" name="NantouC" />
+                </div>
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="YunlinC" class="form-check-label" for="YunlinC"></label>
+                    <input class="form-check-input" type="checkbox" id="YunlinC-switch" onchange="AreaIsOpen( 'YunlinC')" />
+                    <input type="hidden" id="YunlinC" value="0"  name="YunlinC" />
+                </div>
+                <!-- 南部區域 -->
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="ChiayiCity" class="form-check-label" for="ChiayiCity"></label>
+                    <input class="form-check-input" type="checkbox" id="ChiayiCity-switch" onchange="AreaIsOpen( 'ChiayiCity')" />
+                    <input type="hidden" id="ChiayiCity" value="0" name="ChiayiCity" />
+                </div>
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="ChiayiC" class="form-check-label" for="ChiayiC"></label>
+                    <input class="form-check-input" type="checkbox" id="ChiayiC-switch" onchange="AreaIsOpen( 'ChiayiC')" />
+                    <input type="hidden" id="ChiayiC" value="0"  name="ChiayiC" />
+                </div>
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="TainanCity" class="form-check-label" for="TainanCity"></label>
+                    <input class="form-check-input" type="checkbox" id="TainanCity-switch" onchange="AreaIsOpen( 'TainanCity')" />
+                    <input type="hidden" id="TainanCity" value="0"  name="TainanCity" />
+                </div>
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="KaohsiungCity" class="form-check-label" for="KaohsiungCity"></label>
+                    <input class="form-check-input" type="checkbox" id="KaohsiungCity-switch" onchange="AreaIsOpen( 'KaohsiungCity')" />
+                    <input type="hidden" id="KaohsiungCity" value="0"  name="KaohsiungCity" />
+                </div>
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="PingtungC" class="form-check-label" for="PingtungC"></label>
+                    <input class="form-check-input" type="checkbox" id="PingtungC-switch" onchange="AreaIsOpen( 'PingtungC')" />
+                    <input type="hidden" id="PingtungC" value="0"  name="PingtungC" />
+                </div>
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="PenghuC" class="form-check-label" for="PenghuC"></label>
+                    <input class="form-check-input" type="checkbox" id="PenghuC-switch" onchange="AreaIsOpen( 'PenghuC')" />
+                    <input type="hidden" id="PenghuC" value="0" name="PenghuC" />
+                </div>
+                <!-- 東部區域 -->
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="HualienC" class="form-check-label" for="HualienC"></label>
+                    <input class="form-check-input" type="checkbox" id="HualienC-switch" onchange="AreaIsOpen('HualienC')" />
+                    <input type="hidden" id="HualienC" value="0" name="HualienC" />
+                </div>
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="TaitungC" class="form-check-label" for="TaitungC"></label>
+                    <input class="form-check-input" type="checkbox" id="TaitungC-switch" onchange="AreaIsOpen('TaitungC')" />
+                    <input type="hidden" id="TaitungC" value="0" name="TaitungC" />
+                </div>
+                <!-- 福建省 -->
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="KinmenC" class="form-check-label" for="KinmenC"></label>
+                    <input class="form-check-input" type="checkbox" id="KinmenC-switch" onchange="AreaIsOpen('KinmenC'" />
+                    <input type="hidden" id="KinmenC" name="KinmenC" value="0" />
+                </div>
+                <div class="form-check form-switch mt-3">
+                    <label asp-for="LienchiangC" class="form-check-label" for="LienchiangC"></label>
+                    <input class="form-check-input" type="checkbox" id="LienchiangC-switch" onchange="AreaIsOpen('LienchiangC')" />
+                    <input type="hidden" id="LienchiangC" name="LienchiangC" value="0" />
+                </div>
+            </div>
+       </div>
+    </div>
+    <div class="form-group mt-3">
+        <input type="submit" value="儲存" class="btn btn-primary" />
+    </div>
+</form>
+
+<!-- Modal -->
+@if (ViewBag.ShowModal != null && (bool)ViewBag.ShowModal)
+{
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">資料已儲存</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>廠商資料已成功儲存!</p>
+                    <p>廠商的 Email/帳號: @ViewBag.Email</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+
+                    <!-- 註冊帳號按鈕 (使用表單發送POST請求) -->
+                    <form action="@Url.Action("CreateUserManually", "Admin")" method="post">
+                        <input type="hidden" name="Email" value="@ViewBag.Email" />
+                        <input type="hidden" name="role" value="@ViewBag.Role" />  <!-- 可以設置預設角色，根據需要改變 -->
+                        <button type="submit" class="btn btn-success">註冊帳號</button>
+                    </form>
+
+                    <!-- 返回清單按鈕 -->
+                    <a href="@Url.Action("VendorList", "Vendor")" class="btn btn-primary">返回清單</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+    
+
+
+<a asp-action="VendorList" class="btn btn-secondary mt-3" onclick="return confirm('確定要離開此頁面嗎？未儲存的更改將丟失。')">返回清單</a>
+
+@section Scripts {
+
+    <script>
+        var myModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+        myModal.show();
+    </script>
+    <script>
+        function AreaIsOpen (area){
+            if(document.getElementById(area+"-switch").checked)
+            {
+                document.getElementById(area).value = 1;
+            }
+            else
+            {
+                document.getElementById(area).value = 0;
+            }
+        }
+
+
+        
+    </script>
+  
+}

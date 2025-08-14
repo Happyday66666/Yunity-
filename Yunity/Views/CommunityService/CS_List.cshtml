@@ -1,0 +1,161 @@
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+
+@model List<Yunity.Models.CSListWrap>
+
+@{
+    Layout = "_LayoutUser";
+    ViewData["Title"] = "我的預約紀錄";
+}
+
+@functions {
+    public string GetStatusClass(string status)
+    {
+        switch (status)
+        {
+            case "已送單":
+                return "status-已送單";
+            case "進行中":
+                return "status-進行中";
+            case "已取消":
+                return "status-已取消";
+            case "已完成":
+                return "status-已完成";
+            default:
+                return string.Empty;
+        }
+    }
+}
+<head>
+    <!-- 加載 Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<style>
+    /* 設定背景顏色為白色並加上透明度 */
+    .listT {
+        background-color: rgba(124, 222, 224, 0.3) !important;
+        border-radius:30px;
+        padding: 20px 50px 10px 50px; 
+    }
+    /* 設定所有相關區塊的背景為透明 */
+    table, th, td, thead, tbody {
+        background-color: transparent !important;
+    }
+
+    /* 設定表格的tbody邊框顏色為灰色 */
+    .table tbody tr {
+        border-bottom: 1px solid #ccc; /* 灰色的邊框 */
+    }
+    /* 狀態顏色與大小設置 */
+    .status-column {
+        font-size: 1.2rem; /* 設定字體大小 */
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+    /* 狀態顏色對應 */
+    .status-已送單 {
+        color: #83af40 !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .status-進行中 {
+        color: #ff914d !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .status-已取消 {
+        color: #c5401f !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .status-已完成 {
+        color: #3255af !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .sort-icon{
+        cursor:pointer;
+    }
+</style>
+
+
+<div class="container mt-3 mb-3">
+    <div class="container">
+    <nav aria-label="breadcrumb"> 
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index","UHome")">首頁</a>
+            </li>
+            <li class="breadcrumb-item" aria-current="page"><a href="@Url.Action("CS_Index","CommunityService")">社區服務</a></li>
+            <li class="breadcrumb-item active" aria-current="page">我的預約紀錄</li>
+        </ol>
+    </nav>
+    </div>
+    <div class="container mt-4 listT">
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>序號</th>
+                        <th>
+                            @Html.DisplayNameFor(model => model[0].ComName)
+                            <i class="material-icons sort-icon" data-column="ComName" data-sort-order="asc">swap_vert</i>
+
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model[0].ProductName)
+                            <i class="material-icons sort-icon" data-column="ProductName" data-sort-order="asc">swap_vert</i>
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model[0].CreatedDate)
+                            <i class="material-icons sort-icon" data-column="CreatedDate" data-sort-order="asc">swap_vert</i>
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model[0].Status)
+                            <i class="material-icons sort-icon" data-column="Status" data-sort-order="asc">swap_vert</i>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="sortorderList">
+                    @Html.Partial("_sortorderList", Model)                   
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+            $(document).ready(function () {
+
+            $('.sort-icon').click(function () {
+                var column = $(this).data('column');
+                var currentOrder = $(this).data('sort-order');
+                var newOrder = (currentOrder === 'asc') ? 'desc' : 'asc';
+
+                // 更新排序圖示的狀態
+                $(this).data('sort-order', newOrder);
+                                
+                // 發送 AJAX 請求
+                $.ajax({
+                    url: '@Url.Action("CS_List", "CommunityService")',
+                    data: { sort_Order: column + '_' + newOrder },
+                    success: function (result) {
+                        // 更新表格資料
+                        $('#sortorderList').html(result);
+                    }                    
+                });
+            });
+        });
+
+
+        
+    </script>
+
+}

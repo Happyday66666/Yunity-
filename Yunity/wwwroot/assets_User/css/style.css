@@ -1,0 +1,249 @@
+#room {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 15px;
+    height: 350px;
+    overflow-y: auto;
+}
+
+/*.messages {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.messages img {
+    height: 40px;
+    width: 40px;
+    display: flex;
+}
+
+.message {
+    border-radius: 20px;
+    padding: 8px 15px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: inline-block;
+}
+
+.yours {
+    align-items: flex-start;
+}
+
+.yours .message {
+    margin-right: 15%;
+    background-color: #eee;
+    position: relative;
+}
+
+.yours .message.last:before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    bottom: 0;
+    left: -7px;
+    height: 20px;
+    width: 20px;
+    background: #eee;
+    border-bottom-right-radius: 15px;
+}
+
+.yours .message.last:after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    left: -10px;
+    width: 10px;
+    height: 20px;
+    background: white;
+    border-bottom-right-radius: 10px;
+}
+
+.mine {
+    align-items: flex-end;
+}
+
+.mine .message {
+    color: white;
+    margin-left: 25%;
+    background: linear-gradient(to bottom, #00D0EA 0%, #0085D1 100%);
+    background-attachment: fixed;
+    position: relative;
+}
+
+.mine .message.last:before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    bottom: 0;
+    right: -8px;
+    height: 20px;
+    width: 20px;
+    background: linear-gradient(to bottom, #00D0EA 0%, #0085D1 100%);
+    background-attachment: fixed;
+    border-bottom-left-radius: 15px;
+}
+
+.mine .message.last:after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    right: -10px;
+    width: 10px;
+    height: 20px;
+    background: white;
+    border-bottom-left-radius: 10px;
+}*/
+
+.Send_Button {
+    position: fixed;
+    bottom: 20px;
+    right: 50px;
+    cursor: pointer;
+    transition: transform 0.5s ease, box-shadow 0.3s ease;
+}
+
+.Send_Button:hover {
+    transform: scale(1.2);
+}
+
+.btn_send {
+    background: linear-gradient(45deg, #49cdd1, #FF8EFF);
+    -webkit-background-clip: text;
+    color: transparent;
+    font-size: 4rem;
+    transition: text-shadow 1s ease, background 0.5s ease;
+}
+
+.btn_send:hover {
+    animation: gradientAnimation 1s ease forwards;
+    -webkit-background-clip: text;
+    color: transparent;
+    text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes gradientAnimation {
+    0% {
+        background: linear-gradient(45deg, #49cdd1, FDF5FD);
+        -webkit-background-clip: text;
+    }
+    25% {
+        background: linear-gradient(45deg, #49cdd1, #FFDAFF);
+        -webkit-background-clip: text;
+    }
+    50% {
+        background: linear-gradient(45deg, #49cdd1, #FDC1FD);
+        -webkit-background-clip: text;
+    }
+    75% {
+        background: linear-gradient(45deg, #49cdd1, #FFA5FF);
+        -webkit-background-clip: text;
+    }
+    100% {
+        background: linear-gradient(45deg, #49cdd1, #FF8EFF);
+        -webkit-background-clip: text;
+    }
+}
+
+#chatRoom {
+    height: 100%;
+}
+
+.message {
+    display: flex;
+    margin-top: 15px;
+    align-items: flex-end;
+}
+
+.message .time {
+    font-size: 1em;
+    color: #aaa;
+}
+
+.message-right {
+    justify-content: flex-end;
+}
+
+.message-left .time {
+    margin-left: 10px;
+}
+
+.message-right .time {
+    margin-right: 10px;
+}
+
+.mine {
+    align-items: flex-end;
+}
+
+.mine .message {
+    color: white;
+    background: linear-gradient(to bottom, #00D0EA 0%, #0085D1 100%);
+    background-attachment: fixed;
+    position: relative;
+    padding: 10px 15px;
+    border-radius: 30px;
+}
+
+.mine .message.last:before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    bottom: 0;
+    right: -8px;
+    height: 20px;
+    width: 20px;
+    background: linear-gradient(to bottom, #00a7dc 0%, #0085D1 100%);
+    background-attachment: fixed;
+    border-bottom-left-radius: 15px;
+}
+
+.mine .message.last:after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    right: -10px;
+    width: 10px;
+    height: 20px;
+    background: white;
+    border-bottom-left-radius: 10px;
+}
+
+.bubble-left {
+    max-width: 75%;
+    padding: 10px 15px;
+    background-color: #f1f1f1;
+    color: black;
+    border-radius: 30px;
+    position: relative;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.bubble-left:before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    bottom: 0;
+    left: -8px;
+    height: 20px;
+    width: 20px;
+    background: linear-gradient(to bottom, #f1f1f1 0%, #f1f1f1 100%);
+    background-attachment: fixed;
+    border-bottom-right-radius: 15px;
+}
+
+.bubble-left:after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    left: -10px;
+    width: 10px;
+    height: 20px;
+    background: white;
+    border-bottom-right-radius: 10px;
+}

@@ -1,0 +1,148 @@
+﻿@model IEnumerable<Yunity.Models.CManagerWrap>
+
+
+
+@{
+    ViewData["Title"] = "List";
+}
+
+<nav style="--bs-breadcrumb-divider: '>';font-size: 2rem;" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" style="color:black">Index</a></li>
+        <li class="breadcrumb-item active" aria-current="page">管理員</li>
+    </ol>
+</nav>
+
+<h2>管理員資料</h2>
+
+<form action="/Manager/List" method="post" class="p-3 border rounded shadow-sm mb-4 bg-light">
+    <h4 class="mb-3">搜尋條件</h4>
+
+    <div class="d-flex align-items-center flex-wrap gap-3">
+        <!-- 核准狀態篩選 -->
+        <div class="d-flex align-items-center">
+            <label for="approvalStatus" class="form-label fw-bold me-2">審核狀態</label>
+            <select name="approvalStatus" id="approvalStatus" class="form-select" style="width: 150px;">
+                <option value="">全部</option>
+                <option value="Pending">待審核</option>
+                <option value="Approved">已核准</option>
+                <option value="Cancel">已取消</option>
+            </select>
+        </div>
+
+        <!-- 篩選欄位（Checkbox） -->
+        <div class="d-flex align-items-center">
+            <label class="form-label fw-bold me-2">篩選欄位：</label>
+            <div class="d-flex flex-wrap">
+                @foreach (var option in ViewBag.FieldOptions as List<SelectListItem>)
+                {
+                    <div class="form-check form-check-inline me-2">
+                        <input type="checkbox" name="SelectedFields" value="@option.Value"
+                               class="form-check-input" @(option.Selected ? "checked" : "") />
+                        <label class="form-check-label">@option.Text</label>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- 關鍵字輸入框 + 搜尋按鈕 (保持在同一行) -->
+        <div class="flex-grow-1">
+            <div class="input-group">
+                <input type="text" name="txtKeyword" id="txtKeyword"
+                       class="form-control" placeholder="輸入關鍵字">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<table class="table">
+    <tr>
+        <th>
+            #
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BuildingName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FPhone)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FEmail)
+        </th>
+        <th></th>
+        <th>核准狀態</th>
+    </tr>
+
+    @{
+        int count = 0;
+
+        foreach (var item in Model)
+        {
+            count++;
+            <tr>
+                <td>
+                    @count
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FName)
+                </td>
+
+                <td>
+                    @if (string.IsNullOrEmpty(item.BuildingName) || item.BuildingName == "無大樓")
+                    {
+                        <span class="text-muted">無大樓</span>
+                    }
+                    else
+                    {
+                        @Html.DisplayFor(modelItem => item.BuildingName)
+                    }
+                </td>
+
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.FPhone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FEmail)
+                </td>
+                <td>
+                   @Html.ActionLink(" ", "Detail", new { id = item.FId }, new { @class = "bi bi-pencil-square" , @style = "color:black" })
+                </td>
+
+                <td>
+                    @if (item.IsApproved == "Pending")
+                    {
+                        <span class="badge bg-warning text-dark">待審核</span>
+                    }
+                    else if (item.IsApproved == "Approved")
+                    {
+                        <span class="badge bg-success">已核准</span>
+                    }
+                    else if (item.IsApproved == "Cancel")
+                    {
+                        <span class="badge bg-secondary">已取消</span>
+                    }
+                </td>
+               
+               
+            </tr>
+
+            
+        }
+    }
+
+
+
+</table>
+
+<div class="d-flex">
+    <a asp-action="Create" class="ms-auto" style="position: fixed; bottom: 20px; right: 20px;">
+        <i class="bi bi-plus-circle-fill" style="font-size:3rem; color:#ff914d"></i>
+    </a>
+</div>

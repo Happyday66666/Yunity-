@@ -1,0 +1,15 @@
+﻿@model Dictionary<string, string>
+
+<div class="container">
+    <div class="mb-3">
+        <h3>付款資訊</h3>
+    </div>
+    @foreach (var key in @Model.Keys.ToList())
+    {
+        <div class="mb-3">
+            @(key)
+            <input type="text" name="@key" value="@Model[key]" disabled class="form-control" />
+        </div>
+    }
+   
+</div>

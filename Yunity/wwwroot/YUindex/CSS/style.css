@@ -1,0 +1,340 @@
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: #fff;
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.bg-log {
+    background-image: linear-gradient(70deg, #96fbc4 0%, #f9f586 100%);
+}
+
+.myNavbar {
+    background-color: rgba(15, 15, 15, 0.836) !important;
+}
+
+.nav-link {
+    color: #e0dede !important;
+    transition: transform 0.3s ease;
+}
+
+.nav-link:hover {
+    transform: scale(1.2);
+    color: rgb(255, 255, 255) !important;
+}
+
+.cover-container {
+    margin-top: 30px;
+    height: calc(100vh - 130px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cover {
+    width: calc(100vw);
+    height: calc(100vh - 120px);
+    background-image: linear-gradient(60deg, #abecd6 0%, #fbed96 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 998;
+}
+
+.login-popup {
+    position: fixed;
+    height: 500px;
+    width: 500px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #f7f2f2;
+    padding: 20px;
+    box-shadow: 0px 5px 15px 2px rgba(255, 255, 255, 0.3);
+    text-align: center;
+    border-radius: 50%;
+    z-index: 999;
+    display: none;
+}
+
+.role-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.role-button {
+    background: linear-gradient(to right, rgb(54, 209, 220), rgb(91, 134, 229));
+    width: 200px;
+    height: 200px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: 0.3s;
+}
+
+.role-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+#userLogin {
+    background-image: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);
+    color: white;
+    transition: 0.5s;
+}
+
+#userLogin:hover {
+    background-image: linear-gradient(120deg, #8ec5fc 0%, #e0c3fc 100%);
+    background-position: 100% 0;
+}
+
+#adminLogin {
+    background-image: linear-gradient(120deg, #fccb90 0%, #d57eeb 100%);
+    color: white;
+    transition: 0.5s;
+}
+
+#adminLogin:hover {
+    background-image: linear-gradient(120deg, #d57eeb 0%, #fccb90 100%);
+}
+
+.sys-Log {
+    border: none;
+    border-radius: 100px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: #909294;
+    height: 50px;
+    width: 200px;
+    background-color: #fff;
+    transition: width 0.3s ease-in-out;
+}
+
+.sys-Log:hover {
+    width: 300px;
+    color: #6a7580;
+}
+
+.cover-smailP {
+    font-size: 20px;
+    text-align: center;
+    color: #fff;
+    text-shadow: 2px 2px 5px rgba(66, 66, 66, 0.3);
+}
+
+.cover-bigP {
+    color: #fff;
+    font-family: 'Sawarabi Gothic', sans-serif;
+}
+
+.cover-yunity {
+    font-size: 180px;
+    text-shadow: 2px 2px 5px rgba(66, 66, 66, 0.3);
+    margin: -20px 0 0 -20px;
+}
+
+.Introduce-Title {
+    text-shadow: 2px 2px 5px rgba(112, 112, 112, 0.3);
+    white-space: nowrap;
+    transition: transform 0.3s ease;
+}
+
+.Introduce-begin {
+    margin-top: 90px;
+    text-align: center;
+    font-family: 'Sawarabi Gothic', sans-serif;
+    font-weight: bold;
+    font-size: 40px;
+    color: rgb(11, 12, 12);
+}
+
+.Introduce-end {
+    margin-top: 30px;
+    text-align: center;
+    font-family: 'Sawarabi Gothic', sans-serif;
+    font-weight: bold;
+    font-size: 40px;
+    color: rgb(11, 12, 12);
+}
+
+.gradient-text-begin {
+    font-size: 48px;
+    font-weight: bold;
+    background: linear-gradient(to right, rgb(0, 201, 255), rgb(146, 254, 157));
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.gradient-text-end {
+    font-size: 48px;
+    font-weight: bold;
+    background: linear-gradient(to right, rgb(146, 254, 157), rgb(0, 201, 255));
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+footer {
+    background-color: rgba(15, 15, 15, 0.836);
+    color: rgb(219, 218, 214);
+    margin-top: 100px;
+    padding: 20px 0;
+}
+
+.footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.footer-column {
+    flex: 1;
+    padding: 10px;
+    text-align: left;
+}
+
+.logo-column {
+    text-align: center;
+}
+
+.copyright {
+    font-size: 14px;
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .footer-row {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-column {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .logo-column img {
+        width: auto;
+        height: 50%;
+    }
+}
+
+.btn-Welcome {
+    background: linear-gradient(to right, rgb(54, 209, 220), rgb(91, 134, 229));
+    border-radius: 100px;
+    border: none;
+    width: 110px;
+    height: 50px;
+    color: #fff;
+    box-shadow: 0px 3px 12px rgba(82, 82, 82, 0.4);
+    font-family: 'Sawarabi Gothic', sans-serif;
+    transition: width 0.3s ease-in-out;
+    font-size: 18px;
+}
+
+.btn-Welcome:hover {
+    width: 160px;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
+}
+
+#backToTopButton {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: transparent;
+    color: #29b6c0;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50%;
+    font-size: 40px;
+    display: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index:9999;
+}
+
+#backToTopButton:hover {
+    transform: scale(1.25);
+}
+
+.card-log {
+    background-color: rgba(233, 233, 233, 0.4);
+    border: none;
+    box-shadow: 0px 3px 12px rgba(82, 82, 82, 0.4);
+}
+
+.log-input{
+    border-radius:100px;
+}
+
+.btn-log {
+    background-image: linear-gradient(30deg, #6a11cb 0%, #2575fc 100%);
+    border-radius: 100px;
+    border: none;
+    width: 60%;
+    height: 50px;
+    color: #fff;
+    box-shadow: 0px 3px 12px rgba(82, 82, 82, 0.4);
+    font-family: 'Sawarabi Gothic', sans-serif;
+    transition: width 0.3s ease-in-out;
+    font-size: 18px;
+}
+
+.btn-log:hover {
+    width: 100%;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.4);
+}
+
+.log-input {
+    font-size: 1.4rem;
+    padding: 0.5rem 5rem; 
+    height: 4rem;
+}
+.log-text {
+    font-family: "Lora", serif;
+    font-weight: 600;
+    font-style: normal;
+}
+
+.Log_corner {
+    position: absolute;
+    border-radius: 50%;
+    height: 20px;
+    width: 20px;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.Log_top_left {
+    top: 10px;
+    left: 10px;
+}
+
+.Log_top_right {
+    top: 10px;
+    right: 10px;
+}
+
+.Log_bottom_left {
+    bottom: 10px;
+    left: 10px;
+}
+
+.Log_bottom_right {
+    bottom: 10px;
+    right: 10px;
+}

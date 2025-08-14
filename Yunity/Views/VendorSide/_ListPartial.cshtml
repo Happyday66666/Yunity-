@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Yunity.Models.CsAppointmentRecord>
+
+<table>
+    <tbody>
+        @if(!Model.Any())
+        {
+            <p class="text-center" style="font-size: 14px; color: #555555; background-color:#ededed; border-radius:20px;">------ 查無訂單 ------</p>
+        }
+        else
+        {
+            @foreach (var item in Model)
+            {
+                <tr class="row100" data-id="@item.Id" onclick="window.location.href='@Url.Action("Detail", "VendorSide", new { id = item.Id })'">
+                    <td class="column1">@Html.DisplayFor(modelItem => item.CreatedDate)</td>
+                    <td class="column2">@Html.DisplayFor(modelItem => item.Id)</td>
+                    <td class="column3">@Html.DisplayFor(modelItem => item.CustomerName)</td>
+                    <td class="column4">@Html.DisplayFor(modelItem => item.Phone)</td>
+                    <td class="column5">@Html.DisplayFor(modelItem => item.ServiceLocation)</td>
+                    <td class="column6">
+                        @if (item.Status == "進行中")
+                        {
+                            <span class="badge rounded-pill text-bg-primary">進行中</span>
+                        }
+                        else if (item.Status == "已送單")
+                        {
+                            <span class="badge rounded-pill text-bg-danger">已送單</span>
+                        }
+                        else if (item.Status == "已完成")
+                        {
+                            <span class="badge rounded-pill text-bg-success">已完成</span>
+                        }
+                        else if (item.Status == "已取消")
+                        {
+                            <span class="badge rounded-pill text-bg-secondary">已取消</span>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

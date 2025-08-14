@@ -1,0 +1,166 @@
+﻿@model IEnumerable<Yunity.Models.CUsersInfoWrap>
+
+@{
+    ViewData["Title"] = "List";
+}
+
+ 
+ 
+<style>
+    .a-user {
+        color: #000000;
+        padding: 0;
+        font-size: 15px;
+    }
+
+        .a-user:hover {
+            color: #808080 !Important;
+            border-left: none;
+        }
+
+    .breadcrumb-item {
+        color: #000000;
+    }
+
+    .breadcrumb {
+        background-color: transparent;
+    }
+
+    .edit-link {
+        font-weight: bold;
+    }
+
+    .edit-icon {
+        color: #000000;
+        padding: 0;
+        font-size: 15px;
+    }
+
+        .edit-icon:hover {
+            color: #808080 !Important;
+            border-left: none;
+        }
+
+    .bi-pencil-square {
+        color: #000000;
+    }
+
+   
+
+    #dropdownSearch{
+        width: 190px;
+    }
+    #Keyword{
+        width: 190px;
+    }
+
+    
+        
+   
+</style>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")" class="a-user">首頁</a></li>
+        <li class="breadcrumb-item active" aria-current="page">用戶</li>
+    </ol>
+</nav>
+@if (ViewData["Message"] != null)
+{
+    <div class="alert alert-warning">@ViewData["Message"]</div>
+}
+@using (Html.BeginForm())
+{
+    <h1>用戶管理</h1>
+    <div class="form-group d-flex justify-content-end align-items-center">
+        <!-- 搜尋欄位選擇框 -->
+        <div class="mr-2" style="max-width: 200px; width: 200px;">
+            <select id="dropdownSearch" name="SearchField" class="form-control" aria-label="Default select example">
+               
+                <option value="" disabled selected>請選擇搜尋欄位</option>
+                <option value="FName">姓名</option>
+                <option value="FPhone">電話</option>
+                <option value="BuildingName">大樓名稱</option>
+                <option value="FUser_address">聯絡地址</option>
+                <option value="FEmail">電子郵件</option>
+            </select>
+        </div>
+        <!-- 關鍵字輸入框 -->
+        <div class="mr-2" style="max-width: 200px; width: 200px;">
+            @Html.TextBox("Keyword", null, new { @class = "form-control", placeholder = "請輸入關鍵字"  })
+        </div>
+        <!-- 查詢按鈕 -->
+        <div>
+            <input type="submit" value="查詢" class="btn btn-primary" />
+        </div>
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                序號
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FName)
+            </th>
+           
+            <th>
+                @Html.DisplayNameFor(model => model.FPhone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BdName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FUserAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FEmail)
+            </th>
+           
+            <th>
+               
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int count = 0;
+            foreach (var item in Model) {
+                count++;
+        <tr>
+            <td>
+                @count
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FName)
+            </td>
+           
+            <td>
+                @Html.DisplayFor(modelItem => item.FPhone)
+            </td>
+                    <td>
+                        @if (item.BuildingNames != null && item.BuildingNames.Any())
+                        {
+                            @foreach (var buildingName in item.BuildingNames)
+                            {
+                                <div>@buildingName</div>
+                            }
+                        }
+                    </td>
+            <td>
+               @Html.DisplayFor(modelItem => item.FUserAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FEmail)
+            </td>
+         
+            <td>
+                
+              @Html.ActionLink(" ", "Details", new { id = item.FId }, new { @class = "bi bi-pencil-square edit-icon" })
+                
+            </td>
+        </tr>
+}}
+    </tbody>
+</table>

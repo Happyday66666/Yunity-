@@ -1,0 +1,240 @@
+﻿@model IEnumerable<Yunity.Models.CBoardwarp>
+
+@{
+    Layout = "_LayoutUser";
+    ViewData["Title"] = "List";
+}
+
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+<style>
+    /* 自定義按鈕樣式 */
+    .btn-custom {
+        border: none;
+        text-decoration: none;
+        position: relative;
+    }
+
+        .btn-custom::after {
+            content: '';
+            display: block;
+            position: absolute;
+            width: 100%;
+            height: 2px; /* 底線的粗細 */
+            background-color: #D0D0D0; /* 底線顏色 */
+            bottom: 0; /* 放到底部 */
+            left: 0;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover::after {
+            background-color: #3255af; /* 深藍色 */
+        }
+
+    .card {
+        width: 80%; /* 卡片寬度 */
+        height: 200px; /* 固定高度 */
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 4px 10px rgba(50, 85, 175, 0.2); /* 默認陰影 */
+        transition: transform 0.3s ease, box-shadow 0.2-3s ease; /* 使變化過渡平滑 */
+    }
+
+        .card:hover {
+            box-shadow: 0 10px 30px rgba(50, 85, 175, 0.2); /* 滑鼠懸停時增加陰影 */
+            transform: translateY(-5px); /* 使卡片向上漂浮 */
+        }
+
+        .card:active {
+            transform: translateY(2px); /* 按下時效果 */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+
+   
+
+    .card-body {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+
+</style>
+
+
+
+
+<div class="container mt-3 mb-3 ">
+<!-- 篩選選項 -->
+    <h2 class="d-flex justify-content-center" style="color:#3255af;">最新公告</h2>
+
+    <!-- 篩選選項 -->
+    <div class="container mt-3 mb-3 d-flex justify-content-center">
+        <div class="d-flex my-5" style="gap: 15px; ">
+            <button id="btnAll" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-calendar3" style="margin-right:5px; font-size: 40px;"></i>全部</button>
+            <button id="btnActivity" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-megaphone-fill" style="margin-right:5px; font-size: 40px;"></i>活動通知</button>
+            <button id="btnEmergency" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-exclamation-triangle-fill" style="margin-right:5px; font-size: 40px;"></i>緊急通知</button>
+            <button id="btnMaintenance" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-tools" style="margin-right:5px; font-size: 40px;"></i>維修公告</button>
+            <button id="btnOthers" type="button" class="btn btn-custom" style="font-weight: bold;"><i class="bi bi-motherboard-fill" style="margin-right:5px; font-size: 40px;"></i>其他</button>
+        </div>
+    </div>
+ 
+<!-- 公告內容 -->
+
+    <div class="row  d-flex justify-content-center ">
+      
+    @foreach (var item in Model)
+    {
+            <div class="col-12 mb-4 card d-flex justify-content-center">
+                <!-- 更改為 col-12 讓卡片寬度匹配容器 -->
+                <a href="@Url.Action("Details", new { id = item.Id })" class="card-link" style="text-decoration: none; color: inherit;">
+                    <div style="height: 200px; width:1000px; display: flex; flex-direction: column;">
+                        <div class="p-3">
+                            <p style="color:#0000C6;">
+                                <strong>
+                                    <i class="bi @GetIconClass(item.Type)" style="margin-right:8px; font-size: 20px;"></i>
+                                    @BoardType(item.Type)
+                                </strong>
+                            </p>
+
+                            <h5 class="card-title">@item.Name</h5>
+                            <p class="card-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 20ch;">
+                                @item.Info
+                            </p>
+                            <p class="card-text"><small class="text-muted">發布時間: @item.OpenTime</small></p>
+
+                            <i class="bi bi-arrow-right-circle" style="position: absolute; bottom: 10px; right: 10px; font-size: 30px; transition: color 0.3s; color:#3255af;"></i>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@functions {
+    public static string BoardType(int? type)
+    {
+        if (type == null)
+        {
+            return "未知類型";
+        }
+
+        switch (type)
+        {
+            case 1:
+                return "活動通知";
+            case 2:
+                return "緊急通知";
+            case 3:
+                return "維修公告";
+            case 4:
+                return "其他";
+            default:
+                return "無類型";
+        }
+    }
+
+    public static string GetIconClass(int? type)
+    {
+        switch (type)
+        {
+            case 1:
+                return "bi-megaphone-fill";
+            case 2:
+                return "bi-exclamation-triangle-fill";
+            case 3:
+                return "bi-tools";
+            case 4:
+                return "bi-motherboard-fill";
+            default:
+                return "bi-question-circle";
+        }
+    }
+}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        $(document).ready(function(){
+            // 初始化 AOS 動畫庫
+            AOS.init();
+
+            $('#btnAll').click(function(){
+                filterPackages("全部");
+            });
+
+            $('#btnActivity').click(function(){
+                filterPackages("活動通知");
+            });
+
+            $('#btnEmergency').click(function(){
+                filterPackages("緊急通知");
+            });
+
+            $('#btnMaintenance').click(function(){
+                filterPackages("維修公告");
+            });
+
+            $('#btnOthers').click(function(){
+                filterPackages("其他");
+            });
+
+            function filterPackages(state){
+                console.log('Filtering packages with state: ' + state);
+                var stateValue;
+                if (state === "全部") {
+                    stateValue = -1;
+                } else if (state === "活動通知") {
+                    stateValue = 1;
+                } else if (state === "緊急通知") {
+                    stateValue = 2;
+                } else if (state === "維修公告") {
+                    stateValue = 3;
+                } else if (state === "其他") {
+                    stateValue = 4;
+                }
+                $.ajax({
+                    url: '@Url.Action("FilterAjax", "UBoard")',
+                    type: 'GET',
+                    data: { state: stateValue },
+                    success: function(data){
+                        console.log('Data received: ', data);
+                        $('.row').html(data);
+                    },
+                    error: function(){
+                        alert('錯誤:無法加載資料')
+                    }
+                });
+            }
+
+            function checkVisibility() {
+                var windowHeight = $(window).height();
+                var windowTop = $(window).scrollTop();
+                var windowBottom = windowTop + windowHeight;
+
+                $('.card').each(function() {
+                    var cardTop = $(this).offset().top;
+                    var cardBottom = cardTop + $(this).outerHeight();
+
+                    if (cardBottom > windowTop && cardTop < windowBottom) {
+                        $(this).addClass('visible'); // 進入視窗時觸發動畫
+                    }
+                });
+            }
+
+            // 初次加載時檢查可見性
+            checkVisibility();
+
+            // 在滾動時重新檢查
+            $(window).scroll(function() {
+                checkVisibility();
+            });
+
+        }) 
+
+    </script>
+}

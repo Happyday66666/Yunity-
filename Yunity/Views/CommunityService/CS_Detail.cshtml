@@ -1,0 +1,535 @@
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model Yunity.Models.CSListWrap
+
+@{
+    Layout = "_LayoutUser";
+    ViewData["Title"] = "預約明細";
+}
+
+@functions {
+    public string GetStatusClass(string status)
+    {
+        switch(status)
+        {
+            case "已送單":
+                return "status-已送單";
+            case "進行中":
+                return "status-進行中";
+            case "已取消":
+                return "status-已取消";
+            case "已完成":
+                return "status-已完成";
+            default:
+                return string.Empty;
+        }
+    }
+}
+<style>
+    /*表格樣式(thead)*/    
+    table {
+        border-collapse: collapse; /* 讓邊框合併 */
+    }
+    /* 隱藏所有格線 */
+    table th, table td {
+        border: none; /* 去掉所有格線 */
+    }
+
+    /* 只保留表頭的底部框線 */
+    table thead th {
+        border-bottom: 2px solid black; /* 保留表頭底部框線 */
+        text-align: center; /* 置中顯示 */
+        font-size: 1.5rem; /* 增加字體大小 */
+        font-weight: bold; /* 字體加粗 */
+    }
+
+
+    /* 狀態顏色與大小設置 */
+    .status-column {
+        font-size: 1.2rem; /* 設定字體大小 */
+        padding: 5px;
+        border-radius: 5px;
+    }
+
+    /* 狀態顏色對應 */
+    .status-已送單 {
+        color: #83af40 !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .status-進行中 {
+        color: #ff914d !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .status-已取消 {
+        color: #c5401f !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .status-已完成 {
+        color: #3255af !important;        
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    /* 按鈕容器樣式 */
+    .button-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    /* 按鈕樣式 */
+    .action-btn {
+        font-size: 1.2rem;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: background-color 0.3s;
+    }
+
+    
+    /* 返回按鈕 */
+    .back-btn {
+        background-color: #7cdee0;
+        color: #000;
+    }
+
+        .back-btn:hover {
+            background-color: #49cdd1;
+        }
+
+    /* 取消訂單按鈕 */
+    .cancel-btn {
+        background-color: #ef744a;
+        color: white;
+    }
+
+    .cancel-btn:hover {
+        background-color: #c5401f;
+    }
+
+    /* 編輯訂單按鈕 */
+    .edit-btn {
+        background-color: #abd8f1
+        ;
+        color: #000;
+    }
+
+    .edit-btn:hover {
+            background-color: #7abaf9;
+    }
+
+    /* 儲存按鈕樣式 */
+    .save-btn {
+        background-color: #a7cd6d; /* 綠色 */
+        color: #000;
+        font-size: 1.2rem;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+
+        .save-btn:hover {
+            background-color: #83af40; /* 滑鼠懸停變色 */
+        }
+
+    /* 填寫反饋按鈕 */
+    .feedback-btn {
+        background-color: #ffdf70;
+        color: #000;
+    }
+
+    .feedback-btn:hover {
+            background-color: #fdf4a6;
+    }
+
+    /* 反饋模態框樣式 */
+    .feedback-modal {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+        z-index: 10000;
+    }
+
+    /* 反饋標題 */
+    .feedback-title {
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* 按鈕組樣式 */
+    .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    /* 提交按鈕 */
+    .submit-btn {
+        background-color: #28a745;
+        color: white;
+        font-size: 1rem;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+    }
+
+    /* 關閉按鈕 */
+    .close-btn {
+        background-color: #dc3545;
+        color: white;
+        font-size: 1rem;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 30px;
+    }
+
+    /* 按鈕群組樣式 */
+    .action-btn-group {
+        display: flex;
+        gap: 10px;
+    }
+
+</style>
+
+<div class="container mt-3 mb-3">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="@Url.Action("Index","UHome")">首頁</a>
+                </li>
+                <li class="breadcrumb-item" aria-current="page"><a href="@Url.Action("CS_Index","CommunityService")">社區服務</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><a href="@Url.Action("CS_List","CommunityService")">我的預約紀錄</a></li>
+                <li class="breadcrumb-item active" aria-current="page">預約明細</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="container-fluid">
+        <h2>預約明細</h2>        
+        <div class="card mb-3" style="border:none;">
+            <div class="card-body" >
+                <table class="table">
+                    <thead>
+                        <tr><th colspan="4" class="table-header">廠商資訊</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.ComName)</th>
+                            <td colspan="3">@Html.DisplayFor(model => model.ComName)</td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.ProductName)</th>
+                            <td colspan="3">@Html.DisplayFor(model => model.ProductName)</td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.ComPhone)</th>
+                            <td colspan="3">@Html.DisplayFor(model => model.ComPhone)</td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.CreatedDate)</th>
+                            <td colspan="3">@Html.DisplayFor(model => model.CreatedDate)</td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.Status)</th>
+                            <td colspan="3" class="status-column @GetStatusClass(Model.Status)">
+                                @Html.DisplayFor(model => model.Status)
+                            </td>
+                        </tr>
+                        @if (Model.Status == "已完成")
+                        {
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.FinishDate)</th>
+                                <td colspan="3">@Html.DisplayFor(model => model.FinishDate)</td>
+                            </tr>
+                        }
+                        else if (Model.Status == "已取消")
+                        {
+                            <tr>
+                                <th>取消訂單日期</th>
+                                <td colspan="3">@Html.DisplayFor(model => model.FinishDate)</td>
+                            </tr>
+                        }
+                        @if (Model.Status == "已完成" && Model.Feedback != "無")
+                        {
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.Feedback)</th>
+                                <td colspan="3">@Html.DisplayFor(model => model.Feedback)</td>
+                            </tr>
+                        }
+                        
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+        <div class="card" style="border:none;">
+            <div class="card-body">
+                <table class="table">
+                    <thead><tr><th colspan="4" class="table-header">客戶資訊</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.CustomerName)</th>
+                            <td colspan="3">@Html.DisplayFor(model => model.CustomerName)</td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.Phone)</th>
+                            <td colspan="3">@Html.DisplayFor(model => model.Phone)</td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.ServiceLocation)</th>
+                            <td colspan="3">@Html.DisplayFor(model => model.ServiceLocation)</td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.Email)</th>
+                            <td colspan="3">@Html.DisplayFor(model => model.Email)</td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.ArNotes)</th>
+                            <td colspan="3">@Html.DisplayFor(model => model.ArNotes)</td>
+                        </tr>
+                        <tr>
+                            <th>@Html.DisplayNameFor(model => model.Photo1)</th>                   
+                            <td id="photo1Column" data-photo1="@Model.Photo1">
+                                @if (Model.Photo1 != "nophoto" && !string.IsNullOrEmpty(Model.Photo1))
+                                {
+                                    <img src="@Url.Content("~/OrderPhoto/" + Model.Photo1)" alt="Photo1" style="max-width: 200px;width: 100%;" />
+                                }
+                                else
+                                {
+                                    <script>
+                                        document.getElementById('photo1Column').style.display = 'none';  // 隱藏欄位
+                                    </script>
+                                }
+                            </td>
+
+                            <td id="photo2Column" data-photo2="@Model.Photo2">
+                                @if (Model.Photo2 != "nophoto" && !string.IsNullOrEmpty(Model.Photo2))
+                                {
+                                    <img src="@Url.Content("~/OrderPhoto/" + Model.Photo2)" alt="Photo2" style="max-width: 200px;width: 100%;" />
+                                }
+                                else
+                                {
+                                    <script>
+                                        document.getElementById('photo2Column').style.display = 'none';  // 隱藏欄位
+                                    </script>
+                                }
+                            </td>
+
+                            <td id="photo3Column" data-photo3="@Model.Photo3">
+                                @if (Model.Photo3 != "nophoto" && !string.IsNullOrEmpty(Model.Photo3))
+                                {
+                                    <img src="@Url.Content("~/OrderPhoto/" + Model.Photo3)" alt="Photo3" style="max-width: 200px;width: 100%;" />
+                                }
+                                else
+                                {
+                                    <script>
+                                        document.getElementById('photo3Column').style.display = 'none';  // 隱藏欄位
+                                    </script>
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            @*按扭區域 START*@
+            <div class="m-3">
+                <div class="button-container">
+                    <button id="backBtn" class="action-btn back-btn" onclick="window.location.href='@Url.Action("CS_List", "CommunityService")'">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                        <span>返回</span>
+                    </button>
+
+                    @if (ViewBag.CanCancelOrEdit)
+                    {
+                        <div class="action-btn-group">
+                            <button id="cancelOrderBtn" class="action-btn cancel-btn" onclick="confirmCancelOrder()">
+                                <span class="material-symbols-outlined">close</span>
+                                <span>取消訂單</span>
+                            </button>
+                            <button id="editBtn" class="action-btn edit-btn" onclick="window.location.href='@Url.Action("CS_Edit", "CommunityService", new { id = Model.CsAppointmentRecord.Id })'">
+                                <span class="material-symbols-outlined">edit</span>
+                                <span>編輯訂單</span>
+                            </button>
+                        </div>
+                    }
+
+                    @if (Model.Status == "已完成" && Model.Feedback == "無")
+                    {
+                        <div class="action-btn-group">
+                            <button id="feedbackBtn" class="action-btn feedback-btn" onclick="showFeedbackForm()">填寫反饋</button>
+                        </div>
+
+                        <div id="feedbackModal" class="feedback-modal">
+                            <h4 class="feedback-title">
+                                請填寫您的反饋
+                                <span class="material-symbols-outlined">family_star</span>
+                            </h4>
+                            <textarea id="feedbackText" rows="4" cols="50"></textarea>
+                            <div class="button-group">
+                                <button onclick="submitFeedback()" class="submit-btn">提交</button>
+                                <button onclick="closeFeedbackForm()" class="close-btn">關閉</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @*按扭區 END*@
+            </div>
+            @* 原本返回的按鈕
+                <a asp-action="CS_List" style="position: fixed; bottom: 20px; right: 20px; color: #293c56;font-size:3rem; z-index: 9999;">
+                    <i class="bi bi-arrow-left-circle-fill"></i>
+                </a>
+                *@
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 照片處理
+        window.onload = function() {        
+            var photo1Column = document.getElementById('photo1Column');
+            var photo1Value = photo1Column.getAttribute('data-photo1');
+            if (photo1Value === "nophoto" || !photo1Value) {
+                photo1Column.style.display = 'none'; 
+            }
+                
+            var photo2Column = document.getElementById('photo2Column');
+            var photo2Value = photo2Column.getAttribute('data-photo2');
+            if (photo2Value === "nophoto" || !photo2Value) {
+                photo2Column.style.display = 'none'; 
+            }
+                
+            var photo3Column = document.getElementById('photo3Column');
+            var photo3Value = photo3Column.getAttribute('data-photo3');
+            if (photo3Value === "nophoto" || !photo3Value) {
+                photo3Column.style.display = 'none';  
+            }
+        }
+
+        //彈跳視窗
+        function confirmCancelOrder() {
+            Swal.fire({
+                title: "您確定要取消訂單嗎？",
+                text: "請注意!!取消後將無法復原。",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "確定",
+                cancelButtonText: "取消"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 隱藏按鈕
+                    document.getElementById("cancelOrderBtn").style.display = "none";
+                    document.getElementById("editBtn").style.display = "none";
+
+                    // 更新訂單狀態
+                    var statusCell = document.getElementById("statusCell");
+                    if (statusCell) {
+                        statusCell.innerText = "已取消";
+                    }
+
+                    // 發送 AJAX 請求到後端取消訂單
+                    $.ajax({
+                        url: '@Url.Action("CancelOrder", "CommunityService")',
+                        type: 'POST',
+                        data: { orderId: '@Model.CsAppointmentRecord.Id' },
+                        success: function(response) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "訂單已取消",
+                                text: "期待您下次的預約，謝謝!!"
+                            }).then(function () {
+                                location.reload(); // 刷新頁面
+                            });
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "取消失敗",
+                                text: "取消訂單失敗，請稍後再試。"
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // 顯示反饋表單
+        function showFeedbackForm() {
+            document.getElementById("feedbackModal").style.display = "block";
+        }
+
+        function closeFeedbackForm() {
+            document.getElementById("feedbackModal").style.display = "none";
+        }
+
+        function submitFeedback() {
+            var feedback = document.getElementById("feedbackText").value.trim();
+            if (feedback === "" || feedback === "無") {
+                Swal.fire({
+                    icon: "info",
+                    title: "貼心提醒",
+                    text: "請輸入內容再送出唷!"
+                });
+                return;
+            }
+
+            $.ajax({
+                url: '@Url.Action("SubmitFeedback", "CommunityService")',
+                type: 'POST',
+                data: {
+                    orderId: '@Model.CsAppointmentRecord.Id',
+                    feedback: feedback
+                },
+                success: function(response) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "謝謝您的反饋！",
+                        text: "歡迎再次光臨我們的服務 : )"
+                    }).then(function () {
+                        closeFeedbackForm();
+                        location.reload();  // 刷新頁面
+                    });
+                },
+                error: function(xhr, status, error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "提交失敗",
+                        text: "反饋提交失敗，請稍後再試。"
+                    });
+                }
+            });
+        }
+
+    </script>
+}
+

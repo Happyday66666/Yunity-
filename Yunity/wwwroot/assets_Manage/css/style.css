@@ -1,0 +1,245 @@
+#room {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 15px;
+    height: 600px;
+    overflow-y: auto;
+}
+
+.message {
+    display: flex;
+    margin-top: 15px;
+    align-items: flex-end;
+}
+
+.message .time {
+    font-size: 1em;
+    color: #aaa;
+}
+
+.message-right {
+    justify-content: flex-end;
+}
+
+.message-left .time {
+    margin-left: 10px;
+}
+
+.message-right .time {
+    margin-right: 10px;
+}
+
+.mine {
+    align-items: flex-end;
+}
+
+.mine .message {
+    color: white;
+    background: linear-gradient(to bottom, #00D0EA 0%, #0085D1 100%);
+    background-attachment: fixed;
+    position: relative;
+    padding: 10px 15px;
+    border-radius: 30px;
+}
+
+.mine .message.last:before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    bottom: 0;
+    right: -8px;
+    height: 20px;
+    width: 20px;
+    background: linear-gradient(to bottom, #00D0EA 0%, #0085D1 100%);
+    background-attachment: fixed;
+    border-bottom-left-radius: 15px;
+}
+.mine .message.last:after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    right: -10px;
+    width: 10px;
+    height: 20px;
+    background: white;
+    border-bottom-left-radius: 10px;
+}
+
+.bubble-left {
+    max-width: 75%;
+    padding: 10px 15px;
+    background: linear-gradient(to bottom, #f1f1f1 0%, #f1f1f1 100%);
+    color: black;
+    border-radius: 30px;
+    position: relative;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+.bubble-left:before {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    bottom: 0;
+    left: -8px;
+    height: 20px;
+    width: 20px;
+    background: linear-gradient(to bottom, #f1f1f1 0%, #f1f1f1 100%);
+    background-attachment: fixed;
+    border-bottom-right-radius: 15px;
+}
+
+.bubble-left:after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    bottom: 0;
+    left: -10px;
+    width: 10px;
+    height: 20px;
+    background: white;
+    border-bottom-right-radius: 10px;
+    }
+
+.CreateButton {
+    position: fixed;
+    bottom: 20px;
+    right: 50px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.CreateButton:hover {
+    transform: scale(1.1);
+}
+
+.chatName {
+    padding:0;
+    margin-right:10px;
+}
+
+#chatName {
+    height:606px
+}
+
+.chat_preview_container {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    width: 100%; 
+}
+
+.chat_avatar img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+}
+
+#chatRoom {
+    height: 100%;
+}
+
+.chat_item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.chat_item:hover {
+    background-color: #f5f5f5;
+}
+
+.chat_info {
+    flex-grow: 1;
+}
+
+.chat_name {
+    font-weight: bold;
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.chat-preview {
+    color: #666;
+    font-size: 1rem;
+    margin: 0;
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    width: 15ch;
+}
+
+.chat-time {
+    font-size: 0.8rem;
+    color: #999;
+    text-align: right;
+}
+
+.title_li {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: #f8f8f8;
+    height:66px
+}
+
+.keyword_li {
+    display: flex;
+    align-items: center;
+    padding-top: 20px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+.keyword {
+    border-top: solid 1px #A9A9A9;
+    border: solid 1px #A9A9A9;
+    border-right: none;
+    padding: 0.63rem 1rem;
+    font-size: 1.1rem;
+}
+
+.keyword_div {
+    border-top: solid 1px #A9A9A9;
+    border: solid 1px #A9A9A9;
+    border-left: none;
+    padding: 0.7rem 0.75rem;
+}
+
+.keyword:focus {
+    outline: none;
+}
+
+.sendbtn {
+    padding-left: 20px;
+    border: none;
+    outline: none;
+    background: none;
+}
+
+.card_header {
+    display: flex;
+    align-items: center;
+    background-color: #f8f8f8;
+    height: 66px;
+    border-bottom: 1px solid rgb(221, 221, 221);
+    padding: 15px
+}
+.card_footer {
+    background-color: #f8f8f8;
+    height: 17px;
+    border-top: 1px solid rgb(221, 221, 221);
+}
+
+.input_group{
+    display:flex;
+    padding:20px
+}

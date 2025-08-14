@@ -1,0 +1,64 @@
+﻿@model Yunity.Models.UserAreaReserveWithAreaInfo
+
+@{
+    ViewData["Title"] = "刪除預約";
+    Layout = "_LayoutUser"; // 使用 _LayoutUser 版面
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-danger text-white text-center">
+                    <h2>刪除預約</h2>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title text-center">您確定要刪除此預約嗎？</h4>
+                    <hr />
+                    <dl class="row">
+                        <!-- 顯示公設名稱 -->
+                        <dt class="col-sm-4">公設名稱</dt>
+                        <dd class="col-sm-8">@Model.PublicArea.Name</dd>
+
+                        <!-- 顯示預約時間 -->
+                        <dt class="col-sm-4">預約時間</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.ReserveTime)</dd>
+
+                        <!-- 顯示開始時間 -->
+                        <dt class="col-sm-4">開始時間</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.StartTime)</dd>
+
+                        <!-- 顯示結束時間 -->
+                        <dt class="col-sm-4">結束時間</dt>
+                        <dd class="col-sm-8">@Html.DisplayFor(model => model.EndTime)</dd>
+
+                        <!-- 顯示預約狀態 -->
+                        <dt class="col-sm-4">預約狀態</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.State == 0)
+                            {
+                                <span class="text-warning">待審核</span>
+                            }
+                            else if (Model.State == 1)
+                            {
+                                <span class="text-success">已確認</span>
+                            }
+                            else
+                            {
+                                <span class="text-danger">已取消</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+                <div class="card-footer text-center">
+                    <form asp-action="Delete">
+                        <!-- 隱藏不需顯示的欄位 -->
+                        <input type="hidden" asp-for="Id" />
+                        <input type="submit" value="確認刪除" class="btn btn-danger" />
+                        <a asp-action="Index" class="btn btn-secondary">返回列表</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

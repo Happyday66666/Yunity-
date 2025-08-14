@@ -1,0 +1,265 @@
+﻿@using Yunity.Controllers
+
+@{
+    Layout = "~/Views/Shared/_LayoutVendorSide.cshtml";
+    var userInfo = ViewBag.userInfo as VendorSideController.UserCompanyViewModel;
+}
+<main>
+    <h2>您好, @ViewBag.UserName</h2>
+    <div class="container d-flex">
+        <div class="clo-6 no-change">
+            @if (ViewBag.userInfo != null)
+            {
+                <div class="setting-table">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="label">公司名稱</td>
+                                <td class="value">@ViewBag.userInfo.Account.ComName</td>
+                            </tr>
+                            <tr>
+                                <td class="label">Email</td>
+                                <td class="value">@ViewBag.userInfo.Profile.ComEmail</td>
+                            </tr>
+                            <tr>
+                                <td class="label">密碼</td>
+                                <td class="value">******</td>
+                            </tr>
+                            <tr>
+                                <td class="label">服務項目</td>
+                                <td class="value">@ViewBag.userInfo.Profile.ComServerItem</td>
+                            </tr>
+                            <tr>
+                                <td class="label">統一編號</td>
+                                <td class="value">@ViewBag.userInfo.Profile.ComRegistrationNumber</td>
+                            </tr>
+                            <tr>
+                                <td class="label">合約起日</td>
+                                <td class="value">@ViewBag.userInfo.Profile.ComContractStartDate</td>
+                            </tr>
+                            <tr>
+                                <td class="label">合約迄日</td>
+                                <td class="value">@ViewBag.userInfo.Profile.ComContractEndDate</td>
+                            </tr>
+                            <tr>
+                                <td class="label">帳號狀態</td>
+                                <td class="value"><span>@ViewBag.CStatus</span></td>
+                            </tr>
+                            <tr>
+                                <td class="label">服務區域</td>
+                                <td class="value"><span>@ViewBag.SArea</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p>找不到用戶資料</p>
+            }
+        </div>
+        <div class="clo-6 change">
+            @if (ViewBag.userInfo != null)
+            {
+                <div class="change-table">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td class="label">聯絡人</td>
+                                <td class="value">@ViewBag.userInfo.Profile.ComPerson</td>
+                            </tr>
+                            <tr>
+                                <td class="label">聯絡電話</td>
+                                <td class="value">@ViewBag.userInfo.Profile.ComPhone</td>
+                            </tr>
+                            <tr>
+                                <td class="label">地址</td>
+                                <td class="value">@ViewBag.userInfo.Profile.ComAddress</td>
+                            </tr>
+                            <tr>
+                                <td class="label">營業時間</td>
+                                <td class="value">@ViewBag.userInfo.Profile.ComBusinessHours</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-end">
+                                    <button id="editButton" class="btn btn-outline-primary" data-toggle="modal" data-target="#editModal">修改</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p>找不到用戶資料</p>
+            }
+        </div>
+        <!-- Modal 彈出視窗 -->
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editModalLabel">修改資料</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="editForm">
+                            <div class="form-group">
+                                <label for="contactPerson">聯絡人</label>
+                                <input type="text" class="form-control" id="contactPerson" value="@ViewBag.userInfo.Profile.ComPerson">
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNumber">聯絡電話</label>
+                                <input type="text" class="form-control" id="phoneNumber" value="@ViewBag.userInfo.Profile.ComPhone">
+                            </div>
+                            <div class="form-group">
+                                <label for="address">地址</label>
+                                <input type="text" class="form-control" id="address" value="@ViewBag.userInfo.Profile.ComAddress">
+                            </div>
+                            <div class="form-group">
+                                <label for="businessHours">營業時間</label>
+                                <input type="text" class="form-control" id="businessHours" value="@ViewBag.userInfo.Profile.ComBusinessHours">
+                            </div>
+                            <button type="submit" class="btn btn-outline-success">儲存</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</main>
+<style>
+    .no-change{
+        width: 100%;
+        max-width: 500px;
+        margin: 20px auto;
+        background-color: #fff;
+        display: block;
+        padding: 2rem;
+        border-radius: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-family: 'Noto Sans TC', sans-serif;
+    }
+
+    .change {
+        width: 100%;
+        height: 100%;
+        max-width: 500px;
+        margin: 20px auto;
+        background-color: #fff;
+        display: block;
+        padding: 2rem;
+        border-radius: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-family: 'Noto Sans TC', sans-serif;
+        /* position: relative; */
+    }
+
+    .setting-table {
+        width: 100%;
+    }
+
+    .setting-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .setting-table td {
+        padding: 8px 12px;
+        border-bottom: 1px solid #ddd; 
+    }
+
+    .setting-table label {
+        text-align: left;
+        width: 30%; 
+        font-weight: bold;
+    }
+
+    .setting-table value {
+        text-align: right;
+        width: 70%;
+    }
+
+    .change-table {
+        width: 100%;
+    }
+
+    .change-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .change-table td {
+        padding: 8px 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .change-table label {
+        text-align: left;
+        width: 30%;
+        font-weight: bold;
+    }
+
+    .change-table value {
+        text-align: right;
+        width: 70%;
+    }
+
+    .modal-body button{
+        
+    }
+    
+</style>
+@section Scripts {
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+                $(document).ready(function () {
+            $('#editForm').on('submit', function (e) {
+                e.preventDefault();  // 防止表單提交的默認行為
+
+                var updatedUserInfo = {
+                    Profile: {
+                        ComId: @ViewBag.userInfo.Profile.ComId,  // 假設這是公司的ID
+                        ComPerson: $('#contactPerson').val(),
+                        ComPhone: $('#phoneNumber').val(),
+                        ComAddress: $('#address').val(),
+                        ComBusinessHours: $('#businessHours').val()
+                    }
+                };
+
+                // 在發送請求前檢查資料
+                console.log(updatedUserInfo);  // 檢查資料是否正確填充
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("UpdateCompanyInfo", "VendorSide")',  // 確保這是正確的路由
+                    data: JSON.stringify(updatedUserInfo),
+                    contentType: 'application/json',
+                    success: function (response) {
+                        if (response.success) {
+                            $('#editModal').modal('hide');  // 隱藏彈出視窗
+                            alert("資料更新成功！");
+                            location.reload(true);  // 刷新頁面以顯示更新後的資料
+                        } else {
+                            alert(response.message || "資料更新成功！!");
+                            $('#editModal').modal('hide');
+                            location.reload(true)
+                        }
+                    },
+                    error: function (error) {
+                        alert("更新失敗，請稍後再試！!");
+                    }
+                });
+            });
+        });
+
+    </script>
+}

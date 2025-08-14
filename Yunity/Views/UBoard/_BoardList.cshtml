@@ -1,0 +1,93 @@
+﻿ @model IEnumerable<Yunity.Models.CBoardwarp>
+
+<div class="row  d-flex justify-content-center">
+
+    @foreach (var item in Model)
+    {
+        <div class="col-12 mb-4 card d-flex justify-content-center">
+            <!-- 更改為 col-12 讓卡片寬度匹配容器 -->
+            <a href="@Url.Action("Details", new { id = item.Id })" class="card-link" style="text-decoration: none; color: inherit;">
+                <div style="height: 200px; width:1000px; display: flex; flex-direction: column;">
+                    <!-- 設定固定高度為200px -->
+                    <div class="p-3">
+                        <p style="color:#0000C6;">
+                            <strong>
+                                <i class="bi @GetIconClass(item.Type)" style="margin-right:8px; font-size: 20px;"></i>
+                                @BoardType(item.Type)
+                            </strong>
+                        </p>
+
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 20ch;">@item.Info</p>
+                        <p class="card-text"><small class="text-muted">發布時間: @item.OpenTime</small></p>
+
+                        <i class="bi bi-arrow-right-circle" style="position: absolute; bottom: 10px; right: 10px; font-size: 30px; transition: color 0.3s;color:#3255af;"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+
+    }
+
+</div>
+
+
+
+@functions {
+    public static string BoardType(int? type)
+    {
+        if (type == null)
+        {
+            return "未知類型";
+        }
+
+        switch (type)
+        {
+
+            case 1:
+                return "活動通知";
+            case 2:
+                return "緊急通知";
+            case 3:
+                return "維修公告";
+            case 4:
+                return "其他";
+            default:
+                return "無類型";
+        }
+    }
+    public static string GetIconClass(int? type)
+    {
+        switch (type)
+        {
+            case 1:
+                return "bi-megaphone-fill";
+            case 2:
+                return "bi-exclamation-triangle-fill";
+            case 3:
+                return "bi-tools";
+            case 4:
+                return "bi-motherboard-fill";
+            default:
+                return "bi-question-circle";
+        }
+    }
+    public static string GetIconText(int? type)
+    {
+        switch (type)
+        {
+            case 1:
+                return "活動通知";
+            case 2:
+                return "緊急通知";
+            case 3:
+                return "維修公告";
+            case 4:
+                return "其他";
+            default:
+                return "無類型";
+        }
+    }
+}
+ 
